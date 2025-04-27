@@ -38,7 +38,7 @@ export function Navbar() {
             </Link>
   
             {/* Toggle Tema */}
-            <Button onClick={toggleTheme} variant="outline">
+            <Button onClick={toggleTheme} variant="outline" className="bg-blue-900 hover:bg-amber-500 dark:bg-white ">
               {isDarkMode ? '☀️' : '🌙'}
             </Button>
           </div>
