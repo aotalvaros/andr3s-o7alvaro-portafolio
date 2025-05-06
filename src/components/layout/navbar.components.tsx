@@ -9,7 +9,6 @@ export function Navbar() {
     const isDarkMode = useThemeStore((state) => state.isDarkMode)
     const toggleTheme = useThemeStore((state) => state.toggleTheme)
     
-
     return (
       <motion.header
         className="fixed top-0 left-0 w-full bg-background text-foreground shadow-md dark:shadow-white/10 z-50"
@@ -25,7 +24,7 @@ export function Navbar() {
             <Link href="#proyectos" className="hover:underline">
               Proyectos
             </Link>
-            <Link href="#sobre-mi" className="hover:underline">
+            <Link href="/sobre-mi" className="hover:underline">
               Sobre mí
             </Link>
             <Link href="#contacto" className="hover:underline">
