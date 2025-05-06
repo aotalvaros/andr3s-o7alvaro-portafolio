@@ -17,7 +17,7 @@ export default function RootLayout({ children }: { readonly children: React.Reac
     <body className={inter.className}>
       <ThemeProvider>
         <Navbar />
-        <main>{children}</main>
+        {children}
       </ThemeProvider>
     </body>
   </html>

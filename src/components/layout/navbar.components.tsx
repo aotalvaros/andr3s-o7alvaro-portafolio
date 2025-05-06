@@ -21,8 +21,8 @@ export function Navbar() {
   
           {/* Links */}
           <div className="flex items-center gap-6">
-            <Link href="#proyectos" className="hover:underline">
-              Proyectos
+            <Link href="/skills" className="hover:underline">
+              Skills
             </Link>
             <Link href="/sobre-mi" className="hover:underline">
               Sobre mí
@@ -32,7 +32,7 @@ export function Navbar() {
             </Link>
   
             {/* Toggle Tema */}
-            <Button onClick={toggleTheme} variant="outline" className="bg-blue-900 hover:bg-amber-500 dark:bg-white ">
+            <Button onClick={toggleTheme} variant="outline" className="bg-blue-900 hover:bg-amber-500 dark:bg-white cursor-pointer">
               {isDarkMode ? '☀️' : '🌙'}
             </Button>
           </div>
