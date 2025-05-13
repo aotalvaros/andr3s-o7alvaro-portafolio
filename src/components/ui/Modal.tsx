@@ -32,7 +32,7 @@ export default function Modal({ open, onClose, children }: Readonly<ModalProps>)
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.9, opacity: 0 }}
             transition={{ duration: 0.2 }}
-            className="bg-white dark:bg-background text-black dark:text-white p-6 rounded-lg sm:w-[90%] md:w-auto lg:w-[50%] max-w-[820px] shadow-lg relative"
+            className="bg-white dark:bg-background text-black dark:text-white p-6 rounded-lg border sm:w-[90%] md:w-auto lg:w-[50%] max-w-[820px] shadow-lg relative"
             onClick={(e) => e.stopPropagation()} // evita cerrar si clickea dentro
           >
             <button

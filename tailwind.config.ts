@@ -1,4 +1,7 @@
 import type { Config } from 'tailwindcss'
+import plugin from 'tailwindcss/plugin';
+import forms from '@tailwindcss/forms';
+import animate from 'tailwindcss-animate';
 
 const config: Config = {
   content: [
@@ -25,9 +28,20 @@ const config: Config = {
       },
       borderRadius: {
         '4xl': '2rem',
-      }
+      },
     }
   },
-  plugins: []
+  plugins: [
+    forms,
+    animate,
+    plugin(({ addUtilities }) => {
+      addUtilities({
+        '.mask-fade-bottom': {
+          maskImage: 'linear-gradient(white 80%, transparent)',
+          WebkitMaskImage: 'linear-gradient(white 80%, transparent)',
+        },
+      });
+    }),
+  ],
 }
 export default config

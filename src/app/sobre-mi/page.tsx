@@ -2,7 +2,7 @@ import { ClientWrapper } from "@/components/ClientWrapper";
 
 export default function SobreMiPage() {
   return (
-    <main className="flex flex-col min-h-screen items-center justify-center">
+    <main className="flex flex-col items-center justify-center">
        <ClientWrapper />
     </main>
   );

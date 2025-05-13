@@ -7,7 +7,7 @@ export function About() {
   return (
     <section
       id="sobre-mi"
-      className="min-h-[80vh] flex flex-col items-center justify-center px-4 py-16"
+      className="flex flex-col items-center justify-center px-4 py-16"
     >
       <div className="max-w-6xl w-full flex flex-col md:flex-row items-center gap-12">
         <motion.div
@@ -19,7 +19,7 @@ export function About() {
         >
            <div className={`absolute inset-0 rounded-full overflow-hidden shadow-lg backface-hidden group-hover:rotate-y-180 transition-transform duration-700 ease-in-out`}>
             <Image
-              src="/assets/bill1.png"
+              src="/assets/Andres2.jpeg"
               alt="Foto de Andrés"
               fill
               className="object-cover"
@@ -28,7 +28,7 @@ export function About() {
 
           <div className={`absolute inset-0 rounded-full overflow-hidden shadow-lg rotate-y-180 backface-hidden group-hover:rotate-y-0 transition-transform duration-700 ease-in-out`}>
             <Image
-              src="/assets/dipper-and-mabel.png"
+              src="/assets/Andres1.jpeg"
               alt="Otra foto de Andrés"
               fill
               className="object-cover"
