@@ -48,7 +48,7 @@ export function AsteroidList() {
         <section className="pt-10 pb-3 max-w-6xl mx-auto">
         <h2 className="text-4xl font-bold text-center mb-10">Asteroides cercanos a la Tierra ☄️</h2>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 max-h-[50vh] overflow-auto px-1.5 py-1">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:max-h-[50vh] sm:overflow-auto px-1.5 py-1">
             {
                 asteroids.length > 0 ?
                     asteroids.map((asteroid) => (

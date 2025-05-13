@@ -20,10 +20,10 @@ export default function RootLayout({ children }: { readonly children: React.Reac
         <LoaderOverlay />
         <Navbar />
         {children}
-        <footer className="bg-gray-800 text-white py-4 text-center">
-          <p className="text-xl">&copy; {new Date().getFullYear()} Todos los derechos reservados.</p>
-          <p className="text-sm">Desarrollado por Andrés Otalvaro - andr3s.o7alvaro@gmail.com</p>
-          <p className="text-sm text-red-300">Portafolio en construcción</p>
+        <footer className="bg-gray-800 text-white py-4 text-center sm:py-4">
+          <p className="text-fluid-base">&copy; {new Date().getFullYear()} Todos los derechos reservados.</p>
+          <p className="text-sm sm:block hidden">Desarrollado por Andrés Otalvaro - andr3s.o7alvaro@gmail.com</p>
+          <p className="text-fluid-sm text-red-300">Portafolio en construcción</p>
         </footer>
       </ThemeProvider>
     </body>
