@@ -21,8 +21,8 @@ export default function RootLayout({ children }: { readonly children: React.Reac
         <Navbar />
         {children}
         <footer className="bg-gray-800 text-white py-4 text-center">
-          <p>&copy; {new Date().getFullYear()} Andrés Otalvaro. Todos los derechos reservados.</p>
-          <p className="text-sm">Desarrollado por Andrés Otalvaro</p>
+          <p className="text-xl">&copy; {new Date().getFullYear()} Todos los derechos reservados.</p>
+          <p className="text-sm">Desarrollado por Andrés Otalvaro - andr3s.o7alvaro@gmail.com</p>
           <p className="text-sm text-red-300">Portafolio en construcción</p>
         </footer>
       </ThemeProvider>

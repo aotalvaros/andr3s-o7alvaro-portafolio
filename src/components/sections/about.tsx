@@ -22,6 +22,7 @@ export function About() {
               src="/assets/Andres2.jpeg"
               alt="Foto de Andrés"
               fill
+              sizes="auto"
               className="object-cover"
             />
           </div>
@@ -31,6 +32,7 @@ export function About() {
               src="/assets/Andres1.jpeg"
               alt="Otra foto de Andrés"
               fill
+              sizes="auto"
               className="object-cover"
             />
           </div>

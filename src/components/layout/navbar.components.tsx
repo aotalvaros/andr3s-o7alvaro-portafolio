@@ -38,7 +38,7 @@ export function Navbar() {
             <Link href="/sobre-mi" className="hover:underline"  onClick={handleClickLink}>
               Sobre mí
             </Link>
-            <Link href="#contacto" className="hover:underline"  onClick={handleClickLink}>
+            <Link href="/contact" className="hover:underline"  onClick={handleClickLink}>
               Contacto
             </Link>
               <DropdownMenu>
