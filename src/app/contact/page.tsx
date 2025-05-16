@@ -1,13 +1,11 @@
 'use client';
 
-import { DevBadge } from '@/components/common/DevBadge';
 import { ContactForm } from '@/components/contact/ContactForm';
 import { motion } from 'framer-motion';
 
 export default function ContactPage() {
   return (
     <section className="flex flex-col items-center justify-center px-4 py-16">
-      <DevBadge />
       <motion.div
         className="max-w-xl w-full bg-card p-8 rounded-lg shadow-xl/30"
         initial={{ opacity: 0, y: 40 }}

@@ -49,7 +49,7 @@ export function ContactForm() {
     setIsButtonDisabled(!recaptchaRef.current?.getValue());
   };
 
-        console.log("🚀 ~ ContactForm ~ process.env.NEXT_PUBLIC_GOOGLE_RECAPTCHA_SITE_KEY :", process.env.NEXT_PUBLIC_GOOGLE_RECAPTCHA_SITE_KEY )
+
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
       <Input placeholder="Tu nombre" {...register('name')} />
