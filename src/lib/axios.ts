@@ -1,24 +1,21 @@
 import axios from 'axios';
 
 const api = axios.create({
-  timeout: 10000,
-});
-
-api.interceptors.request.use(
-  (config) => {
-    console.log('[Request]', config.url);
-    return config;
+  baseURL: process.env.NEXT_PUBLIC_BASE_URL,
+  headers: {
+    'Content-Type': 'application/json',
   },
-  (error) => {
-    return Promise.reject(error instanceof Error ? error : new Error(error));
-  }
-);
+});
 
 api.interceptors.response.use(
   (response) => response,
-  (error) => {
-    console.error('[Response error]', error);
-    return Promise.reject(error instanceof Error ? error : new Error(error));
+  async(error) => {
+    return Promise.reject({
+      ...error,
+      message: error.response?.data?.error ?? 'An error occurred',
+      status: error.response?.status ?? 500,
+      data: error.response?.data ?? null,
+    });
   }
 );
 

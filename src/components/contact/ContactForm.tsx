@@ -6,29 +6,50 @@ import { contactSchema, ContactFormData } from '@/schemas/contact.schema';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
-import { useLoadingStore } from '@/store/loadingStore';
+import { usePostContact } from './hook/usePostContact';
+import { useRef, useState } from 'react';
+import ReCAPTCHA from 'react-google-recaptcha';
 
 export function ContactForm() {
   const {
     register,
     handleSubmit,
-    formState: { errors, isSubmitting, isSubmitSuccessful },
+    formState: { errors, isSubmitting },
     reset
   } = useForm<ContactFormData>({
     resolver: zodResolver(contactSchema)
   });
 
-  const setLoading = useLoadingStore((state) => state.setLoading)
+  const recaptchaRef = useRef<ReCAPTCHA>(null);
+  const [ isButtonDisabled, setIsButtonDisabled ] = useState<boolean>(true);
+  const [ messageResultMail, setMessageResultMail ] = useState({
+    description: "",
+    show: false,
+    status: 0
+  });
+
+  const { sendEmail, isLoading }  = usePostContact()
 
   const onSubmit = async (data: ContactFormData) => {
-    console.log(data);
-    
-    setLoading(true)
-    await new Promise((r) => setTimeout(r, 1000));
-    setLoading(false)
-    reset();
+    await sendEmail(data, {
+      onSuccess: (data) => {
+        setMessageResultMail({ description: data.message, show: true, status: data.status });
+      },
+      onError: (error) => {
+        setMessageResultMail({ description: error.message, show: true, status: 500 });
+      }
+    })
+    if (!isLoading) {
+      reset();
+      setMessageResultMail({ description: "", show: false, status: 0 });
+    }
   };
 
+  const onChangeReCaptcha = () => {
+    setIsButtonDisabled(!recaptchaRef.current?.getValue());
+  };
+
+        console.log("🚀 ~ ContactForm ~ process.env.NEXT_PUBLIC_GOOGLE_RECAPTCHA_SITE_KEY :", process.env.NEXT_PUBLIC_GOOGLE_RECAPTCHA_SITE_KEY )
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
       <Input placeholder="Tu nombre" {...register('name')} />
@@ -40,11 +61,17 @@ export function ContactForm() {
       <Textarea placeholder="Tu mensaje" rows={5} {...register('message')} className='max-h-[30dvh]' />
       {errors.message && <p className="text-red-500 text-sm">{errors.message.message}</p>}
 
-      <Button type="submit" className="w-full" disabled={true}>
+      <Button type="submit" className="w-full" disabled={isButtonDisabled || isSubmitting}>
         {isSubmitting ? 'Enviando...' : 'Enviar mensaje'}
       </Button>
 
-      {isSubmitSuccessful && <p className="text-green-600 text-center">Mensaje enviado con éxito 🚀</p>}
+      <ReCAPTCHA
+        sitekey={process.env.NEXT_PUBLIC_GOOGLE_RECAPTCHA_SITE_KEY ?? ""}
+        onChange={onChangeReCaptcha}
+        ref={recaptchaRef}
+      />
+
+      {messageResultMail.show && <p className={`${messageResultMail.status == 500 ? "text-red-600": "text-green-600 "} text-center`}>{ messageResultMail.description }</p>}
     </form>
   );
 }

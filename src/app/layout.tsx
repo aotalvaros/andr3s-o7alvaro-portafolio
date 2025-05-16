@@ -3,6 +3,7 @@ import { Inter } from 'next/font/google'
 import { ThemeProvider } from '@/components/theme-provider'
 import { Navbar } from '@/components/layout/navbar.components'
 import { LoaderOverlay } from './LoaderOverlay'
+import { Providers } from './providers'
 
 
 const inter = Inter({ subsets: ['latin'] })
@@ -19,7 +20,9 @@ export default function RootLayout({ children }: { readonly children: React.Reac
       <ThemeProvider>
         <LoaderOverlay />
         <Navbar />
-        {children}
+        <Providers>
+          {children}
+        </Providers>
         <footer className="bg-gray-800 text-white py-4 text-center sm:py-4">
           <p className="text-fluid-base">&copy; {new Date().getFullYear()} Todos los derechos reservados.</p>
           <p className="text-sm sm:block hidden">Desarrollado por Andrés Otalvaro - andr3s.o7alvaro@gmail.com</p>
