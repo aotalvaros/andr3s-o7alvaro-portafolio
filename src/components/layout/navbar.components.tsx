@@ -20,7 +20,7 @@ export function Navbar() {
     setLoading(true)
     setTimeout(() => {
       setLoading(false)
-    }, 1000) 
+    }, 1500) 
   }
 
   return (
@@ -54,8 +54,9 @@ export function Navbar() {
               <DropdownMenuSub>
                 <DropdownMenuSubTrigger className="w-full p-1 bg-white cursor-pointer dark:text-light dark:bg-blue-900">NASA - </DropdownMenuSubTrigger>
                   <DropdownMenuPortal>
-                  <DropdownMenuSubContent className='z-[90] left-3 p-1 w-max shadow-lg rounded-[10px] shadow-blue-900 dark:shadow-white/10'>
+                  <DropdownMenuSubContent className='flex flex-col z-[90] left-3 p-1 w-max shadow-lg rounded-[10px] shadow-blue-900 dark:shadow-white/10'>
                     <Link href="/lab" className="w-full p-1 bg-white left-1 dark:bg-blue-900"  onClick={handleClickLink}>🌌 Asteroides</Link>
+                    <Link href="/lab/mars-rover" className="w-full p-1 bg-white left-1 dark:bg-blue-900"  onClick={handleClickLink}>🚀 Mars Rover</Link>
                   </DropdownMenuSubContent>
                 </DropdownMenuPortal>
               </DropdownMenuSub>
@@ -76,24 +77,24 @@ export function Navbar() {
           <Link onClick={handleClickLink} href="/sobre-mi" className="hover:underline">Sobre mí</Link>
           <Link onClick={handleClickLink} href="/contact" className="hover:underline">Contacto</Link>
           <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <button className="hover:underline text-start">Laboratorio de APIs ▼</button>
-          </DropdownMenuTrigger>
+            <DropdownMenuTrigger asChild>
+              <button className="hover:underline text-start">Laboratorio de APIs ▼</button>
+            </DropdownMenuTrigger>
 
-          <DropdownMenuContent align="start" className="w-48 bg-background text-foreground flex flex-col p-1.5 border rounded-[10px] shadow-blue-900 dark:shadow-white/10">
-            <DropdownMenuSub>
-              <DropdownMenuSubTrigger className="w-full p-1 bg-white cursor-pointer dark:text-light dark:bg-blue-900">NASA - </DropdownMenuSubTrigger>
-                <DropdownMenuPortal>
-                <DropdownMenuSubContent className='z-[90] left-3 p-1 w-max shadow-lg rounded-[10px] shadow-blue-900 dark:shadow-white/10'>
-                  <Link href="/lab" className="w-full p-1 bg-white left-1 dark:bg-blue-900"  onClick={handleClickLink}>🌌 Asteroides</Link>
-                </DropdownMenuSubContent>
-              </DropdownMenuPortal>
-            </DropdownMenuSub>
-            
+            <DropdownMenuContent align="start" className="w-48 bg-background text-foreground flex flex-col p-1.5 border rounded-[10px] shadow-blue-900 dark:shadow-white/10">
+              <DropdownMenuSub>
+                <DropdownMenuSubTrigger className="w-full p-1 bg-white cursor-pointer dark:text-light dark:bg-blue-900">NASA - </DropdownMenuSubTrigger>
+                  <DropdownMenuPortal>
+                  <DropdownMenuSubContent className="flex flex-col z-[90] left-3 p-1 w-max shadow-lg rounded-[10px] shadow-blue-900 dark:shadow-white/10">
+                    <Link href="/lab" className="w-full p-1 bg-white left-1 dark:bg-blue-900" >🌌 Asteroides</Link>
+                    <Link href="/lab/mars-rover" className="w-full p-1 bg-white left-1 dark:bg-blue-900">🚀 Mars Rover</Link>
+                  </DropdownMenuSubContent>
+                </DropdownMenuPortal>
+              </DropdownMenuSub>  
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
       )}
     </motion.header>
-  )
+ )
 }
