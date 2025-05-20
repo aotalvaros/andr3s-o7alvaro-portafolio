@@ -52,6 +52,7 @@ export function MarsGallery({ rover, camera, page = 1 }: Readonly<MarsGalleryPro
                 fill
                 sizes="auto"
                 className="object-cover"
+                loading='lazy'
               />
             </div>
             <div className="p-4">

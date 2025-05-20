@@ -17,7 +17,7 @@ export function RoverFilters() {
     <section className="space-y-8">
       <div className="flex flex-col md:flex-row items-center justify-center gap-4 flex-wrap">
         {/* Rover selector */}
-        <Select value={rover} onValueChange={(value) => setRover(value as any)}>
+        <Select value={rover} onValueChange={(value) => setRover(value as 'curiosity' | 'opportunity' | 'spirit')}>
           <SelectTrigger className="w-40">
             <SelectValue placeholder="Rover" />
           </SelectTrigger>
