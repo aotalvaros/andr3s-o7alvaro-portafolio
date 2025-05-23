@@ -1,9 +1,9 @@
 'use client'
 
 import { useLoadingStore } from '@/store/loadingStore'
-import Spinner from '@/components/ui/spinner'
+import BlackHoleSpinner from '@/components/ui/BlackHoleSpinner'
 
 export function LoaderOverlay() {
   const isLoading = useLoadingStore((s) => s.isLoading)
-  return isLoading ? <Spinner /> : null
+  return isLoading ? <BlackHoleSpinner /> : null
 }

@@ -5,6 +5,9 @@ import { Navbar } from '@/components/layout/navbar.components'
 import { LoaderOverlay } from './LoaderOverlay'
 import { Providers } from './providers'
 
+import { Toaster } from 'sonner'
+import { ToastMessage } from '@/components/ui/ToastMessageComponent';
+
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -20,6 +23,8 @@ export default function RootLayout({ children }: { readonly children: React.Reac
       <ThemeProvider>
         <LoaderOverlay />
         <Navbar />
+        <Toaster expand={false} richColors visibleToasts={1} duration={4000} position="top-right"/>
+        <ToastMessage />
         <Providers>
           {children}
         </Providers>

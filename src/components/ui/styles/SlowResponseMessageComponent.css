@@ -1,0 +1,29 @@
+.container{
+    border: 1px solid #ccc;
+    border-radius: 12px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    min-width: 250px;
+    padding: 10px 20px;
+    color: #0C0F1AE5;
+    font-weight: 700;
+    width: auto;
+}
+.error{
+    border: 1px solid #FF4757;
+    background: #FFE2E4;
+}
+
+.success{
+    border: 1px solid #26C155;
+    background: #F0FDF3;
+}
+
+.warning{
+    border: 1px solid orange;
+    background: #FFF3E0;
+}
+
+.info{
+    border: 1px solid blue;
+    background: #F5F6FA;
+}

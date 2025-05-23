@@ -11,10 +11,18 @@ export function Skills() {
     const [selected, setSelected] = useState<Skill | null>(null);
 
     return (
-        <section id="skills" className="py-20 px-4 max-w-6xl mx-auto">
-            <h2 className="text-4xl font-bold text-center mb-12">
-                Lo que puedo construir
-            </h2>
+        <section id="skills" className="min-h-[100dvh] flex flex-col justify-center snap-start">
+            <motion.div
+                whileHover={{ scale: 1.05 }}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.6}}
+                className="transition-all"
+            >
+                <h2 className="text-4xl font-bold text-center mb-12">
+                    Lo que puedo construir
+                </h2>
+            </motion.div>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-8">
                 {skills.map((skill, index) => (
                 <motion.div

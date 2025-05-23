@@ -3,7 +3,7 @@
 import { motion } from 'framer-motion'
 export function Hero() {
   return (
-    <section className="flex flex-col items-center justify-center text-center px-4 h-full">
+    <section className="min-h-[100dvh] flex flex-col items-center justify-center text-center snap-start">
       <motion.h1 
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -21,19 +21,6 @@ export function Hero() {
       >
         Desarrollador Frontend especializado en React, Next.js, TailwindCSS y tecnologías modernas 🚀.
       </motion.p>
-
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.6, duration: 0.6 }}
-      >
-        {/* <Link
-          href="#contacto"
-          className="inline-block px-6 py-3 bg-primary text-white font-semibold rounded-md hover:bg-primary/90 transition dark:text-black"
-        >
-          Contáctame
-        </Link> */}
-      </motion.div>
     </section>
   )
 }

@@ -7,7 +7,7 @@ export function About() {
   return (
     <section
       id="sobre-mi"
-      className="flex flex-col items-center justify-center px-4 py-16"
+      className="min-h-[100dvh] flex items-center justify-center snap-start md:py-0 py-14"
     >
       <div className="max-w-6xl w-full flex flex-col md:flex-row items-center gap-12">
         <motion.div
