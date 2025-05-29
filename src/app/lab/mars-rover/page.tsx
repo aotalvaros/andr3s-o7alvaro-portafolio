@@ -1,7 +1,18 @@
+'use client';
+
+import ModuleInMaintenance from "@/components/maintenance/ModuleInMaintenance";
 import { RoverFilters } from "@/components/nasa/mars-rover/RoverFilters";
+import { useMaintenance } from "@/components/maintenance/hooks/useMaintenance";
 
 
 export default function MarsRoverPage() {
+
+  const { isInMaintenance } = useMaintenance();
+
+  if (isInMaintenance) {
+    return (<ModuleInMaintenance moduleName="Mars Rover"/>)
+  }
+
   return (
     <main className="py-20 px-4">
       <div className="text-center mb-12">

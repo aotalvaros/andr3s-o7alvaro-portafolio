@@ -9,8 +9,11 @@ import { useLoadingStore } from '@/store/loadingStore'
 import { Menu, X } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { Router } from 'next/router'
+import { useSocketContext } from '@/context/SocketContext'
 
 export function Navbar() {
+
+  const { online } = useSocketContext();
 
   const isDarkMode = useThemeStore((state) => state.isDarkMode)
   const toggleTheme = useThemeStore((state) => state.toggleTheme)
@@ -44,6 +47,14 @@ export function Navbar() {
           Andrés otalvaro dev
         </Link>
 
+        <div className="alert">
+          {
+            online
+              ? <span className="text-green-500"> Online</span>
+              : <span className="text-red-500"> Offline</span>
+          }
+        </div>
+
         <button
           className="md:hidden text-foreground"
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -63,7 +74,7 @@ export function Navbar() {
                   <DropdownMenuPortal>
                   <DropdownMenuSubContent className='flex flex-col z-[90] left-3 p-1 w-max shadow-lg rounded-[10px] shadow-blue-900 bg-white dark:shadow-white/10'>
                      <DropdownMenuItem asChild>
-                      <Link href="/lab" onClick={handleClickLink} className="w-full p-1">
+                      <Link href="/lab/asteroids" onClick={handleClickLink} className="w-full p-1">
                         🌌 Asteroides
                       </Link>
                     </DropdownMenuItem>
@@ -101,7 +112,7 @@ export function Navbar() {
                   <DropdownMenuPortal>
                   <DropdownMenuSubContent className="flex flex-col z-[90] left-3 p-1 w-max shadow-lg rounded-[10px] shadow-blue-900 bg-white dark:shadow-white/10">
                     <DropdownMenuItem asChild>
-                      <Link href="/lab" className="w-full p-1 bg-white left-1 dark:bg-blue-900" >🌌 Asteroides</Link>
+                      <Link href="/lab/asteroids" className="w-full p-1 bg-white left-1 dark:bg-blue-900" >🌌 Asteroides</Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem asChild>
                       <Link href="/lab/mars-rover" className="w-full p-1 bg-white left-1 dark:bg-blue-900">🚀 Mars Rover</Link>
