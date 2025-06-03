@@ -1,10 +1,8 @@
 import './globals.css'
 import { Inter } from 'next/font/google'
 import { ThemeProvider } from '@/components/theme-provider'
-import { SocketProvider } from '@/context/SocketContext'
-import { App } from './App'
 import { Providers } from './providers'
-
+import { SocketProvider } from '@/context/SocketContext'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -20,8 +18,8 @@ export default function RootLayout({ children }: { readonly children: React.Reac
       <ThemeProvider>
         <Providers>
           <SocketProvider>
-            <App>{children}</App>
-          </SocketProvider>
+            {children}
+        </SocketProvider>
         </Providers>
       </ThemeProvider>
     </body>

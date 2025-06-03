@@ -4,13 +4,19 @@ import axios, {
   AxiosRequestConfig,
 } from 'axios';
 
+interface CustomAxiosError extends Error {
+  status?: number;
+  data?: unknown;
+  originalError?: unknown;
+}
+
 
 const api = axios.create({
   baseURL: process.env.NEXT_PUBLIC_BASE_URL,
   headers: {
     'Content-Type': 'application/json',
   },
-  timeout: 15000,
+  timeout: 25000,
 });
 
 api.interceptors.request.use((config) => {
@@ -76,12 +82,11 @@ api.interceptors.response.use(
 
     const friendly = error.response?.data?.error ?? 'La operación no se pudo completar.';
 
-    return Promise.reject({
-      ...error,
-      message: friendly,
-      status: error.response?.status ?? 500,
-      data: error.response?.data ?? null,
-    });
+    const customError = new Error(friendly) as CustomAxiosError;
+    customError.originalError = error;
+    customError.status = error.response?.status ?? 500;
+    customError.data = error.response?.data ?? null;
+    return Promise.reject(customError);
   }
 );
 

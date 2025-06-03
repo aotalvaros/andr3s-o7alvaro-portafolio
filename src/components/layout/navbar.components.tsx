@@ -10,6 +10,7 @@ import { Menu, X } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { Router } from 'next/router'
 import { useSocketContext } from '@/context/SocketContext'
+import Image from 'next/image'
 
 export function Navbar() {
 
@@ -35,10 +36,7 @@ export function Navbar() {
     }
   }, [setLoading])
 
-    const handleClickLink = () => {
-
-    setLoading(true)
-  }
+    const handleClickLink = () =>  setLoading(true)
 
   return (
     <motion.header className="w-full bg-background text-foreground shadow-md dark:shadow-white/10 z-50">
@@ -90,6 +88,10 @@ export function Navbar() {
               
             </DropdownMenuContent>
           </DropdownMenu>
+
+          <Link onClick={handleClickLink} href="/login" className="hover:underline">
+            <Image src="/assets/settings_24dp.svg" alt="Iniciar sesión" width={24} height={24} />
+          </Link>
   
           <Button onClick={toggleTheme} variant="outline" className="bg-blue-900 hover:bg-amber-500 dark:bg-white cursor-pointer">
             {isDarkMode ? '☀️' : '🌙'}
@@ -122,6 +124,9 @@ export function Navbar() {
               </DropdownMenuSub>  
             </DropdownMenuContent>
           </DropdownMenu>
+          <Link onClick={handleClickLink} href="/login" className="hover:underline">
+            <Image src="/assets/settings_24dp.svg" alt="Iniciar sesión" width={24} height={24} />
+          </Link>
            <Button onClick={toggleTheme} variant="outline" className="bg-blue-900 hover:bg-amber-500 dark:bg-white cursor-pointer">
             {isDarkMode ? '☀️' : '🌙'}
           </Button>
