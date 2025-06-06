@@ -2,13 +2,14 @@
 import React, { Fragment } from "react";
 import { LoaderOverlay } from "../LoaderOverlay";
 import { Navbar } from "@/components/layout/navbar.components";
-import { Toaster } from "sonner";
-import { ToastMessage } from "@/components/ui/ToastMessageComponent";
-import ModuleInMaintenance from "@/components/maintenance/ModuleInMaintenance";
+import dynamic from 'next/dynamic';
 import { useMaintenance } from "@/components/maintenance/hooks/useMaintenance";
 import { FloatingActionButton } from "@/components/ui/FloatingActionButton";
 import { useThemeStore } from "@/store/themeStore";
 
+const ModuleInMaintenance = dynamic(() => import('@/components/maintenance/ModuleInMaintenance'), {
+  loading: () => <div>Cargando...</div>,
+});
 
 export const App = ({ children }: { readonly children: React.ReactNode }) => {
 
@@ -23,14 +24,6 @@ export const App = ({ children }: { readonly children: React.ReactNode }) => {
     return (
         <Fragment>
             <LoaderOverlay />
-            <Toaster
-                expand={false}
-                richColors
-                visibleToasts={1}
-                duration={4000}
-                position="top-right"
-            />
-            <ToastMessage />
             <Navbar />
             <FloatingActionButton 
                 onClick={toggleTheme} 

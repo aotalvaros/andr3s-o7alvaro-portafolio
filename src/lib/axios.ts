@@ -3,13 +3,13 @@ import { loadingController } from '@/utils/setLoading';
 import axios, {
   AxiosRequestConfig,
 } from 'axios';
+import { getCookie } from 'cookies-next';
 
 interface CustomAxiosError extends Error {
   status?: number;
   data?: unknown;
   originalError?: unknown;
 }
-
 
 const api = axios.create({
   baseURL: process.env.NEXT_PUBLIC_BASE_URL,
@@ -21,6 +21,12 @@ const api = axios.create({
 
 api.interceptors.request.use((config) => {
   loadingController.start();
+
+  // ──────────── Authorization ────────────
+  const token = getCookie('token') as string | undefined;
+  if (token) {
+     config.headers["Authorization"] = `Bearer ${token}`;
+  }
 
   const controller = new AbortController();
   config.signal = controller.signal;

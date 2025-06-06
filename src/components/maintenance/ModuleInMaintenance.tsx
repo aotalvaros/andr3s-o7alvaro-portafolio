@@ -1,4 +1,3 @@
-// src/components/ModuleInMaintenance.tsx
 import React from 'react';
 import { AlertTriangle } from 'lucide-react';
 

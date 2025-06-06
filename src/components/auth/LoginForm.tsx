@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useLoginForm } from "./hook/useLoginForm";
 import { Eye, EyeOff } from "lucide-react";
+import ReCAPTCHA from "react-google-recaptcha";
 
 export function LoginForm() {
   const {
@@ -14,6 +15,9 @@ export function LoginForm() {
     onSubmit,
     showPassword,
     setShowPassword,
+    recaptchaRef,
+    onChangeReCaptcha,
+    isButtonDisabled
   } = useLoginForm();
 
   return (
@@ -59,10 +63,16 @@ export function LoginForm() {
       <Button
         type="submit"
         className="w-full dark:text-gray-800 text-white"
-        disabled={isSubmitting}
+        disabled={isSubmitting || isButtonDisabled}
       >
         {isSubmitting ? "Iniciando sesión..." : "Iniciar sesión"}
       </Button>
+
+      <ReCAPTCHA
+        sitekey={process.env.NEXT_PUBLIC_GOOGLE_RECAPTCHA_SITE_KEY ?? ""}
+        onChange={onChangeReCaptcha}
+        ref={recaptchaRef}
+      />
     </form>
   );
 }

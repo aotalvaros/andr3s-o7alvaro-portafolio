@@ -3,4 +3,5 @@ export interface MaintenanceResponseStatus {
    moduleName: string,
    __v: number,
    _id: string
+   name: string
 }

@@ -1,9 +1,12 @@
 'use client';
 
-import ModuleInMaintenance from "@/components/maintenance/ModuleInMaintenance";
+import dynamic from 'next/dynamic';
 import { RoverFilters } from "@/components/nasa/mars-rover/RoverFilters";
 import { useMaintenance } from "@/components/maintenance/hooks/useMaintenance";
 
+const ModuleInMaintenance = dynamic(() => import('@/components/maintenance/ModuleInMaintenance'), {
+  loading: () => <div>Cargando...</div>,
+});
 
 export default function MarsRoverPage() {
 
@@ -14,7 +17,7 @@ export default function MarsRoverPage() {
   }
 
   return (
-    <main className="py-20 px-4">
+    <main className="py-24 px-4">
       <div className="text-center mb-12">
         <h1 className="text-4xl md:text-5xl font-bold mb-4">
           📸 Imágenes desde Marte

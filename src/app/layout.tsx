@@ -4,6 +4,8 @@ import { ThemeProvider } from '@/components/theme-provider'
 import { Providers } from './providers'
 import { SocketProvider } from '@/context/SocketContext'
 import { ActiveSectionProvider } from '@/context/ActiveSectionProvider'
+import { ToastMessage } from '@/components/ui/ToastMessageComponent'
+import { Toaster } from 'sonner'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -20,6 +22,14 @@ export default function RootLayout({ children }: { readonly children: React.Reac
         <Providers>
           <ActiveSectionProvider>
             <SocketProvider>
+               <Toaster
+                  expand={false}
+                  richColors
+                  visibleToasts={1}
+                  duration={4000}
+                  position="top-right"
+                />
+              <ToastMessage />
               {children}
             </SocketProvider>
           </ActiveSectionProvider>

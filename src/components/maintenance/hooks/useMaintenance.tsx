@@ -13,18 +13,18 @@ export const useMaintenance = () => {
   const [isAplicationInMaintenance, setIsAplicationInMaintenance] = useState(false);
 
   const { maintenanceData } = useGetStatusMaintenance();
-
+  
   useEffect(() => {
-
+    
     if ( maintenanceData) {
-    const currentPath = paths(pathname);
-    setIsInMaintenance(Boolean(
-      maintenanceData.find((m: MaintenanceResponseStatus) => m.moduleName === currentPath)?.isActive
-    ));
-    setIsAplicationInMaintenance(Boolean(
-      maintenanceData.find((m: MaintenanceResponseStatus) => m.moduleName === 'allAplications')?.isActive
-    ));
-  }
+      const currentPath = paths(pathname);
+      setIsInMaintenance(Boolean(
+        maintenanceData.find((m: MaintenanceResponseStatus) => m.moduleName === currentPath)?.isActive
+      ));
+      setIsAplicationInMaintenance(Boolean(
+        maintenanceData.find((m: MaintenanceResponseStatus) => m.moduleName === 'allAplications')?.isActive
+      ));
+    }
 
     const handler = (data: Record<string, boolean>) => {
       const currentPath = paths(pathname);
@@ -52,5 +52,5 @@ export const useMaintenance = () => {
     };
   }, [socket, pathname, maintenanceData]);
 
-  return { isInMaintenance, isAplicationInMaintenance};
+  return { isInMaintenance, isAplicationInMaintenance, maintenanceData};
 };

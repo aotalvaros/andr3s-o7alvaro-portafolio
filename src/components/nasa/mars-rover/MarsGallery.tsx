@@ -4,6 +4,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { motion } from 'framer-motion'
 import Image from 'next/image'
 import { useMarsPhotos } from '../hooks/useMarsPhotos'
+import React from 'react'
 
 interface MarsGalleryProps {
   rover: 'curiosity' | 'opportunity' | 'spirit'
@@ -11,7 +12,7 @@ interface MarsGalleryProps {
   page?: number
 }
 
-export function MarsGallery({ rover, camera, page = 1 }: Readonly<MarsGalleryProps>) {
+export const MarsGallery = React.memo(function MarsGallery({ rover, camera, page = 1 }: Readonly<MarsGalleryProps>) {
   const { data, isLoading, isError } = useMarsPhotos({ rover, sol: 1000, camera, page })
 
   if (isLoading) {
@@ -66,4 +67,4 @@ export function MarsGallery({ rover, camera, page = 1 }: Readonly<MarsGalleryPro
       }   
     </div>
   )
-}
+});

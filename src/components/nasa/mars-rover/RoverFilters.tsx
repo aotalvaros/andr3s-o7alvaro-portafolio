@@ -46,7 +46,7 @@ export function RoverFilters() {
         </Select>
 
 
-        <Button onClick={() => window.scrollTo({ top: 500, behavior: 'smooth' })}>
+        <Button onClick={() => window.scrollTo({ top: 500, behavior: 'smooth' })} className="text-white bg-primary-foreground dark:bg-secondary-foreground dark:text-primary-foreground">
           🔭 Explorar
         </Button>
       </div>
