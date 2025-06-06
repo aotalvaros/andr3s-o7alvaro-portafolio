@@ -12,45 +12,45 @@ export const useMaintenance = () => {
   const [isInMaintenance, setIsInMaintenance] = useState(false);
   const [isAplicationInMaintenance, setIsAplicationInMaintenance] = useState(false);
 
-  // const { maintenanceData } = useGetStatusMaintenance();
+  const { maintenanceData } = useGetStatusMaintenance();
 
-  // useEffect(() => {
+  useEffect(() => {
 
-  //   if ( maintenanceData) {
-  //   const currentPath = paths(pathname);
-  //   setIsInMaintenance(Boolean(
-  //     maintenanceData.find((m: MaintenanceResponseStatus) => m.moduleName === currentPath)?.isActive
-  //   ));
-  //   setIsAplicationInMaintenance(Boolean(
-  //     maintenanceData.find((m: MaintenanceResponseStatus) => m.moduleName === 'allAplications')?.isActive
-  //   ));
-  // }
+    if ( maintenanceData) {
+    const currentPath = paths(pathname);
+    setIsInMaintenance(Boolean(
+      maintenanceData.find((m: MaintenanceResponseStatus) => m.moduleName === currentPath)?.isActive
+    ));
+    setIsAplicationInMaintenance(Boolean(
+      maintenanceData.find((m: MaintenanceResponseStatus) => m.moduleName === 'allAplications')?.isActive
+    ));
+  }
 
-  //   const handler = (data: Record<string, boolean>) => {
-  //     const currentPath = paths(pathname);
-  //     setIsInMaintenance(Boolean(data[currentPath]));
-  //     setIsAplicationInMaintenance(Boolean(data['allAplications']));
-  //   };
+    const handler = (data: Record<string, boolean>) => {
+      const currentPath = paths(pathname);
+      setIsInMaintenance(Boolean(data[currentPath]));
+      setIsAplicationInMaintenance(Boolean(data['allAplications']));
+    };
 
-  //   socket?.on('init-module-status', handler);
+    socket?.on('init-module-status', handler);
 
-  //   socket?.on('update-module', (data: { moduleName: string, status: boolean }) => {
-  //       const currentPath = paths(pathname);
-  //       if (data.moduleName === currentPath) {
-  //         setIsInMaintenance(data.status);
-  //       }
+    socket?.on('update-module', (data: { moduleName: string, status: boolean }) => {
+        const currentPath = paths(pathname);
+        if (data.moduleName === currentPath) {
+          setIsInMaintenance(data.status);
+        }
 
-  //       if (data.moduleName === 'allAplications') {
-  //         setIsAplicationInMaintenance(data.status);
-  //       }
-  //   });
+        if (data.moduleName === 'allAplications') {
+          setIsAplicationInMaintenance(data.status);
+        }
+    });
 
 
-  //   return () => {
-  //     socket?.off('init-module-status', handler);
-  //     socket?.off('update-module');
-  //   };
-  // }, [socket, pathname, maintenanceData]);
+    return () => {
+      socket?.off('init-module-status', handler);
+      socket?.off('update-module');
+    };
+  }, [socket, pathname, maintenanceData]);
 
   return { isInMaintenance, isAplicationInMaintenance};
 };
