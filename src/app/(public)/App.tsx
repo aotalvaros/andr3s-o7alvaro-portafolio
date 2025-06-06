@@ -6,10 +6,15 @@ import { Toaster } from "sonner";
 import { ToastMessage } from "@/components/ui/ToastMessageComponent";
 import ModuleInMaintenance from "@/components/maintenance/ModuleInMaintenance";
 import { useMaintenance } from "@/components/maintenance/hooks/useMaintenance";
+import { FloatingActionButton } from "@/components/ui/FloatingActionButton";
+import { useThemeStore } from "@/store/themeStore";
+
 
 export const App = ({ children }: { readonly children: React.ReactNode }) => {
 
     const { isAplicationInMaintenance } = useMaintenance();
+    const isDarkMode = useThemeStore((state) => state.isDarkMode)
+    const toggleTheme = useThemeStore((state) => state.toggleTheme)
 
     if (isAplicationInMaintenance) {
         return (<ModuleInMaintenance  message="La aplicación en este momento está en mantenimiento, por favor intenta más tarde."/>)
@@ -27,6 +32,11 @@ export const App = ({ children }: { readonly children: React.ReactNode }) => {
             />
             <ToastMessage />
             <Navbar />
+            <FloatingActionButton 
+                onClick={toggleTheme} 
+                className="bg-primary hover:bg-amber-700 dark:bg-primary cursor-pointer top-23 right-1 md:hidden" 
+                icon={isDarkMode ? '☀️' : '🌙'}    
+            />
             {children}
             <footer className="bg-gray-800 text-white py-4 text-center sm:py-4">
                 <p className="text-fluid-base">

@@ -3,11 +3,13 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useLogin } from "./useLogin";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 export const useLoginForm = () => {
 
     const { auth } = useLogin()
     const router = useRouter();
+    const [showPassword, setShowPassword] = useState(false);
 
     const {
         register,
@@ -30,7 +32,9 @@ export const useLoginForm = () => {
         handleSubmit,
         errors,
         isSubmitting,
-        onSubmit
+        onSubmit,
+        showPassword,
+        setShowPassword
     };
 
 }

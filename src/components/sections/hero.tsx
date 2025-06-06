@@ -1,9 +1,24 @@
 'use client'
 
+
+import { sectionsOrder } from '@/constants/sectionsOrder.constants'
+import { useActiveSection } from '@/context/ActiveSectionProvider'
 import { motion } from 'framer-motion'
+import { useEffect } from 'react'
+import { useInView } from 'react-intersection-observer'
+
 export function Hero() {
+  const { setActiveSection } = useActiveSection()
+  const [ref, inView] = useInView({ threshold: 0.5 })
+
+  useEffect(() => {
+    if (inView) {
+      setActiveSection(sectionsOrder[0])
+    }
+  }, [inView, setActiveSection])
+
   return (
-    <section className="min-h-[100dvh] flex flex-col items-center justify-center text-center snap-start">
+    <section  ref={ref} id="hero" className="min-h-[100dvh] flex flex-col items-center justify-center text-center snap-start">
       <motion.h1 
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}

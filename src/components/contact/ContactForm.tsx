@@ -21,16 +21,16 @@ export function ContactForm() {
   
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-      <Input placeholder="Tu nombre" {...register('name')} />
+      <Input placeholder="Tu nombre" {...register('name')} className='dark:text-white dark:placeholder:text-secondary-foreground' />
       {errors.name && <p className="text-red-500 text-sm">{errors.name.message}</p>}
 
-      <Input placeholder="Tu correo" {...register('email')} />
+      <Input placeholder="Tu correo" {...register('email')} className='dark:text-white dark:placeholder:text-secondary-foreground' />
       {errors.email && <p className="text-red-500 text-sm">{errors.email.message}</p>}
 
-      <Textarea placeholder="Tu mensaje" rows={5} {...register('message')} className='max-h-[30dvh]' />
+      <Textarea placeholder="Tu mensaje" rows={5} {...register('message')} className='max-h-[30dvh] dark:text-white dark:placeholder:text-secondary-foreground' />
       {errors.message && <p className="text-red-500 text-sm">{errors.message.message}</p>}
 
-      <Button type="submit" className="w-full" disabled={isButtonDisabled || isSubmitting}>
+      <Button type="submit" className="w-full dark:text-gray-800 text-white" disabled={isButtonDisabled || isSubmitting}>
         {isSubmitting ? 'Enviando...' : 'Enviar mensaje'}
       </Button>
 

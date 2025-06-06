@@ -3,15 +3,27 @@
 import { skills } from "@/helpers/skillsData";
 import { Skill } from "@/types/skill.type";
 import { motion } from "framer-motion";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Modal from "../ui/Modal";
+import { useInView } from 'react-intersection-observer'
+import { useActiveSection } from "@/context/ActiveSectionProvider";
+import { sectionsOrder } from "@/constants/sectionsOrder.constants";
+import { ContentModalSkills } from "./ContentModalSkills";
 
 export function Skills() {
+  const { setActiveSection } = useActiveSection()
+  const [ref, inView] = useInView({ threshold: 0.5 })
+
+  useEffect(() => {
+    if (inView) {
+      setActiveSection(sectionsOrder[1])
+    }
+  }, [inView, setActiveSection])
 
     const [selected, setSelected] = useState<Skill | null>(null);
 
     return (
-        <section id="skills" className="min-h-[100dvh] flex flex-col justify-center snap-start">
+        <section ref={ref} id="skills" className="py-6 min-h-[100dvh] flex flex-col justify-center snap-start bg-secondary-foreground dark:bg-gray-800">
             <motion.div
                 whileHover={{ scale: 1.05 }}
                 initial={{ opacity: 0, y: 20 }}
@@ -23,7 +35,7 @@ export function Skills() {
                     Lo que puedo construir
                 </h2>
             </motion.div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 gap-8 md:max-w-[75%] md:m-auto px-8 md:px-0">
                 {skills.map((skill, index) => (
                 <motion.div
                     key={index + skill.title}
@@ -60,8 +72,7 @@ export function Skills() {
                 ))}
             </div>
             <Modal open={!!selected} onClose={() => setSelected(null)}>
-                <h3 className="text-xl font-bold mb-2">{selected?.title}</h3>
-                <p>{selected?.description}</p>
+               <ContentModalSkills selected={selected} />
             </Modal>
         </section>
     );

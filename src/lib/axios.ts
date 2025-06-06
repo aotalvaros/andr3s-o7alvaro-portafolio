@@ -73,12 +73,15 @@ api.interceptors.response.use(
   (error) => {
     loadingController.stop();
     clearTimers(error.config);
-    useToastMessageStore.getState().setParams({
-      show: true,
-      typeMessage: 'error',
-      message: '¡Ups! Algo no está bien.',
-      description:  error.response?.data?.error ?? 'La operación no se pudo completar.',
-    });
+    const toastState = useToastMessageStore.getState();
+    if (!toastState.show || toastState.typeMessage !== 'error') {
+      toastState.setParams({
+        show: true,
+        typeMessage: 'error',
+        message: '¡Ups! Algo no está bien.',
+        description: error.response?.data?.error ?? 'La operación no se pudo completar.',
+      });
+    }
 
     const friendly = error.response?.data?.error ?? 'La operación no se pudo completar.';
 
