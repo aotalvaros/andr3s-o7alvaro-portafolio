@@ -3,8 +3,13 @@
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useLoginForm } from "./hook/useLoginForm";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, Info } from "lucide-react";
 import ReCAPTCHA from "react-google-recaptcha";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
 
 export function LoginForm() {
   const {
@@ -23,9 +28,19 @@ export function LoginForm() {
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className="max-w-md w-full space-y-6 bg-white dark:bg-gray-800 p-8 rounded-lg shadow-md border"
+      className="max-w-md w-full space-y-6 bg-white dark:bg-gray-800 p-4 md:p-8 rounded-lg shadow-md border"
     >
-      <h2 className="text-2xl font-bold text-center">Iniciar sesión 🔐</h2>
+      <section className="flex flex-row items-center justify-center">
+        <h2 className="text-2xl font-bold text-center text-gray-800 dark:text-secondary select-none">Iniciar sesión 🔐</h2>
+         <Tooltip>
+          <TooltipTrigger asChild>
+            <Info className="w-5 h-5 text-secondary"/>
+          </TooltipTrigger>
+          <TooltipContent className=" text-white rounded-medium dark:bg-white dark:text-gray-800">
+            <p>Inicio de sesion solo para usuarios registrados (administrador)</p>
+          </TooltipContent>
+        </Tooltip>
+      </section>
 
       <Input
         placeholder="Ingresa tu email"
@@ -62,7 +77,7 @@ export function LoginForm() {
 
       <Button
         type="submit"
-        className="w-full dark:text-gray-800 text-white"
+        className="w-full dark:text-gray-800 text-white select-none"
         disabled={isSubmitting || isButtonDisabled}
       >
         {isSubmitting ? "Iniciando sesión..." : "Iniciar sesión"}
@@ -73,6 +88,7 @@ export function LoginForm() {
         onChange={onChangeReCaptcha}
         ref={recaptchaRef}
       />
+     
     </form>
   );
 }

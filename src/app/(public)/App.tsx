@@ -31,7 +31,7 @@ export const App = ({ children }: { readonly children: React.ReactNode }) => {
                 icon={isDarkMode ? '☀️' : '🌙'}    
             />
             {children}
-            <footer className="bg-gray-800 text-white py-4 text-center sm:py-4">
+            <footer className="bg-gray-800 text-white py-4 text-center sm:py-4 select-none">
                 <p className="text-fluid-base">
                 &copy; {new Date().getFullYear()} Todos los derechos reservados.
                 </p>

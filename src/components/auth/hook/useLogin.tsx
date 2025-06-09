@@ -16,6 +16,7 @@ export const useLogin = () => {
         mutationFn: (payload: { email: string; password: string }) => login(payload),
         onSuccess: (data) => {
             setCookie('token', data.token, { path: '/' });
+            setCookie('refreshToken', data.refreshToken, { path: '/' });
         },
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         onError: (error: any) => {

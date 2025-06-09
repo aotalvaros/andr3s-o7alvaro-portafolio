@@ -14,8 +14,8 @@ export function BlockedModules() {
             defaultValue="item-1"
         >
             <AccordionItem value="item-1">
-            <AccordionTrigger>Modulos bloqueados y no seran visibles</AccordionTrigger>
-            <AccordionContent className="flex flex-col gap-4 text-balance">
+            <AccordionTrigger className="text-fluid-base">Modulos bloqueados y no seran visibles</AccordionTrigger>
+            <AccordionContent className="flex flex-col gap-4 text-balance px-5">
                  {
                     modules?.map((module) => (
                         <div key={module._id} className="flex items-center space-x-2">

@@ -3,7 +3,7 @@ import { loadingController } from '@/utils/setLoading';
 import axios, {
   AxiosRequestConfig,
 } from 'axios';
-import { getCookie } from 'cookies-next';
+import { getCookie, setCookie } from 'cookies-next';
 
 interface CustomAxiosError extends Error {
   status?: number;
@@ -16,8 +16,41 @@ const api = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
-  timeout: 25000,
+  timeout: 60000,
 });
+
+// ──────────── Interceptors ────────────
+
+// Interceptor para manejar el refresh token
+api.interceptors.response.use(
+  response => response,
+  async (error) => {
+    const originalRequest = error.config;
+  
+    if (
+      error.response?.status === 401 &&
+      !originalRequest._retry &&
+      getCookie('refreshToken') // Verifica si existe un refresh token
+    ){
+      originalRequest._retry = true;
+
+      try {
+        const { data } = await axios.post(`${process.env.NEXT_PUBLIC_BASE_URL}/auth/refresh-token`, {
+            refreshToken: getCookie('refreshToken'),
+        });
+
+        setCookie('token', data.token, { path: '/' });
+        return  api(originalRequest);
+
+      } catch (refreshError) {
+        setCookie('token', '', { path: '/' });
+        setCookie('refreshToken', '', { path: '/' });
+        window.location.href = '/login';
+        return Promise.reject(refreshError); 
+      }
+    }
+  }
+);
 
 api.interceptors.request.use((config) => {
   loadingController.start();
@@ -31,7 +64,7 @@ api.interceptors.request.use((config) => {
   const controller = new AbortController();
   config.signal = controller.signal;
 
-  const slowThreshold = (config.timeout ?? 20000) / 3; 
+  const slowThreshold = (config.timeout ?? 25000) / 3; 
   const slowTimer = setTimeout(() => {
     useToastMessageStore.getState().setParams({
       show: true,
@@ -71,7 +104,7 @@ api.interceptors.response.use(
   (response) => {
     
     loadingController.stop();
-    clearTimers(response.config);
+    clearTimers(response?.config);
     return response;
   },
 
@@ -80,6 +113,7 @@ api.interceptors.response.use(
     loadingController.stop();
     clearTimers(error.config);
     const toastState = useToastMessageStore.getState();
+    console.log("🚀 ~ toastState:", toastState)
     if (!toastState.show || toastState.typeMessage !== 'error') {
       toastState.setParams({
         show: true,

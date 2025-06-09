@@ -50,7 +50,7 @@ export function Navbar() {
           alt="Logo"
           width={155}
           height={90}
-          className="object-cover w-[33dvw] min-w-[120px] md:w-[90%]"
+          className="object-cover w-[33dvw] min-w-[120px] md:w-[90%] select-none"
           loading="lazy"
         />
         </Link>

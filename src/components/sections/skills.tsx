@@ -35,7 +35,7 @@ export function Skills() {
                     Lo que puedo construir
                 </h2>
             </motion.div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 gap-8 md:max-w-[75%] md:m-auto px-8 md:px-0">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 gap-8 md:max-w-[75%] md:m-auto px-8 md:px-0 select-none">
                 {skills.map((skill, index) => (
                 <motion.div
                     key={index + skill.title}

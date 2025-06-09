@@ -21,7 +21,7 @@ export function About() {
     <section
       ref={ref}
       id="about"
-      className="min-h-[100dvh] flex items-center justify-center snap-start md:py-0 py-14"
+      className="min-h-[100dvh] flex items-center justify-center snap-start md:py-0 py-14 select-none"
     >
       <div className="max-w-6xl w-full flex flex-col md:flex-row items-center gap-12">
         <motion.div
@@ -60,8 +60,8 @@ export function About() {
         >
           <h2 className="text-4xl md:text-5xl font-bold mb-6">Sobre mí</h2>
           <p className="text-lg md:text-xl text-muted-foreground mb-4">
-            Soy un desarrollador frontend con más de 4 años de estar dándole al
-            código duro. 🎯 Tecnólogo en desarrollo de software, pronto a ser
+            Soy un desarrollador frontend con más de 4 años de experiencia creando 
+            interfaces sólidas, modernas y funcionales. 🎯 Tecnólogo en desarrollo de software, pronto a ser
             ingeniero (ya casi, ya casi). Me muevo como pez en el agua con
             React, Next.js, SASS, y pruebas unitarias (sí, también soy amigo de
             Vitest y Jest). Me gusta trabajar limpio, ordenado y sobre todo

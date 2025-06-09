@@ -5,6 +5,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import ReCAPTCHA from 'react-google-recaptcha';
 import { useContactForm } from './hook/useContactForm';
+import { FooterContact } from '../ui/FooterContact';
 
 export function ContactForm() {
   const {
@@ -30,9 +31,11 @@ export function ContactForm() {
       <Textarea placeholder="Tu mensaje" rows={5} {...register('message')} className='max-h-[30dvh] dark:text-white dark:placeholder:text-secondary-foreground' />
       {errors.message && <p className="text-red-500 text-sm">{errors.message.message}</p>}
 
-      <Button type="submit" className="w-full dark:text-gray-800 text-white" disabled={isButtonDisabled || isSubmitting}>
+      <Button type="submit" className="w-full dark:text-gray-800 text-white select-none" disabled={isButtonDisabled || isSubmitting}>
         {isSubmitting ? 'Enviando...' : 'Enviar mensaje'}
       </Button>
+
+      <FooterContact/>
 
       <ReCAPTCHA
         sitekey={process.env.NEXT_PUBLIC_GOOGLE_RECAPTCHA_SITE_KEY ?? ""}
