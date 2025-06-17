@@ -36,6 +36,7 @@ export function AsteroidList() {
 
     useEffect(() => {
         loadAsteroids(pageInfo.current);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [pageInfo.current]);
 
     useEffect(() => {

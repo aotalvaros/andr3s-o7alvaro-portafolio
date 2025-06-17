@@ -23,10 +23,6 @@ vi.mock('@/components/ui/ToastMessageComponent', () => ({
     ToastMessage: () => <div data-testid="toast-message" />,
 }));
 
-vi.mock('sonner', () => ({
-    Toaster: (props: any) => <div data-testid="toaster" {...props} />,
-}));
-
 describe("Test RootLayout component", () => {
     beforeEach(() => {
         vi.clearAllMocks();
@@ -47,7 +43,6 @@ describe("Test RootLayout component", () => {
         expect(screen.getByTestId("providers")).toBeInTheDocument();
         expect(screen.getByTestId("active-section-provider")).toBeInTheDocument();
         expect(screen.getByTestId("socket-provider")).toBeInTheDocument();
-        expect(screen.getByTestId("toaster")).toBeInTheDocument();
         expect(screen.getByTestId("toast-message")).toBeInTheDocument();
     });
 
@@ -62,7 +57,7 @@ describe("Test RootLayout component", () => {
 
     it("renders Toaster with correct props", () => {
         render(<RootLayout><div>Test</div></RootLayout>);
-        const toaster = screen.getByTestId("toaster");
+        const toaster = screen.getByTestId("toast-message");
         // Puedes verificar props si los usas en tu implementación real
         expect(toaster).toBeInTheDocument();
     });

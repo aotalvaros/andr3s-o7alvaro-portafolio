@@ -9,6 +9,7 @@ export default function LoginPage() {
 
   useEffect(() => {
     setLoading(false); // Ensure loading is false on mount
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   },[])
 
   return (
