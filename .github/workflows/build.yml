@@ -18,6 +18,6 @@ jobs:
         with:
           args: >
             -Dsonar.organization=aotalvaros
-            -Dsonar.projectKey=andr3s-o7alvaro-portafolio
+            -Dsonar.projectKey=aotalvaros
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
