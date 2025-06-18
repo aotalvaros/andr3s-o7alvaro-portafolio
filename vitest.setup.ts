@@ -13,3 +13,5 @@ vi.mock('next/font/google', () => ({
     className: 'mock-inter-font',
   }),
 }));
+
+vi.mock('@/components/styles/PsychedelicSpinner.css', () => ({}));

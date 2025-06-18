@@ -28,7 +28,8 @@ export const App = ({ children }: { readonly children: React.ReactNode }) => {
             <FloatingActionButton 
                 onClick={toggleTheme} 
                 className="bg-primary hover:bg-amber-700 dark:bg-primary cursor-pointer top-23 right-1 md:hidden" 
-                icon={isDarkMode ? '☀️' : '🌙'}    
+                icon={isDarkMode ? '☀️' : '🌙'}
+                data-testid="theme-toggle-button"    
             />
             {children}
             <footer className="bg-gray-800 text-white py-4 text-center sm:py-4 select-none">
