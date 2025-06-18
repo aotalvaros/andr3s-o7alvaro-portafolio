@@ -3,6 +3,7 @@ import { afterEach, beforeEach, vi, describe, it, expect } from 'vitest';
 import { render, screen } from "@testing-library/react";
 import { useSocketContext } from "@/context/SocketContext";
 import { logout } from "@/components/auth/logout";
+import { Socket } from "socket.io-client";
 
 const mockLogout = vi.fn();
 
@@ -16,7 +17,7 @@ vi.mock("@/context/SocketContext");
 describe("Test AdminPage component", () => {
     beforeEach(() => {
         vi.clearAllMocks();
-        vi.mocked(useSocketContext).mockReturnValue({ online: true, socket: { emit: vi.fn() } as any });
+        vi.mocked(useSocketContext).mockReturnValue({ online: true, socket: { emit: vi.fn() } as unknown as Socket });
         vi .mocked(logout).mockImplementation(mockLogout);
     });
 
@@ -30,7 +31,7 @@ describe("Test AdminPage component", () => {
     });
 
     it("renders admin status as offline", () => {
-        vi.mocked(useSocketContext).mockReturnValue({ online: false, socket: { emit: vi.fn() } as any  });
+        vi.mocked(useSocketContext).mockReturnValue({ online: false, socket: { emit: vi.fn() } as unknown as Socket });
         render(<AdminPage />);
         expect(screen.getByTestId('admin-status')).toHaveTextContent('Offline');
     });

@@ -14,6 +14,7 @@ export default defineConfig({
     coverage: {
       reporter: ['text', 'lcov', 'cobertura'],
       reportsDirectory: './coverage',
+      include: ['src/**/*.{ts,tsx}'],
       exclude: [
         "src/test/**",
         "src/**/*.d.ts",
@@ -27,6 +28,7 @@ export default defineConfig({
         "node_modules/**",
         "**/*.config.ts",
         "**/*.json",
+        "**/src/components/ui/**"
       ]
     },
   },
