@@ -1,4 +1,4 @@
-import { fetchMarsPhotos } from '@/services/nasa/nasaMars';
+import { fetchMarsPhotos } from '@/services/nasa/nasaMarsPhotos.service';
 import { useQuery } from '@tanstack/react-query';
 
 

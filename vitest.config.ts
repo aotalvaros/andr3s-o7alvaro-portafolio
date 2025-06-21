@@ -28,7 +28,9 @@ export default defineConfig({
         "node_modules/**",
         "**/*.config.ts",
         "**/*.json",
-        "**/src/components/ui/**"
+        "**/src/components/ui/**",
+        "**/src/schemas/**",
+        "**/src/constants/**",
       ]
     },
   },
