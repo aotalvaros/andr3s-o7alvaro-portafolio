@@ -12,7 +12,7 @@ export const useGetStatusMaintenance = () => {
         refetchOnWindowFocus: false,
     });
     
-    const isInMaintenance = maintenanceData?.some((module) => module.isActive) || false;
+    const isInMaintenance = maintenanceData?.data.some((module) => module.isActive) || false;
 
     return {
         isInMaintenance,

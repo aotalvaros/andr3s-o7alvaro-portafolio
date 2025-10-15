@@ -1,7 +1,7 @@
 import { useMaintenance } from '@/components/maintenance/hooks/useMaintenance';
 import { usePostToggleModule } from '@/components/maintenance/hooks/usePostToggleModule';
 import { SocketContext } from '@/context/SocketContext';
-import { MaintenanceResponseStatus } from '@/services/maintenance/models/maintenaceResponseStatus.interface';
+import { responseModuleData } from '@/services/maintenance/models/maintenaceResponseStatus.interface';
 import { useToastMessageStore } from '@/store/ToastMessageStore';
 import{  useContext, useEffect, useState } from 'react'
 
@@ -11,18 +11,18 @@ export const useBlockedModules = () => {
     const { maintenanceData } = useMaintenance();
     const { mutateAsync: toggleModule } = usePostToggleModule();
      const { setParams } = useToastMessageStore((state) => state)
-    const [modules, setModules] = useState<MaintenanceResponseStatus[] | undefined>([]);
+    const [modules, setModules] = useState<responseModuleData[] | undefined>([]);
 
     useEffect(() => {
         if (maintenanceData) {
-            setModules(maintenanceData);
+            setModules(maintenanceData.data);
         }
     }, [maintenanceData]);
 
     const updateModuleStatus = (
-        prevModules: MaintenanceResponseStatus[] | undefined,
+        prevModules: responseModuleData[] | undefined,
         data: { moduleName: string; status: boolean }
-    ): MaintenanceResponseStatus[] | undefined => {
+    ): responseModuleData[] | undefined => {
         if (!prevModules) return prevModules;
         return prevModules.map((module) =>
             module.moduleName === data.moduleName ? { ...module, isActive: data.status } : module

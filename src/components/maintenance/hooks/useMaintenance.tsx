@@ -4,7 +4,7 @@ import { SocketContext } from '@/context/SocketContext';
 import { usePathname } from 'next/navigation';
 import { useContext, useEffect, useState } from 'react';
 import { useGetStatusMaintenance } from './useGetStatusMaintenance';
-import { MaintenanceResponseStatus } from '@/services/maintenance/models/maintenaceResponseStatus.interface';
+import { responseModuleData } from '@/services/maintenance/models/maintenaceResponseStatus.interface';
 
 export const useMaintenance = () => {
   const pathname = usePathname();
@@ -19,10 +19,10 @@ export const useMaintenance = () => {
     if ( maintenanceData) {
       const currentPath = paths(pathname);
       setIsInMaintenance(Boolean(
-        maintenanceData.find((m: MaintenanceResponseStatus) => m.moduleName === currentPath)?.isActive
+        maintenanceData.data.find((m: responseModuleData) => m.moduleName === currentPath)?.isActive
       ));
       setIsAplicationInMaintenance(Boolean(
-        maintenanceData.find((m: MaintenanceResponseStatus) => m.moduleName === 'allAplications')?.isActive
+        maintenanceData.data.find((m: responseModuleData) => m.moduleName === 'allAplications')?.isActive
       ));
     }
 

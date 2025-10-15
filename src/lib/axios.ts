@@ -64,7 +64,7 @@ api.interceptors.request.use((config) => {
   const controller = new AbortController();
   config.signal = controller.signal;
 
-  const slowThreshold = (config.timeout ?? 25000) / 3; 
+  const slowThreshold = (config.timeout ?? 48000) / 3; 
   const slowTimer = setTimeout(() => {
     useToastMessageStore.getState().setParams({
       show: true,
