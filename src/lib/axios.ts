@@ -64,7 +64,7 @@ api.interceptors.request.use((config) => {
   const controller = new AbortController();
   config.signal = controller.signal;
 
-  const slowThreshold = (config.timeout ?? 48000) / 3; 
+  const slowThreshold = (58000) / 3;
   const slowTimer = setTimeout(() => {
     useToastMessageStore.getState().setParams({
       show: true,
@@ -82,7 +82,7 @@ api.interceptors.request.use((config) => {
       message: '¡Ups! Algo no está bien.',
       description: 'La operación fue cancelada por tiempo de espera.',
     });
-  }, config.timeout); // mismo valor que Axios
+  }, 58000); 
 
   config.metadata = { slowTimer, abortTimer };
   return config;
