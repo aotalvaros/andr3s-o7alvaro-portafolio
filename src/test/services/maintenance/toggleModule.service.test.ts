@@ -22,7 +22,7 @@ describe("Toggle Module Service", () => {
         const response = await toggleModule(requestData);
         
         expect(response).toEqual(mockResponse);
-        expect(api.post).toHaveBeenCalledWith('/modules/toggle', requestData);
+        expect(api.post).toHaveBeenCalledWith('/modules/toggle', requestData, { showLoading: false });
     });
 
     it("should handle errors when toggling a module", async () => {

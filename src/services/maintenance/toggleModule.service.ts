@@ -7,6 +7,8 @@ export interface ToggleModuleResponse {
 }
 
 export const toggleModule = async (data: ToggleModuleRequest): Promise<ToggleModuleResponse> => {
-  return api.post('/modules/toggle', data)
+  return api.post('/modules/toggle', data, {
+    showLoading: false,
+  })
     .then((response) => response.data);
 };
