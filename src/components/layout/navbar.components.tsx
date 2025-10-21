@@ -11,6 +11,7 @@ import { useEffect, useState } from 'react'
 import { Router } from 'next/router'
 import { useSocketContext } from '@/context/SocketContext'
 import Image from 'next/image'
+import { ItemsMenu } from './items.components'
 
 export function Navbar() {
 
@@ -39,7 +40,7 @@ export function Navbar() {
     }
   }, [setLoading])
 
-    const handleClickLink = () =>  setLoading(true)
+  const handleClickLink = () =>  setLoading(true)
 
   return (
     <motion.header className="fixed top-0 left-0 w-full bg-background text-foreground shadow-md dark:shadow-white/10 z-90 dark:bg-gray-800">
@@ -76,27 +77,8 @@ export function Navbar() {
               <button className="hover:underline dark:text-secondary">Laboratorio de APIs ▼</button>
             </DropdownMenuTrigger>
 
-            <DropdownMenuContent align="start" className="w-48 bg-background text-foreground flex flex-col p-1.5 border rounded-[10px] shadow-blue-900 dark:shadow-white/10">
-              <DropdownMenuSub>
-                <DropdownMenuSubTrigger className="w-full p-1 bg-white cursor-pointer dark:text-secondary dark:bg-blue-900">NASA - </DropdownMenuSubTrigger>
-                  <DropdownMenuPortal>
-                  <DropdownMenuSubContent className='flex flex-col z-[90] p-1 w-max shadow-lg border rounded-[10px] shadow-primary absolute left-2.5 bg-white dark:shadow-white/10 dark:text-secondary dark:bg-blue-900' >
-                     <DropdownMenuItem asChild>
-                      <Link href="/lab/asteroids" onClick={handleClickLink} className="w-full p-1">
-                        🌌 Asteroides
-                      </Link>
-                    </DropdownMenuItem>
-
-                    <DropdownMenuItem asChild>
-                      <Link href="/lab/mars-rover" onClick={handleClickLink} className="w-full p-1">
-                        🚀 Mars Rover
-                      </Link>
-                    </DropdownMenuItem>
-                  </DropdownMenuSubContent>
-                </DropdownMenuPortal>
-              </DropdownMenuSub>
-              
-            </DropdownMenuContent>
+            <ItemsMenu handleClickLink={handleClickLink} />
+            
           </DropdownMenu>
 
           <Link onClick={handleClickLink} href="/login" className="hover:underline">
@@ -120,8 +102,8 @@ export function Navbar() {
 
             <DropdownMenuContent align="start" className="w-48 bg-background text-foreground flex flex-col p-1.5 border rounded-[10px] shadow-blue-900 dark:shadow-white/10">
               <DropdownMenuSub>
-                <DropdownMenuSubTrigger className="w-full p-1 bg-white cursor-pointer dark:text-secondary dark:bg-blue-900">NASA - </DropdownMenuSubTrigger>
-                  <DropdownMenuPortal>
+                <DropdownMenuSubTrigger className="w-full p-1 bg-white cursor-pointer dark:text-secondary dark:bg-blue-900">NASA → </DropdownMenuSubTrigger>
+                <DropdownMenuPortal>
                   <DropdownMenuSubContent className="flex flex-col z-[90] left-3 p-1 w-max shadow-lg rounded-[10px] shadow-blue-900 bg-white dark:shadow-white/10">
                     <DropdownMenuItem asChild>
                       <Link href="/lab/asteroids" className="w-full p-1 bg-white left-1 dark:bg-blue-900" >🌌 Asteroides</Link>
@@ -131,7 +113,11 @@ export function Navbar() {
                     </DropdownMenuItem>
                   </DropdownMenuSubContent>
                 </DropdownMenuPortal>
-              </DropdownMenuSub>  
+              </DropdownMenuSub>
+
+              <DropdownMenuItem asChild>
+                <Link href="/lab/pokemon" className="w-full p-1"> 🐲 Pokédex </Link>
+              </DropdownMenuItem>  
             </DropdownMenuContent>
           </DropdownMenu>
           <Link onClick={handleClickLink} href="/login" className="hover:underline">

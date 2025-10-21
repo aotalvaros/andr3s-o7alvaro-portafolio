@@ -61,8 +61,7 @@ export function About() {
           <h2 className="text-4xl md:text-5xl font-bold mb-6">Sobre mí</h2>
           <p className="text-lg md:text-xl text-muted-foreground mb-4">
             Soy un desarrollador frontend con más de 4 años de experiencia creando 
-            interfaces sólidas, modernas y funcionales. 🎯 Tecnólogo en desarrollo de software, pronto a ser
-            ingeniero (ya casi, ya casi). Me muevo como pez en el agua con
+            interfaces sólidas, modernas y funcionales. 🎯 Ingeniero en desarrollo de software. Me muevo como pez en el agua con
             React, Next.js, SASS, y pruebas unitarias (sí, también soy amigo de
             Vitest y Jest). Me gusta trabajar limpio, ordenado y sobre todo
             crear cosas que realmente funcionen. 🚀 También me he metido con

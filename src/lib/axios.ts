@@ -2,6 +2,7 @@ import { useToastMessageStore } from '@/store/ToastMessageStore';
 import { loadingController } from '@/utils/setLoading';
 import axios, {
   AxiosRequestConfig,
+  InternalAxiosRequestConfig
 } from 'axios';
 import { getCookie, setCookie } from 'cookies-next';
 
@@ -10,6 +11,25 @@ interface CustomAxiosError extends Error {
   data?: unknown;
   originalError?: unknown;
 }
+
+declare module 'axios' {
+  export interface AxiosRequestConfig {
+    showLoading?: boolean;
+    metadata?: {
+      slowTimer?: ReturnType<typeof setTimeout>;
+      abortTimer?: ReturnType<typeof setTimeout>;
+    };
+  }
+
+  export interface InternalAxiosRequestConfig {
+    showLoading?: boolean;
+    metadata?: {
+      slowTimer?: ReturnType<typeof setTimeout>;
+      abortTimer?: ReturnType<typeof setTimeout>;
+    };
+  }
+}
+
 
 const api = axios.create({
   baseURL: process.env.NEXT_PUBLIC_BASE_URL,
@@ -52,39 +72,43 @@ api.interceptors.response.use(
   }
 );
 
-api.interceptors.request.use((config) => {
-  loadingController.start();
+api.interceptors.request.use((config: InternalAxiosRequestConfig) => {
+  const shouldShowLoading = config.showLoading !== false;
+  
+  if (shouldShowLoading) {
+    loadingController.start();
+  }
 
   // ──────────── Authorization ────────────
   const token = getCookie('token') as string | undefined;
   if (token) {
-     config.headers["Authorization"] = `Bearer ${token}`;
+    config.headers["Authorization"] = `Bearer ${token}`;
   }
 
-  const controller = new AbortController();
-  config.signal = controller.signal;
+  // const controller = new AbortController();
+  // config.signal = controller.signal;
 
-  const slowThreshold = (58000) / 3;
-  const slowTimer = setTimeout(() => {
-    useToastMessageStore.getState().setParams({
-      show: true,
-      typeMessage: 'warning',
-      message: '¡Ups! Algo no está bien.',
-      description: 'La operación está tardando más de lo habitual.',
-    });
-  }, slowThreshold);
+  // const slowThreshold = (58000) / 3;
+  // const slowTimer = setTimeout(() => {
+  //   useToastMessageStore.getState().setParams({
+  //     show: true,
+  //     typeMessage: 'warning',
+  //     message: '¡Ups! Algo no está bien.',
+  //     description: 'La operación está tardando más de lo habitual.',
+  //   });
+  // }, slowThreshold);
 
-  const abortTimer = setTimeout(() => {
-    controller.abort(); // cancela la request real
-    useToastMessageStore.getState().setParams({
-      show: true,
-      typeMessage: 'error',
-      message: '¡Ups! Algo no está bien.',
-      description: 'La operación fue cancelada por tiempo de espera.',
-    });
-  }, 58000); 
+  // const abortTimer = setTimeout(() => {
+  //   controller.abort(); // cancela la request real
+  //   useToastMessageStore.getState().setParams({
+  //     show: true,
+  //     typeMessage: 'error',
+  //     message: '¡Ups! Algo no está bien.',
+  //     description: 'La operación fue cancelada por tiempo de espera.',
+  //   });
+  // }, 58000); 
 
-  config.metadata = { slowTimer, abortTimer };
+  // config.metadata = { slowTimer, abortTimer };
   return config;
 });
 
@@ -110,10 +134,10 @@ api.interceptors.response.use(
 
   // ──────────── error ────────────
   (error) => {
+      // 🚀 Solo ocultar loading si se mostró inicialmente
     loadingController.stop();
     clearTimers(error.config);
     const toastState = useToastMessageStore.getState();
-    console.log("🚀 ~ toastState:", toastState)
     if (!toastState.show || toastState.typeMessage !== 'error') {
       toastState.setParams({
         show: true,

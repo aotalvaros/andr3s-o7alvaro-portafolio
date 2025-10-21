@@ -4,7 +4,7 @@ import { ModalProps } from "@/types/modalProps.type";
 import { motion, AnimatePresence  } from 'framer-motion';
 import { useEffect } from "react";
 
-export default function Modal({ open, onClose, children }: Readonly<ModalProps>) {
+export default function Modal({ open, onClose, children, isCrollable = true, className }: Readonly<ModalProps>) {
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') onClose();
@@ -32,7 +32,7 @@ export default function Modal({ open, onClose, children }: Readonly<ModalProps>)
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.95, opacity: 0 }}
             transition={{ duration: 0.3 }}
-            className="bg-white/80 dark:bg-background/80 backdrop-blur-lg shadow-2xl border border-border text-black dark:text-white p-6 rounded-2xl w-[90%] md:w-auto lg:w-[45%] max-w-[820px] relative overflow-hidden"
+            className={`${className} bg-white/80 dark:bg-background/80 backdrop-blur-lg shadow-2xl border border-border text-black dark:text-white p-6 rounded-2xl w-[90%] md:w-auto lg:w-[45%] max-w-[820px] relative overflow-hidden`}
             onClick={(e) => e.stopPropagation()}
           >
             <button
@@ -42,7 +42,7 @@ export default function Modal({ open, onClose, children }: Readonly<ModalProps>)
             >
               ✖
             </button>
-              <div className="max-h-[60vh] overflow-y-auto pr-2 custom-scroll">
+            <div className={`max-h-[60vh] ${isCrollable ? 'overflow-y-auto mt-2' : ''} pr-2 custom-scroll`}>
               {children}
             </div>
           </motion.div>

@@ -112,7 +112,7 @@ html, body {
   --sidebar-foreground: oklch(0.985 0 0);
   --sidebar-primary: oklch(0.488 0.243 264.376);
   --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
+  --sidebar-accent: rgb(38, 38, 38);
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.556 0 0);
@@ -142,4 +142,45 @@ html, body {
 
 .text-fluid-lg {
   font-size: clamp(1.2rem, 0.3042rem + 1.48vw, 1.5rem);
+}
+
+.text-fluid-xl {
+  font-size: clamp(1.5rem, 0.3042rem + 1.48vw, 2rem);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+
+  .animated-title-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+  }
+
+  .animated-title {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .animated-char {
+    position: relative;
+    display: inline-block;
+    top: 0;
+    transition: top 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+  }
+
+  .animated-title-wrapper:hover .animated-char:nth-child(even) {
+    top: -20px;
+  }
+
+  .animated-title-wrapper:hover .animated-char:nth-child(odd) {
+    top: 20px;
+  }
 }
