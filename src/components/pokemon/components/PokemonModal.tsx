@@ -17,7 +17,7 @@ interface PokemonModalProps {
   pokemon: ResponsePokemonDetaexport;
 }
 
-export function PokemonModal({ pokemon: initialPokemon }: PokemonModalProps) {
+export function PokemonModal({ pokemon: initialPokemon }: Readonly<PokemonModalProps>) {
 
   const imageContainerRef = useRef<HTMLDivElement>(null);
   const [description, setDescription] = useState<string>('');
@@ -222,7 +222,7 @@ export function PokemonModal({ pokemon: initialPokemon }: PokemonModalProps) {
           )}
 
       {/* Action Buttons */}
-      <div className="flex gap-3 pt-4">
+      <div className="flex flex-col h-[15dvh] gap-3 pt-4 md:flex-row md:h-auto">
         <Button
           onClick={handleEvolve}
           disabled={!canEvolve || isEvolving || loading}
