@@ -12,7 +12,7 @@ export const useMaintenance = () => {
   const [isInMaintenance, setIsInMaintenance] = useState(false);
   const [isAplicationInMaintenance, setIsAplicationInMaintenance] = useState(false);
 
-  const { maintenanceData } = useGetStatusMaintenance();
+  const { data: maintenanceData, isLoading } = useGetStatusMaintenance();
   
   useEffect(() => {
     
@@ -52,5 +52,5 @@ export const useMaintenance = () => {
     };
   }, [socket, pathname, maintenanceData]);
 
-  return { isInMaintenance, isAplicationInMaintenance, maintenanceData};
+  return { isInMaintenance, isAplicationInMaintenance, maintenanceData, isLoading};
 };

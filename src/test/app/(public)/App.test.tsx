@@ -4,9 +4,10 @@ import { useThemeStore } from "@/store/themeStore";
 import { describe, it, expect, beforeEach } from "vitest";
 import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
-
+import { useFirstVisit } from "@/hooks/useFirstVisit";
 
 vi.mock("@/components/maintenance/hooks/useMaintenance")
+vi.mock("@/hooks/useFirstVisit");
 vi.mock("@/store/themeStore");
 
 vi.mock("next/dynamic", () => ({
@@ -38,23 +39,31 @@ vi.mock("@/components/layout/navbar.components", () => ({
     Navbar: () => <nav data-testid="navbar">Navbar</nav>,
 }));
 
+vi.mock("../../../components/ui/spaceLoading", () => ({
+    SpaceLoading: () => <div data-testid="space-loading">Cargando...</div>,
+}));
+
 const mockUseMaintenance = vi.mocked(useMaintenance);
 const mockUseThemeStore = vi.mocked(useThemeStore);
+const mockUseFirstVisit = vi.mocked(useFirstVisit);
 
 describe("Test App Component", () => {
+
     beforeEach(() => {
         vi.clearAllMocks();
     });
 
     it("Should show the maintenance module if isApplicationInMaintenance is true.", () => {
-        mockUseMaintenance.mockReturnValue({ isAplicationInMaintenance: true, isInMaintenance: true, maintenanceData:[] });
+        mockUseFirstVisit.mockReturnValue({ isFirstVisit: false, isChecking: false });
+        mockUseMaintenance.mockReturnValue({ isAplicationInMaintenance: true, isInMaintenance: true, maintenanceData: undefined, isLoading: false });
         render(<App>contenido</App>);
         expect(screen.getByTestId("maintenance-module")).toBeInTheDocument();
         expect(screen.queryByText("contenido")).not.toBeInTheDocument();
     });
 
     it("Should render LoaderOverlay, Navbar, FloatingActionButton and children if not in maintenance.", () => {
-        mockUseMaintenance.mockReturnValue({ isAplicationInMaintenance: false, isInMaintenance: true, maintenanceData:[]  });
+        mockUseFirstVisit.mockReturnValue({ isFirstVisit: false, isChecking: false });
+        mockUseMaintenance.mockReturnValue({ isAplicationInMaintenance: false, isInMaintenance: true, maintenanceData: undefined, isLoading: false });
         mockUseThemeStore.mockImplementation((fn) =>
             fn({ isDarkMode: false, toggleTheme: vi.fn() })
         );
@@ -66,7 +75,8 @@ describe("Test App Component", () => {
     });
 
     it("Should show the icon ☀️ if isDarkMode is true.", () => {
-        mockUseMaintenance.mockReturnValue({ isAplicationInMaintenance: false, isInMaintenance: true, maintenanceData:[]  });
+        mockUseFirstVisit.mockReturnValue({ isFirstVisit: false, isChecking: false });
+        mockUseMaintenance.mockReturnValue({ isAplicationInMaintenance: false, isInMaintenance: true, maintenanceData: undefined, isLoading: false });
         mockUseThemeStore.mockImplementation((fn) =>
             fn({ isDarkMode: true, toggleTheme: vi.fn() })
         );
@@ -75,7 +85,8 @@ describe("Test App Component", () => {
     });
 
     it("Should show the icon ☀️ if isDarkMode is false.", () => {
-        mockUseMaintenance.mockReturnValue({ isAplicationInMaintenance: false, isInMaintenance: true, maintenanceData:[]  });
+        mockUseFirstVisit.mockReturnValue({ isFirstVisit: false, isChecking: false });
+        mockUseMaintenance.mockReturnValue({ isAplicationInMaintenance: false, isInMaintenance: true, maintenanceData: undefined, isLoading: false });
         mockUseThemeStore.mockImplementation((fn) =>
             fn({ isDarkMode: false, toggleTheme: vi.fn() })
         );
@@ -85,7 +96,8 @@ describe("Test App Component", () => {
 
     it("Should call toggleTheme when you click on the FloatingActionButton.", () => {
         const toggleTheme = vi.fn();
-        mockUseMaintenance.mockReturnValue({ isAplicationInMaintenance: false, isInMaintenance: true, maintenanceData:[]  });
+        mockUseFirstVisit.mockReturnValue({ isFirstVisit: false, isChecking: false });
+        mockUseMaintenance.mockReturnValue({ isAplicationInMaintenance: false, isInMaintenance: true, maintenanceData: undefined, isLoading: false });
         mockUseThemeStore.mockImplementation((fn) =>
             fn({ isDarkMode: false, toggleTheme })
         );
@@ -96,7 +108,8 @@ describe("Test App Component", () => {
     });
 
     it("Should render correctly the footer with the expected texts.", () => {
-        mockUseMaintenance.mockReturnValue({ isAplicationInMaintenance: false, isInMaintenance: true, maintenanceData:[]  });
+        mockUseFirstVisit.mockReturnValue({ isFirstVisit: false, isChecking: false });
+        mockUseMaintenance.mockReturnValue({ isAplicationInMaintenance: false, isInMaintenance: true, maintenanceData: undefined, isLoading: false });
         mockUseThemeStore.mockImplementation((fn) =>
             fn({ isDarkMode: false, toggleTheme: vi.fn() })
         );
@@ -104,4 +117,14 @@ describe("Test App Component", () => {
         expect(screen.getByText(/desarrollado por andrés otalvaro/i)).toBeInTheDocument();
         expect(screen.getByText(/portafolio en construcción/i)).toBeInTheDocument();
     });
+
+
+    //SpaceLoading
+    it("Should render SpaceLoading when isChecking is true.", () => {
+        mockUseFirstVisit.mockReturnValue({ isFirstVisit: true, isChecking: true });
+        mockUseMaintenance.mockReturnValue({ isAplicationInMaintenance: false, isInMaintenance: true, maintenanceData: undefined, isLoading: true });
+        render(<App>contenido</App>);
+        expect(screen.getByTestId("space-loading")).toBeInTheDocument();
+    });
+
 });

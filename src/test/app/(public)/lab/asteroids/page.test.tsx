@@ -34,27 +34,27 @@ describe("Test LaboratorioPage Component", () => {
   });
 
   it("Should show the maintenance module if isInMaintenance is true", () => {
-    mockUseMaintenance.mockReturnValue({ isInMaintenance: true, isAplicationInMaintenance: false, maintenanceData:[] });
+    mockUseMaintenance.mockReturnValue({ isInMaintenance: true, isAplicationInMaintenance: false, maintenanceData: undefined, isLoading: false });
     render(<LaboratorioPage />);
     expect(screen.getByTestId("maintenance-module")).toBeInTheDocument();
     expect(screen.queryByTestId("asteroid-list")).not.toBeInTheDocument();
   });
 
   it("Should show the asteroid list if isInMaintenance is false", () => {
-    mockUseMaintenance.mockReturnValue({ isInMaintenance: false, isAplicationInMaintenance: false, maintenanceData:[] });
+    mockUseMaintenance.mockReturnValue({ isInMaintenance: false, isAplicationInMaintenance: false, maintenanceData: undefined, isLoading: false });
     render(<LaboratorioPage />);
     expect(screen.getByTestId("asteroid-list")).toBeInTheDocument();
     expect(screen.queryByTestId("maintenance-module")).not.toBeInTheDocument();
   });
 
   it("Should render the loading component while the dynamic maintenance module is loading", async () => {
-    mockUseMaintenance.mockReturnValue({ isInMaintenance: false, isAplicationInMaintenance: false, maintenanceData:[] } );
+    mockUseMaintenance.mockReturnValue({ isInMaintenance: false, isAplicationInMaintenance: false, maintenanceData: undefined, isLoading: true });
     render(<LaboratorioPage />);
     expect(screen.queryByText("Cargando...")).not.toBeInTheDocument();
   });
 
   it("Should render the main correctly when not in maintenance", () => {
-    mockUseMaintenance.mockReturnValue({ isInMaintenance: false, isAplicationInMaintenance: false, maintenanceData:[] });
+    mockUseMaintenance.mockReturnValue({ isInMaintenance: false, isAplicationInMaintenance: false, maintenanceData: undefined, isLoading: false });
     render(<LaboratorioPage />);
     expect(screen.getByRole("main")).toBeInTheDocument();
   });

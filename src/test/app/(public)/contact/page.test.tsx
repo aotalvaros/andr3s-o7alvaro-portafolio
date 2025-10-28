@@ -23,13 +23,13 @@ describe("Test ContactPage Component", () => {
     });
 
     it("Should render ContactForm when not in maintenance", () => {
-        mockUseMaintenance.mockReturnValue({ isInMaintenance: false, isAplicationInMaintenance: false, maintenanceData:[] });
+        mockUseMaintenance.mockReturnValue({ isInMaintenance: false, isAplicationInMaintenance: false, maintenanceData: undefined, isLoading: true });
         render(<ContactPage />);
         expect(screen.getByTestId("contact-form")).toBeInTheDocument();
     });
 
     it("Should show ModuleInMaintenance when in maintenance", () => {
-        mockUseMaintenance.mockReturnValue({ isInMaintenance: true, isAplicationInMaintenance: true, maintenanceData:[] });
+        mockUseMaintenance.mockReturnValue({ isInMaintenance: true, isAplicationInMaintenance: true, maintenanceData: undefined, isLoading: true });
         render(<ContactPage />);
         expect(screen.getByTestId("maintenance-module")).toHaveTextContent("Módulo en mantenimiento: contacto");
     });

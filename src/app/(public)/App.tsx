@@ -6,6 +6,8 @@ import dynamic from 'next/dynamic';
 import { useMaintenance } from "@/components/maintenance/hooks/useMaintenance";
 import { FloatingActionButton } from "@/components/ui/FloatingActionButton";
 import { useThemeStore } from "@/store/themeStore";
+import { SpaceLoading } from "@/components/ui/spaceLoading";
+import { useFirstVisit } from "@/hooks/useFirstVisit";
 
 const ModuleInMaintenance = dynamic(() => import('@/components/maintenance/ModuleInMaintenance'), {
   loading: () => <div>Cargando...</div>,
@@ -13,9 +15,14 @@ const ModuleInMaintenance = dynamic(() => import('@/components/maintenance/Modul
 
 export const App = ({ children }: { readonly children: React.ReactNode }) => {
 
-    const { isAplicationInMaintenance } = useMaintenance();
+    const { isFirstVisit, isChecking } = useFirstVisit()
+    const { isAplicationInMaintenance, isLoading } = useMaintenance();
     const isDarkMode = useThemeStore((state) => state.isDarkMode)
     const toggleTheme = useThemeStore((state) => state.toggleTheme)
+
+    if (isChecking || (isFirstVisit && isLoading)) {
+        return <SpaceLoading isLoading={isLoading} shouldShow={isFirstVisit} />
+    }
 
     if (isAplicationInMaintenance) {
         return (<ModuleInMaintenance  message="La aplicación en este momento está en mantenimiento, por favor intenta más tarde."/>)
