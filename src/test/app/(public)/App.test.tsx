@@ -43,6 +43,10 @@ vi.mock("../../../components/ui/spaceLoading", () => ({
     SpaceLoading: () => <div data-testid="space-loading">Cargando...</div>,
 }));
 
+vi.mock("../../../components/ui/BackToTop", () => ({
+    BackToTop: () => <div data-testid="back-to-top">Back to Top</div>,
+}));
+
 const mockUseMaintenance = vi.mocked(useMaintenance);
 const mockUseThemeStore = vi.mocked(useThemeStore);
 const mockUseFirstVisit = vi.mocked(useFirstVisit);
@@ -126,5 +130,13 @@ describe("Test App Component", () => {
         render(<App>contenido</App>);
         expect(screen.getByTestId("space-loading")).toBeInTheDocument();
     });
+
+    //BackToTop
+    it("Should render BackToTop component.", () => {
+        mockUseFirstVisit.mockReturnValue({ isFirstVisit: false, isChecking: false });
+        mockUseMaintenance.mockReturnValue({ isAplicationInMaintenance: false, isInMaintenance: true, maintenanceData: undefined, isLoading: false });
+        render(<App>contenido</App>);
+        expect(screen.getByTestId("back-to-top")).toBeInTheDocument();
+    })
 
 });

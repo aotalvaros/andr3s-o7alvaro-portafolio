@@ -1,6 +1,10 @@
+import { JSX } from "react";
+
 export type Skill = {
-    icon: string;
+    icon: JSX.Element | string;
     title: string;
     description: string;
-    details: string[]
+    details: string[];
+    stack: string;
+    className: string;
 }

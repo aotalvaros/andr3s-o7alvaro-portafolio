@@ -3,7 +3,6 @@ import { Inter } from 'next/font/google'
 import { ThemeProvider } from '@/components/theme-provider'
 import { Providers } from './providers'
 import { SocketProvider } from '@/context/SocketContext'
-import { ActiveSectionProvider } from '@/context/ActiveSectionProvider'
 import { ToastMessage } from '@/components/ui/ToastMessageComponent'
 import { Toaster } from 'sonner'
 
@@ -20,7 +19,6 @@ export default function RootLayout({ children }: { readonly children: React.Reac
     <body className={`${inter.className} grid min-h-[100dvh] grid-rows-[auto_1fr_auto]`}>
       <ThemeProvider>
         <Providers>
-          <ActiveSectionProvider>
             <SocketProvider>
                <Toaster
                   expand={false}
@@ -32,7 +30,6 @@ export default function RootLayout({ children }: { readonly children: React.Reac
               <ToastMessage />
               {children}
             </SocketProvider>
-          </ActiveSectionProvider>
         </Providers>
       </ThemeProvider>
     </body>
