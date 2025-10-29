@@ -75,8 +75,8 @@ export function Navbar() {
         </button>
         <div className="hidden md:flex items-center gap-6">
           <Link 
-            onClick={handleClickLink} 
-            href="/contact" className="hover:underline dark:text-secondary" data-testid="contact-link">Contacto</Link>
+            // onClick={handleClickLink} 
+            href="#contact" className="hover:underline dark:text-secondary" data-testid="contact-link">Contacto</Link>
           <DropdownMenu >
             <DropdownMenuTrigger asChild>
               <button className="hover:underline dark:text-secondary" data-testid="api-lab-dropdown">Laboratorio de APIs ▼</button>
@@ -99,7 +99,7 @@ export function Navbar() {
       {/* Menú móvil (visible solo cuando está abierto) */}
       {mobileMenuOpen && (
         <div className="md:hidden flex flex-col gap-4 px-4 pb-4  dark:border-primary" data-testid="mobile-menu" >
-          <Link onClick={handleClickLink} href="/contact" className="hover:underline dark:text-secondary" data-testid="contact-link">Contacto</Link>
+          <Link  href="#contact" className="hover:underline dark:text-secondary" data-testid="contact-link">Contacto</Link>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <button className="hover:underline text-start dark:text-secondary" data-testid="api-lab-dropdown">Laboratorio de APIs ▼</button>

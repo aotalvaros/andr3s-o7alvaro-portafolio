@@ -94,7 +94,7 @@ export function Hero() {
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
             <Link 
-              href="/contact" 
+              href="#contact" 
               aria-label='Contactame'  
               className="flex py-2.5 px-5 gap-1.5 rounded-[12px] text-white text-[14px] items-center bg-gradient-to-r from-primary via-secondary to-accent hover:scale-105 transition-transform"
               data-testid="contact-me-link"
