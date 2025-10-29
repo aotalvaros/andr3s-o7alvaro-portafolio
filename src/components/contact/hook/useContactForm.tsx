@@ -37,6 +37,14 @@ export const useContactForm = () => {
                     typeMessage: "success",
                     show: true,
                 });
+            },
+            onError: (error) => {
+                setParams({
+                    message: "Error",
+                    description: error.message,
+                    typeMessage: "error",
+                    show: true,
+                });
             }
         });
         if (!isLoading) reset();
