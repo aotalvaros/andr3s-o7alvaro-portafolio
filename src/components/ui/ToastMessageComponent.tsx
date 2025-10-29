@@ -11,7 +11,7 @@ const ToastMessageComponent = () => {
     useEffect(() => {
         if (!show) return;
         toast.custom(() => (
-            <div className={`container dark:bg-gray-300 bg-white ${typeMessage}`}>
+            <div className={`containerToast dark:bg-gray-300 bg-white ${typeMessage}`}>
                 <p className="text-[0.938rem]">{message}</p>
                 <p className="text-[0.813rem] text-[#050F3DAB] font-normal">{description}</p>
             </div>

@@ -1,74 +1,99 @@
 "use client";
 
-import { sectionsOrder } from "@/constants/sectionsOrder.constants";
-import { useActiveSection } from "@/context/ActiveSectionProvider";
-import { motion } from "framer-motion";
 import Image from "next/image";
-import { useEffect } from "react";
-import { useInView } from 'react-intersection-observer'
+import { ScrollReveal } from "../ui/ScrollReveal";
+import { Badge } from "../ui/badge";
 
 export function About() {
-  const { setActiveSection } = useActiveSection()
-  const [ref, inView] = useInView({ threshold: 0.5 })
 
-  useEffect(() => {
-    if (inView) {
-      setActiveSection(sectionsOrder[2])
-    }
-  }, [inView, setActiveSection])
-  
+  const technologies = [
+    "React",
+    "Next.js",
+    "TypeScript",
+    "TailwindCSS",
+    "SASS",
+    "Jest",
+    "Vitest",
+    "Azure",
+    "Git",
+    "SQL",
+  ];
+
   return (
-    <section
-      ref={ref}
-      id="about"
-      className="min-h-[100dvh] flex items-center justify-center snap-start md:py-0 py-14 select-none"
-    >
-      <div className="max-w-6xl w-full flex flex-col md:flex-row items-center gap-12">
-        <motion.div
-          initial={{ opacity: 0, x: -50 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.6 }}
-          viewport={{ once: true }}
-          className="relative w-50 h-50 md:w-64 md:h-64 perspective group"
-        >
-           <div className={`absolute inset-0 rounded-full overflow-hidden shadow-lg backface-hidden group-hover:rotate-y-180 transition-transform duration-700 ease-in-out`}>
-            <Image
-              src="/assets/Andres2.jpeg"
-              alt="Foto de Andrés"
-              fill
-              sizes="auto"
-              className="object-cover"
-            />
-          </div>
+    <section id="about" className="py-20 bg-muted/30" data-testid="about-section">
+      <div className="container mx-auto px-4">
+        <ScrollReveal>
+          <h2 className="text-4xl md:text-5xl font-bold text-center mb-16">
+            Sobre <span className="text-primary">mí</span>
+          </h2>
+        </ScrollReveal>
 
-          <div className={`absolute inset-0 rounded-full overflow-hidden shadow-lg rotate-y-180 backface-hidden group-hover:rotate-y-0 transition-transform duration-700 ease-in-out`}>
-            <Image
-              src="/assets/Andres1.jpeg"
-              alt="Otra foto de Andrés"
-              fill
-              sizes="auto"
-              className="object-cover"
-            />
-          </div>
-        </motion.div>
-        <motion.div
-          initial={{ opacity: 0, x: 50 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.6 }}
-          viewport={{ once: true }}
-          className="flex-1 text-center md:text-left px-8 md:px-0"
-        >
-          <h2 className="text-4xl md:text-5xl font-bold mb-6">Sobre mí</h2>
-          <p className="text-lg md:text-xl text-muted-foreground mb-4">
-            Soy un desarrollador frontend con más de 4 años de experiencia creando 
-            interfaces sólidas, modernas y funcionales. 🎯 Ingeniero en desarrollo de software. Me muevo como pez en el agua con
-            React, Next.js, SASS, y pruebas unitarias (sí, también soy amigo de
-            Vitest y Jest). Me gusta trabajar limpio, ordenado y sobre todo
-            crear cosas que realmente funcionen. 🚀 También me he metido con
-            Azure, Git, bases de datos SQL y me encanta jugar con librerías de
-            componentes. Y bueno... fan de todo lo que huela a tecnología 🤓🛸.
-          </p>
-        </motion.div>
+        <div className="grid md:grid-cols-2 gap-12 items-center max-w-6xl mx-auto">
+          {/* Profile Image */}
+          <ScrollReveal delay={200}>
+            <div className="relative">
+              <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-accent/20 rounded-3xl blur-2xl" />
+              <div className="relative aspect-square rounded-3xl overflow-hidden border-4 border-border/50 hover:border-primary/50 transition-all duration-300 hover:scale-105">
+                <Image
+                  src="/assets/Andres2.jpeg"
+                  alt="Foto de Andrés"
+                  fill
+                  sizes="auto"
+                  className="object-cover"
+                />
+              </div>
+            </div>
+          </ScrollReveal>
+
+          {/* About Content */}
+          <ScrollReveal delay={400}>
+            <div className="space-y-6">
+              <p className="text-lg leading-relaxed">
+                Soy un desarrollador frontend con más de{" "}
+                <span className="font-bold text-primary">
+                  4 años de experiencia
+                </span>{" "}
+                creando interfaces sólidas, modernas y funcionales. Ingeniero en
+                desarrollo de software.
+              </p>
+
+              <p className="text-lg leading-relaxed">
+                Me muevo como pez en el agua con{" "}
+                <span className="font-semibold text-secondary">React</span>,{" "}
+                <span className="font-semibold text-secondary">Next.js</span>,{" "}
+                <span className="font-semibold text-secondary">SASS</span>, y
+                pruebas unitarias. Me gusta trabajar limpio, ordenado y sobre
+                todo crear cosas que realmente funcionen.
+              </p>
+
+              <p className="text-lg leading-relaxed">
+                También me he metido con{" "}
+                <span className="font-semibold text-accent">Azure</span>,{" "}
+                <span className="font-semibold text-accent">Git</span>, bases de
+                datos <span className="font-semibold text-accent">SQL</span> y
+                me encanta jugar con librerías de componentes.
+              </p>
+
+              {/* Technologies */}
+              <div className="pt-4">
+                <h3 className="text-sm font-semibold text-muted-foreground mb-3">
+                  TECNOLOGÍAS
+                </h3>
+                <div className="flex flex-wrap gap-2">
+                  {technologies.map((tech, index) => (
+                    <Badge
+                      key={index}
+                      variant="secondary"
+                      className="px-3 py-1 hover:bg-primary hover:text-primary-foreground transition-colors cursor-default"
+                    >
+                      {tech}
+                    </Badge>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </ScrollReveal>
+        </div>
       </div>
     </section>
   );

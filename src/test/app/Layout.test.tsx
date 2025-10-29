@@ -11,10 +11,6 @@ vi.mock('@/app/providers', () => ({
   Providers: ({ children }: { children: React.ReactNode }) => <div data-testid="providers">{children}</div>,
 }));
 
-vi.mock('@/context/ActiveSectionProvider', () => ({
-  ActiveSectionProvider: ({ children }: { children: React.ReactNode }) => <div data-testid="active-section-provider">{children}</div>,
-}));
-
 vi.mock('@/context/SocketContext', () => ({
   SocketProvider: ({ children }: { children: React.ReactNode }) => <div data-testid="socket-provider">{children}</div>,
 }));
@@ -41,7 +37,6 @@ describe("Test RootLayout component", () => {
       render(<RootLayout><div>Test</div></RootLayout>);
       expect(screen.getByTestId("theme-provider")).toBeInTheDocument();
       expect(screen.getByTestId("providers")).toBeInTheDocument();
-      expect(screen.getByTestId("active-section-provider")).toBeInTheDocument();
       expect(screen.getByTestId("socket-provider")).toBeInTheDocument();
       expect(screen.getByTestId("toast-message")).toBeInTheDocument();
   });

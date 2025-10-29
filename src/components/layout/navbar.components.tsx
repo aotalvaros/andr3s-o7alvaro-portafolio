@@ -12,6 +12,7 @@ import { Router } from 'next/router'
 import { useSocketContext } from '@/context/SocketContext'
 import Image from 'next/image'
 import { ItemsMenu } from './items.components'
+import { OnlineStatus } from '../ui/OnlineStatus'
 
 export function Navbar() {
 
@@ -43,9 +44,9 @@ export function Navbar() {
   const handleClickLink = () =>  setLoading(true)
 
   return (
-    <motion.header className="fixed top-0 left-0 w-full bg-background text-foreground shadow-md dark:shadow-white/10 z-90 dark:bg-gray-800">
-      <nav className="max-w-7xl mx-auto flex items-center justify-between py-2 px-4 dark:bg-gray-800">
-        <Link href="/" className="relative w-[18%] h-[68px] min-w-[120px] max-w-[180px] flex items-center">
+    <motion.header className="fixed top-0 left-0 right-0 z-50 glass text-foreground shadow-md dark:shadow-white/10 ">
+      <nav className="max-w-7xl mx-auto flex items-center justify-between py-2 px-4 ">
+        <Link href="/" className="relative w-[18%] h-[68px] min-w-[120px] max-w-[180px] flex items-center" data-testid="logo-link">
         <Image
           src={logoSrc}
           alt="Logo"
@@ -59,33 +60,37 @@ export function Navbar() {
         <div className="alert">
           {
             online
-              ? <span className="text-green-500"> Online</span>
-              : <span className="text-red-500"> Offline</span>
+              ? <OnlineStatus text=" Online" backgroundColor="bg-green-500" textColor="text-green-500" />
+              : <OnlineStatus text=" Offline" backgroundColor="bg-red-500" textColor="text-red-500" />
           }
         </div>
 
         <button
           className="md:hidden text-foreground"
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          aria-label="Toggle mobile menu"
+          data-testid="mobile-menu-toggle"
         >
           {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
         </button>
         <div className="hidden md:flex items-center gap-6">
-          <Link onClick={handleClickLink} href="/contact" className="hover:underline dark:text-secondary">Contacto</Link>
+          <Link 
+            onClick={handleClickLink} 
+            href="/contact" className="hover:underline dark:text-secondary" data-testid="contact-link">Contacto</Link>
           <DropdownMenu >
             <DropdownMenuTrigger asChild>
-              <button className="hover:underline dark:text-secondary">Laboratorio de APIs ▼</button>
+              <button className="hover:underline dark:text-secondary" data-testid="api-lab-dropdown">Laboratorio de APIs ▼</button>
             </DropdownMenuTrigger>
 
-            <ItemsMenu handleClickLink={handleClickLink} />
+            <ItemsMenu handleClickLink={handleClickLink}  data-testid="api-lab-items-menu" />
             
           </DropdownMenu>
 
-          <Link onClick={handleClickLink} href="/login" className="hover:underline">
+          <Link onClick={handleClickLink} href="/login" className="hover:underline" data-testid="login-link">
             <Image src="/assets/settings_24dp.svg" alt="Iniciar sesión" width={24} height={24} className='filter dark:invert' />
           </Link>
   
-          <Button onClick={toggleTheme} variant="outline" className="bg-primary hover:bg-amber-700 dark:bg-primary cursor-pointer">
+          <Button onClick={toggleTheme} variant="outline" className="bg-primary hover:bg-amber-700 dark:bg-primary cursor-pointer" data-testid="theme-toggle-button">
             {isDarkMode ? '☀️' : '🌙'}
           </Button>
         </div>
@@ -93,11 +98,11 @@ export function Navbar() {
 
       {/* Menú móvil (visible solo cuando está abierto) */}
       {mobileMenuOpen && (
-        <div className="md:hidden flex flex-col gap-4 px-4 pb-4  dark:border-primary">
-          <Link onClick={handleClickLink} href="/contact" className="hover:underline dark:text-secondary">Contacto</Link>
+        <div className="md:hidden flex flex-col gap-4 px-4 pb-4  dark:border-primary" data-testid="mobile-menu" >
+          <Link onClick={handleClickLink} href="/contact" className="hover:underline dark:text-secondary" data-testid="contact-link">Contacto</Link>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <button className="hover:underline text-start dark:text-secondary">Laboratorio de APIs ▼</button>
+              <button className="hover:underline text-start dark:text-secondary" data-testid="api-lab-dropdown">Laboratorio de APIs ▼</button>
             </DropdownMenuTrigger>
 
             <DropdownMenuContent align="start" className="w-48 bg-background text-foreground flex flex-col p-1.5 border rounded-[10px] shadow-blue-900 dark:shadow-white/10">
@@ -106,21 +111,21 @@ export function Navbar() {
                 <DropdownMenuPortal>
                   <DropdownMenuSubContent className="flex flex-col z-[90] left-3 p-1 w-max shadow-lg rounded-[10px] shadow-blue-900 bg-white dark:shadow-white/10">
                     <DropdownMenuItem asChild>
-                      <Link href="/lab/asteroids" className="w-full p-1 bg-white left-1 dark:bg-blue-900" >🌌 Asteroides</Link>
+                      <Link href="/lab/asteroids" className="w-full p-1 bg-white left-1 dark:bg-blue-900" data-testid="api-lab-asteroids-link">🌌 Asteroides</Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem asChild>
-                      <Link href="/lab/mars-rover" className="w-full p-1 bg-white left-1 dark:bg-blue-900">🚀 Mars Rover</Link>
+                      <Link href="/lab/mars-rover" className="w-full p-1 bg-white left-1 dark:bg-blue-900" data-testid="api-lab-mars-rover-link">🚀 Mars Rover</Link>
                     </DropdownMenuItem>
                   </DropdownMenuSubContent>
                 </DropdownMenuPortal>
               </DropdownMenuSub>
 
               <DropdownMenuItem asChild>
-                <Link href="/lab/pokemon" className="w-full p-1"> 🐲 Pokédex </Link>
+                <Link href="/lab/pokemon" className="w-full p-1" data-testid="api-lab-pokemon-link"> 🐲 Pokédex </Link>
               </DropdownMenuItem>  
             </DropdownMenuContent>
           </DropdownMenu>
-          <Link onClick={handleClickLink} href="/login" className="hover:underline">
+          <Link onClick={handleClickLink} href="/login" className="hover:underline" data-testid="login-link">
             <Image src="/assets/settings_24dp.svg" alt="Iniciar sesión" width={24} height={24} className='filter dark:invert'/>
           </Link>
         </div>
