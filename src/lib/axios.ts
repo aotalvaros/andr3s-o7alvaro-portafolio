@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useToastMessageStore } from '@/store/ToastMessageStore';
 import { loadingController } from '@/utils/setLoading';
 import axios, {
@@ -213,7 +214,7 @@ api.interceptors.response.use(
   }
 );
 
-function getErrorMessage(error: unknown): string {
+function getErrorMessage(error: any): string {
   if (error.code === 'ECONNABORTED') {
     return 'La solicitud tardó demasiado tiempo';
   }
@@ -226,7 +227,7 @@ function getErrorMessage(error: unknown): string {
   return error.response?.data?.error ?? error.message ?? 'Error desconocido';
 }
 
-function createCustomError(error: unknown): CustomAxiosError {
+function createCustomError(error: any): CustomAxiosError {
   const friendly = getErrorMessage(error);
   const customError = new Error(friendly) as CustomAxiosError;
   

@@ -10,9 +10,8 @@ export const useGetStatusMaintenance = () => {
         queryFn: getMaintenanceStatus,
         staleTime: 1000 * 60 * 5, // 5 min
         refetchOnWindowFocus: false,
-        retry: (failureCount, error) => {
+        retry: (failureCount) => {
             if (failureCount >= 3) return false;
-            if (error?.response?.status >= 400 && error?.response?.status < 500) return false;
             return true;
         },
         retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
