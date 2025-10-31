@@ -45,6 +45,7 @@ export const PokemonImage = ({ pokemon, isEvolving, className = '' }: PokemonIma
           className="w-full h-full object-contain p-8"
           priority
           data-testid="pokemon-image"
+          loading="eager"
         />
       </div>
       {isEvolving && (

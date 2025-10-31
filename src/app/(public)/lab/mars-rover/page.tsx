@@ -10,9 +10,9 @@ const ModuleInMaintenance = dynamic(() => import('@/components/maintenance/Modul
 
 export default function MarsRoverPage() {
 
-  const { isInMaintenance } = useMaintenance();
+  const { isInMaintenance, isError } = useMaintenance();
 
-  if (isInMaintenance) {
+  if (isError || isInMaintenance) {
     return (<ModuleInMaintenance moduleName="Mars Rover"/>)
   }
 

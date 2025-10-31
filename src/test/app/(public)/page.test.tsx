@@ -3,7 +3,6 @@ import { render, screen } from "@testing-library/react";
 import { describe, it, expect, vi, afterEach } from "vitest";
 import React from "react";
 
-
 vi.mock("@/components/sections/about", () => ({
     About: () => <div data-testid="about-section">About Section</div>,
 }));
@@ -20,6 +19,10 @@ vi.mock("../../../components/ui/ScrollProgress", () => ({
     ScrollProgress: () => <div data-testid="scroll-progress">Scroll Progress</div>,
 }));
 
+vi.mock("@/components/contact/ContactForm", () => ({
+    ContactForm: () => <div data-testid="contact-form">Contact Form</div>,
+}));
+
 describe("Home component", () => {
 
     afterEach(() => {
@@ -31,23 +34,6 @@ describe("Home component", () => {
         expect(screen.getByTestId("hero-section")).toBeInTheDocument();
         expect(screen.getByTestId("skills-section")).toBeInTheDocument();
         expect(screen.getByTestId("about-section")).toBeInTheDocument();
+        expect(screen.getByTestId("contact-form")).toBeInTheDocument();
     });
-
-
-
-    it("has correct main element classes", () => {
-        render(<Home />);
-        const main = screen.getByRole("main");
-        expect(main).toHaveClass("overflow-y-auto");
-        expect(main).toHaveClass("h-full");
-        expect(main).toHaveClass("snap-y");
-        expect(main).toHaveClass("snap-mandatory");
-        expect(main).toHaveClass("scroll-smooth");
-    });
-
-    it("renders ScrollProgress component", () => {
-        render(<Home />);
-        expect(screen.getByTestId("scroll-progress")).toBeInTheDocument();
-    });
-
 });

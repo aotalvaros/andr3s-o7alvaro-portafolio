@@ -5,7 +5,6 @@ import { Navbar } from "@/components/layout/navbar.components";
 import dynamic from "next/dynamic";
 import { useMaintenance } from "@/components/maintenance/hooks/useMaintenance";
 import { SpaceLoading } from "@/components/ui/spaceLoading";
-import { useFirstVisit } from "@/hooks/useFirstVisit";
 import { BackToTop } from "@/components/ui/BackToTop";
 import { FloatingActionButton } from "@/components/ui/FloatingActionButton";
 import { useThemeStore } from "@/store/themeStore";
@@ -18,13 +17,16 @@ const ModuleInMaintenance = dynamic(
 );
 
 export const App = ({ children }: { readonly children: React.ReactNode }) => {
-  const { isFirstVisit, isChecking } = useFirstVisit();
-  const { isAplicationInMaintenance, isLoading } = useMaintenance();
-  const isDarkMode = useThemeStore((state) => state.isDarkMode)
-    const toggleTheme = useThemeStore((state) => state.toggleTheme)
+  const { 
+    isAplicationInMaintenance, 
+    isLoading
+  } = useMaintenance();
 
-  if (isChecking || (isFirstVisit && isLoading)) {
-    return <SpaceLoading isLoading={isLoading} shouldShow={isFirstVisit} />;
+  const isDarkMode = useThemeStore((state) => state.isDarkMode);
+  const toggleTheme = useThemeStore((state) => state.toggleTheme);
+
+  if (isLoading) {
+    return <SpaceLoading isLoading={true} />;
   }
 
   if (isAplicationInMaintenance) {
@@ -51,7 +53,7 @@ export const App = ({ children }: { readonly children: React.ReactNode }) => {
               &copy; {new Date().getFullYear()} Todos los derechos reservados.
               Desarrollado por Andrés Otalvaro
             </p>
-            <p className="text-sm text-red-300">
+            <p className="text-sm text-(var(--primary))">
               Portafolio en construcción
             </p>
             <p className="text-sm text-muted-foreground">andr3s.o7alvaro@gmail.com</p>

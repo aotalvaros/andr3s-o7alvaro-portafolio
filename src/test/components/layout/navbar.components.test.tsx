@@ -213,16 +213,6 @@ describe("Navbar Component", () => {
     expect(mobileMenuToggle).toBeInTheDocument();
   });
 
-  it("should call setLoading when contact link is clicked", async () => {
-    const { user } = setup();
-    renderNavbar();
-
-    const contactLink = screen.getByTestId("contact-link");
-    await user.click(contactLink);
-
-    expect(setLoadingMock).toHaveBeenCalledWith(true);
-  });
-
   it("should call setLoading when login link is clicked", async () => {
     const { user } = setup();
     renderNavbar();
@@ -400,7 +390,7 @@ describe("Navbar Component", () => {
     renderNavbar();
 
     const contactLink = screen.getByTestId("contact-link");
-    expect(contactLink).toHaveAttribute("href", "/contact");
+    expect(contactLink).toHaveAttribute("href", "/#contact");
   });
 
   it("should render login link with correct href", () => {
@@ -410,22 +400,6 @@ describe("Navbar Component", () => {
     expect(loginLink).toHaveAttribute("href", "/login");
   });
 
-  it("should call setLoading when mobile contact link is clicked", async () => {
-    const { user } = setup();
-    renderNavbar();
-
-    // Open mobile menu first
-    const mobileMenuToggle = screen.getByTestId("mobile-menu-toggle");
-    await user.click(mobileMenuToggle);
-
-    // Get all contact links (desktop and mobile)
-    const contactLinks = screen.getAllByTestId("contact-link");
-    const mobileContactLink = contactLinks[1]; // Second one is mobile
-
-    await user.click(mobileContactLink);
-
-    expect(setLoadingMock).toHaveBeenCalledWith(true);
-  });
 
   it("should call setLoading when mobile login link is clicked", async () => {
     const { user } = setup();

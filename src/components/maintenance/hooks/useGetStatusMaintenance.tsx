@@ -10,6 +10,13 @@ export const useGetStatusMaintenance = () => {
         queryFn: getMaintenanceStatus,
         staleTime: 1000 * 60 * 5, // 5 min
         refetchOnWindowFocus: false,
+        retry: (failureCount) => {
+            if (failureCount >= 3) return false;
+            return true;
+        },
+        retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
+        // ✅ Configurar comportamiento en caso de error
+        throwOnError: false, // No lanzar errores, manejarlos gracefully
     });
 
     const isInMaintenance = maintenanceData?.data?.data.some((module) => module.isActive) || false;

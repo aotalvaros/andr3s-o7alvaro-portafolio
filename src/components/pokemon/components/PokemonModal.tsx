@@ -49,7 +49,7 @@ export function PokemonModal({ pokemon: initialPokemon }: Readonly<PokemonModalP
         );
         
         if (spanishEntry) {
-          setDescription(spanishEntry.flavor_text.replace(/\f/g, ' '));
+          setDescription(spanishEntry.flavor_text.replaceAll('\f', ' '));
         }
 
         // Obtener cadena de evolución

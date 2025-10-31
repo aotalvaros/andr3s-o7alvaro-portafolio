@@ -40,6 +40,7 @@ export function About() {
                   fill
                   sizes="auto"
                   className="object-cover"
+                  loading="lazy"
                 />
               </div>
             </div>

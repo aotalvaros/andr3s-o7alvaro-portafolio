@@ -13,10 +13,14 @@ import { useSocketContext } from '@/context/SocketContext'
 import Image from 'next/image'
 import { ItemsMenu } from './items.components'
 import { OnlineStatus } from '../ui/OnlineStatus'
+import { usePathname } from "next/navigation"
 
 export function Navbar() {
 
   const { online } = useSocketContext();
+
+  const pathname = usePathname()
+  const isHome = pathname === "/"
 
   const isDarkMode = useThemeStore((state) => state.isDarkMode)
   const toggleTheme = useThemeStore((state) => state.toggleTheme)
@@ -42,6 +46,16 @@ export function Navbar() {
   }, [setLoading])
 
   const handleClickLink = () =>  setLoading(true)
+
+   const handleContactClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    if (isHome) {
+      e.preventDefault()
+      const contactSection = document.getElementById("contact")
+      if (contactSection) {
+        contactSection.scrollIntoView({ behavior: "smooth" })
+      }
+    }
+  }
 
   return (
     <motion.header className="fixed top-0 left-0 right-0 z-50 glass text-foreground shadow-md dark:shadow-white/10 ">
@@ -75,8 +89,8 @@ export function Navbar() {
         </button>
         <div className="hidden md:flex items-center gap-6">
           <Link 
-            // onClick={handleClickLink} 
-            href="#contact" className="hover:underline dark:text-secondary" data-testid="contact-link">Contacto</Link>
+            onClick={handleContactClick} 
+            href="/#contact" className="hover:underline dark:text-secondary" data-testid="contact-link">Contacto</Link>
           <DropdownMenu >
             <DropdownMenuTrigger asChild>
               <button className="hover:underline dark:text-secondary" data-testid="api-lab-dropdown">Laboratorio de APIs ▼</button>
@@ -87,7 +101,9 @@ export function Navbar() {
           </DropdownMenu>
 
           <Link onClick={handleClickLink} href="/login" className="hover:underline" data-testid="login-link">
-            <Image src="/assets/settings_24dp.svg" alt="Iniciar sesión" width={24} height={24} className='filter dark:invert' />
+            <Image src="/assets/settings_24dp.svg" alt="Iniciar sesión" width={24} height={24} className='filter dark:invert' 
+              loading="lazy"
+            />
           </Link>
   
           <Button onClick={toggleTheme} variant="outline" className="bg-primary hover:bg-amber-700 dark:bg-primary cursor-pointer" data-testid="theme-toggle-button">
@@ -99,7 +115,7 @@ export function Navbar() {
       {/* Menú móvil (visible solo cuando está abierto) */}
       {mobileMenuOpen && (
         <div className="md:hidden flex flex-col gap-4 px-4 pb-4  dark:border-primary" data-testid="mobile-menu" >
-          <Link  href="#contact" className="hover:underline dark:text-secondary" data-testid="contact-link">Contacto</Link>
+          <Link  onClick={handleContactClick} href="/#contact" className="hover:underline dark:text-secondary" data-testid="contact-link">Contacto</Link>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <button className="hover:underline text-start dark:text-secondary" data-testid="api-lab-dropdown">Laboratorio de APIs ▼</button>
@@ -126,7 +142,7 @@ export function Navbar() {
             </DropdownMenuContent>
           </DropdownMenu>
           <Link onClick={handleClickLink} href="/login" className="hover:underline" data-testid="login-link">
-            <Image src="/assets/settings_24dp.svg" alt="Iniciar sesión" width={24} height={24} className='filter dark:invert'/>
+            <Image src="/assets/settings_24dp.svg" alt="Iniciar sesión" width={24} height={24} className='filter dark:invert' loading="lazy"/>
           </Link>
         </div>
       )}
