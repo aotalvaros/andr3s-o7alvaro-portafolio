@@ -9,10 +9,16 @@ import { responseModuleData } from '@/services/maintenance/models/maintenaceResp
 export const useMaintenance = () => {
   const pathname = usePathname();
   const { socket } = useContext(SocketContext);
-  const [isInMaintenance, setIsInMaintenance] = useState(false);
+  const [isInMaintenance, setIsInMaintenance] = useState(true);
   const [isAplicationInMaintenance, setIsAplicationInMaintenance] = useState(false);
 
-  const { data: maintenanceData, isLoading } = useGetStatusMaintenance();
+  const { 
+    data: maintenanceData, 
+    isLoading: isInitialLoading, 
+    isFetched,
+    isError,
+    error
+  } = useGetStatusMaintenance();
   
   useEffect(() => {
     
@@ -52,5 +58,13 @@ export const useMaintenance = () => {
     };
   }, [socket, pathname, maintenanceData]);
 
-  return { isInMaintenance, isAplicationInMaintenance, maintenanceData, isLoading};
+ return { 
+    isInMaintenance, 
+    isAplicationInMaintenance, 
+    maintenanceData, 
+    isLoading: !isFetched, // Solo true hasta el primer fetch (éxito o error)
+    isInitialLoading, // El estado original de React Query
+    isError,
+    error
+  };
 };
