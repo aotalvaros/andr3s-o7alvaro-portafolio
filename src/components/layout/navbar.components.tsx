@@ -6,7 +6,7 @@ import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuPortal, DropdownMenuSub, DropdownMenuSubContent, DropdownMenuSubTrigger, DropdownMenuTrigger, DropdownMenuItem, } from '@radix-ui/react-dropdown-menu'
 import { useLoadingStore } from '@/store/loadingStore'
-import { Menu, X } from 'lucide-react'
+import { Menu, Moon, Sun, X } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { Router } from 'next/router'
 import { useSocketContext } from '@/context/SocketContext'
@@ -48,6 +48,7 @@ export function Navbar() {
   const handleClickLink = () =>  setLoading(true)
 
    const handleContactClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    setMobileMenuOpen(!mobileMenuOpen)
     if (isHome) {
       e.preventDefault()
       const contactSection = document.getElementById("contact")
@@ -106,8 +107,10 @@ export function Navbar() {
             />
           </Link>
   
-          <Button onClick={toggleTheme} variant="outline" className="bg-primary hover:bg-amber-700 dark:bg-primary cursor-pointer" data-testid="theme-toggle-button">
-            {isDarkMode ? '☀️' : '🌙'}
+          <Button onClick={toggleTheme} variant="outline" 
+            className="rounded-full transition-all duration-300 hover:scale-110 bg-transparent" 
+            data-testid="theme-toggle-button">
+            {isDarkMode ? <Sun className="h-5 w-5" data-testid="sun-icon" /> : <Moon className="h-5 w-5" data-testid="moon-icon" />}
           </Button>
         </div>
       </nav>
@@ -121,23 +124,23 @@ export function Navbar() {
               <button className="hover:underline text-start dark:text-secondary" data-testid="api-lab-dropdown">Laboratorio de APIs ▼</button>
             </DropdownMenuTrigger>
 
-            <DropdownMenuContent align="start" className="w-48 bg-background text-foreground flex flex-col p-1.5 border rounded-[10px] shadow-blue-900 dark:shadow-white/10">
+            <DropdownMenuContent align="start" className=" z-15 w-48 bg-background text-foreground flex flex-col p-1.5 border rounded-[10px] shadow-blue-900 dark:shadow-white/10">
               <DropdownMenuSub>
                 <DropdownMenuSubTrigger className="w-full p-1 bg-white cursor-pointer dark:text-secondary dark:bg-blue-900">NASA → </DropdownMenuSubTrigger>
                 <DropdownMenuPortal>
-                  <DropdownMenuSubContent className="flex flex-col z-[90] left-3 p-1 w-max shadow-lg rounded-[10px] shadow-blue-900 bg-white dark:shadow-white/10">
+                  <DropdownMenuSubContent className="flex flex-col z-[90] left-3 p-1  w-max shadow-lg rounded-[10px] shadow-blue-900 bg-white dark:bg-secondary  dark:shadow-white/10">
                     <DropdownMenuItem asChild>
-                      <Link href="/lab/asteroids" className="w-full p-1 bg-white left-1 dark:bg-blue-900" data-testid="api-lab-asteroids-link">🌌 Asteroides</Link>
+                      <Link href="/lab/asteroids" onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="w-full p-1 bg-white left-1 dark:bg-blue-900 rounded-[8px_8px_0_0]" data-testid="api-lab-asteroids-link">🌌 Asteroides</Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem asChild>
-                      <Link href="/lab/mars-rover" className="w-full p-1 bg-white left-1 dark:bg-blue-900" data-testid="api-lab-mars-rover-link">🚀 Mars Rover</Link>
+                      <Link href="/lab/mars-rover" onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="w-full p-1 bg-white left-1 dark:bg-blue-900 rounded-[0_0_8px_8px]" data-testid="api-lab-mars-rover-link">🚀 Mars Rover</Link>
                     </DropdownMenuItem>
                   </DropdownMenuSubContent>
                 </DropdownMenuPortal>
               </DropdownMenuSub>
 
               <DropdownMenuItem asChild>
-                <Link href="/lab/pokemon" className="w-full p-1" data-testid="api-lab-pokemon-link"> 🐲 Pokédex </Link>
+                <Link href="/lab/pokemon" onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="w-full p-1" data-testid="api-lab-pokemon-link"> 🐲 Pokédex </Link>
               </DropdownMenuItem>  
             </DropdownMenuContent>
           </DropdownMenu>

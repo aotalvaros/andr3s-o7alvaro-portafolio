@@ -9,7 +9,7 @@ import { responseModuleData } from '@/services/maintenance/models/maintenaceResp
 export const useMaintenance = () => {
   const pathname = usePathname();
   const { socket } = useContext(SocketContext);
-  const [isInMaintenance, setIsInMaintenance] = useState(true);
+  const [isInMaintenance, setIsInMaintenance] = useState(false);
   const [isAplicationInMaintenance, setIsAplicationInMaintenance] = useState(false);
 
   const { 
