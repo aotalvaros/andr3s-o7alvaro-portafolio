@@ -209,7 +209,7 @@ export function PokemonModal({ pokemon: initialPokemon }: Readonly<PokemonModalP
                 {evolutionChain.map((name, index) => (
                   <div key={name} className="flex items-center gap-2">
                     <Badge variant={index === currentEvolutionIndex ? "default" : "outline"} 
-                      className={`capitalize ${index === currentEvolutionIndex && "bg-primary-foreground text-amber-50 dark:bg-gray-800 dark:border border-input"}`}
+                      className={`capitalize ${index === currentEvolutionIndex && "bg-primary text-amber-50 dark:bg-gray-800 dark:border border-input"}`}
                       data-testid={`evolution-stage-${name}`}
                     >
                       {name}
@@ -226,7 +226,7 @@ export function PokemonModal({ pokemon: initialPokemon }: Readonly<PokemonModalP
         <Button
           onClick={handleEvolve}
           disabled={!canEvolve || isEvolving || loading}
-          className="flex-1 bg-primary-foreground text-amber-50 dark:bg-gray-800 dark:border border-input"
+          className="flex-1 bg-primary text-amber-50 dark:bg-gray-800 dark:border border-input"
           size="lg"
           aria-describedby={!canEvolve ? "evolve-disabled-reason" : undefined}
           data-testid="evolve-button"

@@ -422,12 +422,7 @@ describe("Navbar Component", () => {
     renderNavbar();
 
     const themeButton = screen.getByTestId("theme-toggle-button");
-    expect(themeButton).toHaveClass(
-      "bg-primary",
-      "hover:bg-amber-700",
-      "dark:bg-primary",
-      "cursor-pointer"
-    );
+    expect(themeButton).toHaveClass("rounded-full transition-all duration-300 hover:scale-110 bg-transparent");
   });
 
   it("should render login setting icon with correct classes", () => {

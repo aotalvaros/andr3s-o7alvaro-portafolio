@@ -1,3 +1,5 @@
+"use client"
+
 import {
   DropdownMenuContent,
   DropdownMenuItem,
@@ -50,7 +52,7 @@ export const ItemsMenu: React.FC<ItemsMenuProps> = ({ handleClickLink }) => {
 
         <DropdownMenuItem asChild>
           <Link href="/lab/pokemon" onClick={handleClickLink} className="w-full p-1" data-testid="pokedex-link">
-            🐲 Pokédex
+            🎮 Pokédex
           </Link>
         </DropdownMenuItem>
       </DropdownMenuContent>

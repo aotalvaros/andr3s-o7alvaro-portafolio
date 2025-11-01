@@ -8,7 +8,7 @@ export default function PokemonPage() {
 
     const { isInMaintenance, isError } = useMaintenance();
 
-    if (isError || isInMaintenance) {
+    if (isInMaintenance || isError) {
         return (<ModuleInMaintenance moduleName="Pokemon" />)
     }
 

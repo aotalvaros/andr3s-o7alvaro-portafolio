@@ -8,6 +8,7 @@ import { SpaceLoading } from "@/components/ui/spaceLoading";
 import { BackToTop } from "@/components/ui/BackToTop";
 import { FloatingActionButton } from "@/components/ui/FloatingActionButton";
 import { useThemeStore } from "@/store/themeStore";
+import { Moon, Sun } from "lucide-react";
 
 const ModuleInMaintenance = dynamic(
   () => import("@/components/maintenance/ModuleInMaintenance"),
@@ -41,15 +42,15 @@ export const App = ({ children }: { readonly children: React.ReactNode }) => {
       <Navbar />
       <FloatingActionButton 
         onClick={toggleTheme} 
-        className="bg-primary hover:bg-amber-700 dark:bg-primary cursor-pointer top-23 right-1 md:hidden" 
-        icon={isDarkMode ? '☀️' : '🌙'}
+        className="rounded-full transition-all duration-300 hover:scale-110 bg-primary  hover:bg-accent cursor-pointer top-23 right-1 md:hidden" 
+        icon={isDarkMode ? <Sun className="h-5 w-5" data-testid="sun-icon" /> : <Moon className="h-5 w-5" data-testid="moon-icon" />}
         data-testid="theme-toggle-button"    
       />
       {children}
       <footer className="border-t border-border/70 py-8 bg-muted/30">
         <div className="container mx-auto px-10">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-            <p className="text-sm text-muted-foreground">
+            <p className="text-sm text-muted-foreground text-center">
               &copy; {new Date().getFullYear()} Todos los derechos reservados.
               Desarrollado por Andrés Otalvaro
             </p>

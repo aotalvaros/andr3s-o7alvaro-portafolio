@@ -198,9 +198,11 @@ describe("App Component", () => {
                 selector({ isDarkMode: false, toggleTheme: vi.fn() })
             );
 
-            render(<App>contenido</App>);
             
-            expect(screen.getByTestId("theme-toggle-button")).toHaveTextContent("🌙");
+            render(<App>contenido</App>);
+            const iconMoon = screen.getByTestId("moon-icon");
+            
+            expect(screen.getByTestId("theme-toggle-button")).toContainElement(iconMoon);
         });
 
         it("Should show sun icon when isDarkMode is true", () => {
@@ -209,8 +211,8 @@ describe("App Component", () => {
             );
 
             render(<App>contenido</App>);
-            
-            expect(screen.getByTestId("theme-toggle-button")).toHaveTextContent("☀️");
+            const iconSun = screen.getByTestId("sun-icon");
+            expect(screen.getByTestId("theme-toggle-button")).toContainElement(iconSun);
         });
 
         it("Should call toggleTheme when FloatingActionButton is clicked", () => {
@@ -231,13 +233,7 @@ describe("App Component", () => {
             render(<App>contenido</App>);
             
             const button = screen.getByTestId("theme-toggle-button");
-            expect(button).toHaveClass("bg-primary");
-            expect(button).toHaveClass("hover:bg-amber-700");
-            expect(button).toHaveClass("dark:bg-primary");
-            expect(button).toHaveClass("cursor-pointer");
-            expect(button).toHaveClass("top-23");
-            expect(button).toHaveClass("right-1");
-            expect(button).toHaveClass("md:hidden");
+            expect(button).toHaveClass("rounded-full transition-all duration-300 hover:scale-110 bg-primary hover:bg-accent cursor-pointer top-23 right-1 md:hidden")
         });
     });
 
@@ -302,7 +298,7 @@ describe("App Component", () => {
             mockUseMaintenance.mockReturnValue({
                 isAplicationInMaintenance: false,
                 isInMaintenance: false,
-                maintenanceData: null,
+                maintenanceData: undefined,
                 isLoading: false,
                 isInitialLoading: false,
                 isError: true,
@@ -369,22 +365,28 @@ describe("App Component", () => {
 
         it("Should handle theme transitions correctly", () => {
             const toggleTheme = vi.fn();
-            
             // Start with light theme
             mockUseThemeStore.mockImplementation((selector) =>
                 selector({ isDarkMode: false, toggleTheme })
             );
             
-            const { rerender } = render(<App>contenido</App>);
-            expect(screen.getByTestId("theme-toggle-button")).toHaveTextContent("🌙");
             
-            // Switch to dark theme
+            const { rerender } = render(<App>contenido</App>);
+            const iconMoon = screen.getByTestId("moon-icon");
+            expect(screen.getByTestId("theme-toggle-button")).toContainElement(iconMoon);
+
+            
+            
+            //Switch to dark theme
             mockUseThemeStore.mockImplementation((selector) =>
                 selector({ isDarkMode: true, toggleTheme })
             );
             
+            
+
             rerender(<App>contenido</App>);
-            expect(screen.getByTestId("theme-toggle-button")).toHaveTextContent("☀️");
+            const iconSun = screen.getByTestId("sun-icon");
+            expect(screen.getByTestId("theme-toggle-button")).toContainElement(iconSun);
         });
     });
 });

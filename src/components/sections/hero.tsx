@@ -113,8 +113,18 @@ export function Hero() {
             </Link> */}
           </div>
 
+          <div className='mb-2'>
+            <button
+              onClick={scrollToNext}
+              className="p-2 rounded-full glass hover:scale-110 transition-all animate-bounce"
+              aria-label="Scroll to next section"
+              data-testid="scroll-down-button"
+            >
+              <ArrowDown className="h-6 w-6" />
+            </button>
+          </div>
 
-          <div className="flex items-center justify-center gap-4 pt-8">
+          <div className="flex items-center justify-center gap-4 mb-2">
             <a
               href="https://github.com/aotalvaros"
               target="_blank"
@@ -144,18 +154,11 @@ export function Hero() {
               <Mail className="h-5 w-5" />
             </a>
           </div>
+         
         </div>
       </div>
 
       {/* Scroll indicator */}
-      <button
-        onClick={scrollToNext}
-        className="absolute bottom-8 mb-4 left-1/2 -translate-x-1/2 p-2 rounded-full glass hover:scale-110 transition-all animate-bounce"
-        aria-label="Scroll to next section"
-        data-testid="scroll-down-button"
-      >
-        <ArrowDown className="h-6 w-6" />
-      </button>
     </section>
   )
 }
