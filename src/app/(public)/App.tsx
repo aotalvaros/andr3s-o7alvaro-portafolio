@@ -1,7 +1,7 @@
 "use client";
 import React, { Fragment } from "react";
 import { LoaderOverlay } from "../LoaderOverlay";
-import { Navbar } from "@/components/layout/navbar.components";
+import { Navbar } from "@/components/layout/navbar/navbar.components";
 import dynamic from "next/dynamic";
 import { useMaintenance } from "@/components/maintenance/hooks/useMaintenance";
 import { SpaceLoading } from "@/components/ui/spaceLoading";

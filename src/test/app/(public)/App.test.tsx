@@ -37,7 +37,7 @@ vi.mock("@/components/ui/FloatingActionButton", () => ({
     ),
 }));
 
-vi.mock("@/components/layout/navbar.components", () => ({
+vi.mock("@/components/layout/navbar/navbar.components", () => ({
     Navbar: () => <nav data-testid="navbar">Navbar</nav>,
 }));
 
