@@ -13,7 +13,7 @@ export function OnlineStatus({ text, backgroundColor, textColor }: Readonly<Onli
         <div className={`h-2 w-2 rounded-full ${backgroundColor} animate-pulse-glow`} />
         <div className={`absolute inset-0 h-2 w-2 rounded-full ${backgroundColor} animate-ping`} />
       </div>
-      <span className={`text-sm font-medium ${textColor}`}>{text}</span>
+      <span className={`hidden sm:inline-flex text-sm font-medium ${textColor}`}>{text}</span>
     </div>
   )
 }

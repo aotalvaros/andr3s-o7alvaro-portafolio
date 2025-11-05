@@ -3,7 +3,7 @@ import { screen, render } from "@testing-library/react";
 import React from "react";
 import { afterEach, beforeEach, vi, describe, it, expect } from 'vitest'
 
-vi.mock('@/components/theme-provider', () => ({
+vi.mock('@/providers/theme-provider', () => ({
   ThemeProvider: ({ children }: { children: React.ReactNode }) => <div data-testid="theme-provider">{children}</div>,
 }));
 

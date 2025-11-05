@@ -7,7 +7,8 @@ const config: Config = {
   content: [
     './src/app/**/*.{ts,tsx}',
     './src/pages/**/*.{ts,tsx}',
-    './src/components/**/*.{ts,tsx}'
+    './src/components/**/*.{ts,tsx}',
+    './src/**/*.{js,ts,jsx,tsx}'
   ],
   darkMode: 'class',
   theme: {

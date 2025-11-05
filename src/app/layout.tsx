@@ -1,12 +1,12 @@
 import './globals.css'
 import { Inter } from 'next/font/google'
-import { ThemeProvider } from '@/components/theme-provider'
 import { Providers } from './providers'
 import { SocketProvider } from '@/context/SocketContext'
 import { ToastMessage } from '@/components/ui/ToastMessageComponent'
 import { Toaster } from 'sonner'
+import { ThemeProvider } from '@/providers/theme-provider'
 
-const inter = Inter({ subsets: ['latin'] })
+const inter = Inter({ subsets: ["latin"], display: "swap" })
 
 export const metadata = {
   title: 'Portafolio | Andrés Dev',

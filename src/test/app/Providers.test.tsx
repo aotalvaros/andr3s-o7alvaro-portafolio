@@ -1,7 +1,13 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import React from 'react';
 import { Providers } from '../../app/providers';
+
+vi.mock('@/providers/CommandPaletteProvider', () => ({
+    CommandPaletteProvider: ({ children }: { children: React.ReactNode }) => (
+        <div data-testid="command-palette-provider">{children}</div>
+    ),
+}));
 
 describe('Providers', () => {
     
