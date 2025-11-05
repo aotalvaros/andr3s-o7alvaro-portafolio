@@ -18,8 +18,8 @@ export const useNavbar = () => {
   
   // Logo source based on theme
   const logoSrc = isDarkMode 
-    ? "/assets/LogoAndresClaro.svg"
-    : "/assets/LogoAndres.svg"
+    ? "https://s6s2oxgnpnutegmr.public.blob.vercel-storage.com/Imagenes/LogoAndresClaro.svg"
+    : "https://s6s2oxgnpnutegmr.public.blob.vercel-storage.com/Imagenes/LogoAndres.svg"
 
   // Router event handlers
   useEffect(() => {

@@ -6,12 +6,14 @@ import { Progress } from "@/components/ui/progress"
 interface SpaceLoadingProps {
   isLoading?: boolean
   onLoadingComplete?: () => void
-  shouldShow?: boolean
+  shouldShow?: boolean,
+  hasError?: boolean
 }
 
-export function SpaceLoading({ isLoading = true, onLoadingComplete, shouldShow = true }: Readonly<SpaceLoadingProps>) {
+export function SpaceLoading({ isLoading = true, onLoadingComplete, shouldShow = true, hasError = false }: Readonly<SpaceLoadingProps>) {
   const [progress, setProgress] = useState(0)
   const [isComplete, setIsComplete] = useState(false)
+  const [timeoutReached, setTimeoutReached] = useState(false)
 
   const handleLoadingComplete = () => {
     setIsComplete(true)
@@ -20,36 +22,42 @@ export function SpaceLoading({ isLoading = true, onLoadingComplete, shouldShow =
     }, 800)
   }
 
-  const calculateNextProgress = (prev: number): number => {
-    if (!isLoading && prev >= 90) {
-      handleLoadingComplete()
-      return 100
+   const calculateNextProgress = (prev: number): number => {
+    if (!isLoading || timeoutReached || hasError) {
+      // Completar carga cuando termina, hay error o timeout
+      if (prev >= 98) {
+        handleLoadingComplete()
+        return 100
+      }
+      return Math.min(prev + 5, 100)
     }
 
-    if (isLoading) {
-      if (prev < 30) return Math.min(prev + 3, 30)
-      if (prev < 60) return Math.min(prev + 1.5, 60)
-      if (prev < 90) return Math.min(prev + 0.5, 90)
-      return 90
-    }
-
-    if (prev < 100) return Math.min(prev + 5, 100)
-    return prev
+    // Mientras está cargando
+    if (prev < 40) return prev + Math.random() * 3 + 1 // más rápido al inicio
+    if (prev < 70) return prev + Math.random() * 1.5 + 0.5
+    if (prev < 95) return prev + Math.random() * 0.4 // avanza más lento al final
+    return prev // se queda flotando entre 95–98
   }
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setProgress(calculateNextProgress)
-    }, 100)
+      setProgress((prev) => Math.min(100, calculateNextProgress(prev)))
+    }, 120)
 
     return () => clearInterval(interval)
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isLoading, onLoadingComplete])
+  }, [isLoading, timeoutReached, hasError])
 
-  if (!shouldShow) {
-    return null
-  }
+  // 🔹 Fallback de seguridad (por si tarda o hay error)
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      if (isLoading) setTimeoutReached(true)
+    }, 25000) // 25 segundos máx. de carga
+    return () => clearTimeout(timeout)
+  }, [isLoading])
 
+  if (!shouldShow) return null
+  
   return (
     <div
       className={`fixed inset-0 z-50 flex items-center justify-center bg-gradient-to-b from-[#0a0e27] via-[#16213e] to-[#0f1729] transition-opacity duration-700 ${
@@ -142,8 +150,8 @@ export function SpaceLoading({ isLoading = true, onLoadingComplete, shouldShow =
               <span className="text-blue-300/70">
                 {progress < 30 && "Iniciando sistemas..."}
                 {progress >= 30 && progress < 60 && "Cargando módulos..."}
-                {progress >= 60 && progress < 90 && "Casi listo..."}
-                {progress >= 90 && "¡Despegando!"}
+                {progress >= 60 && progress < 98 && "Casi listo..."}
+                {progress >= 98 && "¡Despegando!"}
               </span>
             </div>
           </div>

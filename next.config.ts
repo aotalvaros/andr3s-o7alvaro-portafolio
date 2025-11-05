@@ -8,7 +8,8 @@ const nextConfig: NextConfig = {
       'mars.nasa.gov', 
       'www.nasa.gov',
       'raw.githubusercontent.com',
-      'assets.pokemon.com'
+      'assets.pokemon.com',
+      's6s2oxgnpnutegmr.public.blob.vercel-storage.com',
     ],
   }
 };
