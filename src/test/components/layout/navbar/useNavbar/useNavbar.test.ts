@@ -63,7 +63,7 @@ describe("useNavbar", () => {
     it("should initialize with correct default values", () => {
         const { result } = renderHook(() => useNavbar());
         expect(result.current.mobileMenuOpen).toBe(false);
-        expect(result.current.logoSrc).toBe("/assets/LogoAndres.svg");
+        expect(result.current.logoSrc).toBe("https://s6s2oxgnpnutegmr.public.blob.vercel-storage.com/Imagenes/LogoAndres.svg");
         expect(typeof result.current.handleClickLink).toBe("function");
         expect(typeof result.current.handleContactClick).toBe("function");
         expect(typeof result.current.toggleMobileMenu).toBe("function");

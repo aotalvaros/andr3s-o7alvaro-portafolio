@@ -9,6 +9,7 @@ import { BackToTop } from "@/components/ui/BackToTop";
 import { FloatingActionButton } from "@/components/ui/FloatingActionButton";
 import { useThemeStore } from "@/store/themeStore";
 import { Moon, Sun } from "lucide-react";
+import Image from "next/image";
 
 const ModuleInMaintenance = dynamic(
   () => import("@/components/maintenance/ModuleInMaintenance"),
@@ -20,14 +21,14 @@ const ModuleInMaintenance = dynamic(
 export const App = ({ children }: { readonly children: React.ReactNode }) => {
   const { 
     isAplicationInMaintenance, 
-    isLoading
+    isLoading,
   } = useMaintenance();
 
   const isDarkMode = useThemeStore((state) => state.isDarkMode);
   const toggleTheme = useThemeStore((state) => state.toggleTheme);
 
   if (isLoading) {
-    return <SpaceLoading isLoading={true} />;
+    return <SpaceLoading isLoading={isLoading} />;
   }
 
   if (isAplicationInMaintenance) {
@@ -45,6 +46,14 @@ export const App = ({ children }: { readonly children: React.ReactNode }) => {
         className="rounded-full transition-all duration-300 hover:scale-110 bg-primary  hover:bg-accent cursor-pointer top-23 right-1 md:hidden" 
         icon={isDarkMode ? <Sun className="h-5 w-5" data-testid="sun-icon" /> : <Moon className="h-5 w-5" data-testid="moon-icon" />}
         data-testid="theme-toggle-button"    
+      />
+      <Image
+        src="/assets/iconoBlackAndWhite.png"
+        alt="Background Pattern"
+        width={155}
+        height={90}
+        className="fixed top-20 right-0 w-36 h-36 md:w-60 md:h-60 opacity-8 pointer-events-none"
+        loading="eager"
       />
       {children}
       <footer className="border-t border-border/70 py-8 bg-muted/30">

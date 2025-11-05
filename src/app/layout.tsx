@@ -11,6 +11,9 @@ const inter = Inter({ subsets: ["latin"], display: "swap" })
 export const metadata = {
   title: 'Portafolio | Andrés Dev',
   description: 'Desarrollador Frontend especializado en React y Next.js',
+  icons: {
+    icon: "/favicon.png", 
+  },
 }
 
 export default function RootLayout({ children }: { readonly children: React.ReactNode }) {
