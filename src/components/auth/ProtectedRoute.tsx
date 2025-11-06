@@ -2,35 +2,25 @@
 
 import { useAuth } from '@/hooks/useAuth';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 
 interface Props {
   readonly children: React.ReactNode;
 }
 
 export default function ProtectedRoute({ children }: Props) {
-  const { isAuthenticated, user } = useAuth();
+  const { isAuthenticated, user, isLoading, isInitialized } = useAuth();
   const router = useRouter();
-  const [isChecking, setIsChecking] = useState(true);
 
-    useEffect(() => {
-    const checkAuth = async () => {
-      // Verificar tanto el token como el estado de autenticación
-      const token = typeof window !== 'undefined' ? localStorage.getItem("token") : null;
-      
-      if (!token || !isAuthenticated) {
-        router.push("/login");
-        return;
-      }
-      
-      setIsChecking(false);
-    };
+  useEffect(() => {
+    // Solo redirigir si ya se inicializó la autenticación
+    if (isInitialized && !isLoading && !isAuthenticated) {
+      router.replace("/login");
+    }
+  }, [isAuthenticated, isLoading, isInitialized, router]);
 
-    checkAuth();
-  }, [isAuthenticated, router]);
-
-  // Mostrar loading mientras verificamos autenticación
-  if (isChecking) {
+  // Mostrar loading mientras se inicializa o está cargando
+  if (!isInitialized || isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-lg">Verificando autenticación...</div>
@@ -38,7 +28,7 @@ export default function ProtectedRoute({ children }: Props) {
     );
   }
 
-  // Solo renderizar children si está autenticado
+  // No renderizar nada si no está autenticado (se está redirigiendo)
   if (!isAuthenticated || !user) {
     return null;
   }

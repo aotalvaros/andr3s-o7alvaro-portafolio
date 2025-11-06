@@ -2,33 +2,34 @@
 
 import { useAuth } from '@/hooks/useAuth';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 
 interface Props {
   readonly children: React.ReactNode;
 }
 
 export default function PublicRoute({ children }: Props) {
-  const { isAuthenticated } = useAuth();
+ const { isAuthenticated, isLoading, isInitialized } = useAuth();
   const router = useRouter();
-  const [isChecking, setIsChecking] = useState(true);
 
   useEffect(() => {
-    const checkAuth = () => {
-      // Si ya está autenticado, redirigir al admin
-      if (isAuthenticated) {
-        router.push("/admin");
-        return;
-      }
-      
-      setIsChecking(false);
-    };
+    // Solo redirigir si ya se inicializó y está autenticado
+    if (isInitialized && !isLoading && isAuthenticated) {
+      router.replace("/admin");
+    }
+  }, [isAuthenticated, isLoading, isInitialized, router]);
 
-    checkAuth();
-  }, [isAuthenticated, router]);
+  // Mostrar loading mientras se inicializa
+  if (!isInitialized || isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-lg">Verificando autenticación...</div>
+      </div>
+    );
+  }
 
-  // Mostrar loading mientras verificamos
-  if (isChecking && isAuthenticated) {
+  // No renderizar si está autenticado (se está redirigiendo)
+  if (isAuthenticated) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-lg">Redirigiendo...</div>
@@ -36,6 +37,5 @@ export default function PublicRoute({ children }: Props) {
     );
   }
 
-  // Solo mostrar login si NO está autenticado
   return <>{children}</>;
 }

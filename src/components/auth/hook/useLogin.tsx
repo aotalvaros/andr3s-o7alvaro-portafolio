@@ -15,8 +15,26 @@ export const useLogin = () => {
     } = useMutation({
         mutationFn: (payload: { email: string; password: string }) => login(payload),
         onSuccess: (data) => {
-            setCookie('token', data.token, { path: '/' });
-            setCookie('refreshToken', data.refreshToken, { path: '/' });
+            // Establecer cookies con configuración segura
+            setCookie('token', data.token, { 
+                path: '/', 
+                secure: process.env.NODE_ENV === 'production',
+                sameSite: 'strict',
+                maxAge: 60 * 60 * 24 * 7 // 7 días
+            });
+            setCookie('refreshToken', data.refreshToken, { 
+                path: '/', 
+                secure: process.env.NODE_ENV === 'production',
+                sameSite: 'strict',
+                maxAge: 60 * 60 * 24 * 30 // 30 días
+            });
+            
+            // También guardar en localStorage como respaldo
+            if (typeof window !== 'undefined') {
+                localStorage.setItem('token', data.token);
+            }
+            
+            toast.success('Inicio de sesión exitoso');
         },
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         onError: (error: any) => {

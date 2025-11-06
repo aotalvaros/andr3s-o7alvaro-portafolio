@@ -11,10 +11,6 @@ vi.mock('@/store/loadingStore', () => ({
   useLoadingStore: (selector: (store: { setLoading: typeof setLoadingMock }) => unknown) => selector({ setLoading: setLoadingMock }),
 }));
 
-vi.mock('@/components/auth/PublicRoute', () => ({
-  default: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
-}))
-
 describe("LoginPage Component", () => {
   beforeEach(() => {
     vi.clearAllMocks();

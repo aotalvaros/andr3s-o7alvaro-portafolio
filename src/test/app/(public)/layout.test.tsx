@@ -9,6 +9,11 @@ vi.mock("@/app/(public)/App", () => ({
     ),
 }));
 
+vi.mock('@/components/auth/PublicRoute', () => ({
+  default: ({ children }: { children: React.ReactNode }) => children
+}))
+
+
 describe("test layout component", () => {
  
     it("renders App component with children", () => {
