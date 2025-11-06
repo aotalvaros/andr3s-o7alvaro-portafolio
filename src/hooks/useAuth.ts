@@ -15,8 +15,9 @@ interface DecodedToken {
 }
 
 export const useAuth = () => {
-   const [user, setUser] = useState<DecodedToken | null>(null);
+  const [user, setUser] = useState<DecodedToken | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isInitialized, setIsInitialized] = useState(false);
 
   const clearAuth = () => {
     setUser(null);
@@ -27,35 +28,44 @@ export const useAuth = () => {
     }
   };
 
+  const validateAndSetUser = (token: string) => {
+    try {
+      const decoded: DecodedToken = jwtDecode(token);
+      const currentTime = Date.now() / 1000;
+
+      if (decoded.exp < currentTime) {
+        clearAuth();
+        return false;
+      }
+
+      setUser(decoded);
+      return true;
+    } catch (err) {
+      console.error('Token inválido', err);
+      clearAuth();
+      return false;
+    }
+  };
+
   useEffect(() => {
     const checkAuth = () => {
       try {
-        // Verificar tanto cookie como localStorage
+        // Priorizar cookie sobre localStorage para mejor SSR
         const cookieToken = getCookie('token');
         const localToken = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
         const token = cookieToken || localToken;
 
         if (!token) {
-          setIsLoading(false);
-          return;
+          setUser(null);
+        } else {
+          validateAndSetUser(token as string);
         }
-
-        const decoded: DecodedToken = jwtDecode(token as string);
-        const currentTime = Date.now() / 1000;
-
-        // Verificar si el token ha expirado
-        if (decoded.exp < currentTime) {
-          clearAuth();
-          setIsLoading(false);
-          return;
-        }
-
-        setUser(decoded);
-        setIsLoading(false);
       } catch (err) {
-        console.error('Token inválido', err);
+        console.error('Error checking auth', err);
         clearAuth();
+      } finally {
         setIsLoading(false);
+        setIsInitialized(true);
       }
     };
 
@@ -66,6 +76,7 @@ export const useAuth = () => {
     user, 
     isAuthenticated: !!user, 
     isLoading,
+    isInitialized,
     clearAuth 
   };
 };

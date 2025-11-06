@@ -77,53 +77,78 @@ const processQueue = (error: unknown, token: string | null = null) => {
 
 // Interceptor para manejar el refresh token
 api.interceptors.response.use(
-  response => response,
+  (response) => {
+    clearTimers(response.config);
+    return response;
+  },
   async (error) => {
     const originalRequest = error.config;
-    
-    if (error.response?.status === 401 && 
-        !originalRequest._retry && 
-        getCookie('refreshToken')) {
-      
+    clearTimers(originalRequest);
+
+    // ✅ Manejo mejorado de errores de autenticación
+    if (error.response?.status === 401 && !originalRequest._retry) {
+      originalRequest._retry = true;
+
+      // Si ya hay un refresh en progreso, agregar a la cola
       if (isRefreshing) {
-        // ✅ Queue requests mientras se refresca el token
         return new Promise((resolve, reject) => {
           failedQueue.push({ resolve, reject });
-        }).then(() => {
+        }).then((token) => {
+          originalRequest.headers.Authorization = `Bearer ${token}`;
           return api(originalRequest);
-        }).catch(err => {
+        }).catch((err) => {
           return Promise.reject(err);
         });
       }
 
-      originalRequest._retry = true;
       isRefreshing = true;
 
       try {
+        const refreshToken = getCookie('refreshToken');
+        
+        if (!refreshToken) {
+          throw new Error('No refresh token available');
+        }
+
         const { data } = await axios.post(
           `${process.env.NEXT_PUBLIC_BASE_URL}/auth/refresh-token`,
-          { refreshToken: getCookie('refreshToken') }
+          { refreshToken }
         );
 
+        // Actualizar cookies y localStorage
         setCookie('token', data.token, { 
           path: '/', 
           secure: process.env.NODE_ENV === 'production',
           sameSite: 'strict'
         });
         
+        if (typeof window !== 'undefined') {
+          localStorage.setItem('token', data.token);
+        }
+        
         processQueue(null, data.token);
+        
+        // Reintentar petición original
+        originalRequest.headers.Authorization = `Bearer ${data.token}`;
         return api(originalRequest);
 
       } catch (refreshError) {
         processQueue(refreshError, null);
-        // ✅ Limpiar cookies de forma segura
+        
+        // Limpiar autenticación completamente
         setCookie('token', '', { path: '/', expires: new Date(0) });
         setCookie('refreshToken', '', { path: '/', expires: new Date(0) });
         
-        // ✅ Mejor manejo de redirección
         if (typeof window !== 'undefined') {
-          window.location.href = '/login';
+          localStorage.removeItem('token');
+          localStorage.removeItem('refreshToken');
+          
+          // Solo redirigir si no estamos ya en login
+          if (!window.location.pathname.includes('/login')) {
+            window.location.replace('/login');
+          }
         }
+        
         return Promise.reject(refreshError);
       } finally {
         isRefreshing = false;
