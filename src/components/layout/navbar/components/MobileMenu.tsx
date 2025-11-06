@@ -41,7 +41,7 @@ export function MobileMenu({ isOpen, onContactClick, onLinkClick, onClose }: Rea
             className="hover:underline text-start dark:text-secondary" 
             data-testid="api-lab-dropdown"
           >
-            Laboratorio de APIs ▼
+            Lab. de APIs ▼
           </button>
         </DropdownMenuTrigger>
 

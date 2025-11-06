@@ -21,14 +21,14 @@ const ModuleInMaintenance = dynamic(
 export const App = ({ children }: { readonly children: React.ReactNode }) => {
   const { 
     isAplicationInMaintenance, 
-    isLoading,
+    isInitialLoading
   } = useMaintenance();
 
   const isDarkMode = useThemeStore((state) => state.isDarkMode);
   const toggleTheme = useThemeStore((state) => state.toggleTheme);
 
-  if (isLoading) {
-    return <SpaceLoading isLoading={isLoading} />;
+  if (isInitialLoading) {
+    return <SpaceLoading isLoading={isInitialLoading} />;
   }
 
   if (isAplicationInMaintenance) {
