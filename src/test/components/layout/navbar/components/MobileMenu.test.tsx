@@ -133,7 +133,7 @@ describe("MobileMenu Component", () => {
         const dropdown = screen.getByTestId("api-lab-dropdown");
         
         expect(dropdown).toBeInTheDocument();
-        expect(dropdown).toHaveTextContent("Laboratorio de APIs ▼");
+        expect(dropdown).toHaveTextContent("Lab. de APIs ▼");
     });
 
     it("should render all NASA API lab links", () => {

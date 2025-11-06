@@ -23,7 +23,7 @@ export const ItemsMenu: React.FC<ItemsMenuProps> = ({ handleClickLink }) => {
       >
         <DropdownMenuSub>
           <DropdownMenuSubTrigger className="w-full p-1 bg-white cursor-pointer dark:text-secondary dark:bg-blue-900">
-            NASA -{" "}
+            &#127776; NASA →
           </DropdownMenuSubTrigger>
           <DropdownMenuSubContent className="flex flex-col z-[90] p-1 w-max shadow-lg border rounded-[10px] shadow-primary absolute left-2.5 bg-white dark:shadow-white/10 dark:text-secondary dark:bg-blue-900">
             <DropdownMenuItem asChild>

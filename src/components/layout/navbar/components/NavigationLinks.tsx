@@ -42,7 +42,7 @@ export function NavigationLinks({
             className={`hover:underline ${variant === 'mobile' ? 'text-start' : ''} dark:text-secondary`} 
             data-testid="api-lab-dropdown"
           >
-            Laboratorio de APIs ▼
+            Lab. de APIs ▼
           </button>
         </DropdownMenuTrigger>
         <ItemsMenu handleClickLink={onLinkClick} />

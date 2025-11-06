@@ -2,6 +2,10 @@ import AdminLayout from "@/app/admin/layout";
 import { afterEach, beforeEach, vi, describe, it, expect } from 'vitest'
 import { render, screen } from "@testing-library/react";
 
+vi.mock('@/components/auth/ProtectedRoute', () => ({
+    default: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
+}))
+
 describe("Test AdminLayout component", () => {
     beforeEach(() => {
         vi.clearAllMocks();
