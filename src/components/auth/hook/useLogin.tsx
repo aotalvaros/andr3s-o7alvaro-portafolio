@@ -16,13 +16,13 @@ export const useLogin = () => {
         mutationFn: (payload: { email: string; password: string }) => login(payload),
         onSuccess: (data) => {
             // Establecer cookies con configuración segura
-            setCookie('token', data.token, { 
+            setCookie('token', data?.token, { 
                 path: '/', 
                 secure: process.env.NODE_ENV === 'production',
                 sameSite: 'strict',
                 maxAge: 60 * 60 * 24 * 7 // 7 días
             });
-            setCookie('refreshToken', data.refreshToken, { 
+            setCookie('refreshToken', data?.refreshToken, { 
                 path: '/', 
                 secure: process.env.NODE_ENV === 'production',
                 sameSite: 'strict',
@@ -31,7 +31,7 @@ export const useLogin = () => {
             
             // También guardar en localStorage como respaldo
             if (typeof window !== 'undefined') {
-                localStorage.setItem('token', data.token);
+                localStorage.setItem('token', data?.token);
             }
             
             toast.success('Inicio de sesión exitoso');

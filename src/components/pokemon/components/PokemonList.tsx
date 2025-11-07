@@ -5,7 +5,7 @@ import { PokemonHeader } from "./Pokemonheader";
 import { usePokeApi } from "../hooks/usePokeApi";
 import { PokemonSkeleton } from "./PokemonSkeleton";
 import { PokemonCard } from "./PokemonCard";
-import { CustomPagination } from "@/components/layout/CustomPagination.components";
+import { CustomPagination } from "@/components/layout/pagination/CustomPagination.components";
 import Modal from "@/components/ui/Modal";
 import { PokemonModal } from "./PokemonModal";
 

@@ -62,7 +62,7 @@ export const useMaintenance = () => {
     isInMaintenance, 
     isAplicationInMaintenance, 
     maintenanceData, 
-    isLoading: !isFetched, // Solo true hasta el primer fetch (éxito o error)
+    isFetched, // Solo true hasta el primer fetch (éxito o error)
     isInitialLoading, // El estado original de React Query
     isError,
     error

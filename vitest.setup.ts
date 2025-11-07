@@ -1,4 +1,4 @@
-import { afterEach, vi } from "vitest";
+import { afterEach, vi,beforeAll } from "vitest";
 import { cleanup } from "@testing-library/react";
 import '@testing-library/jest-dom'
 
@@ -15,3 +15,20 @@ vi.mock('next/font/google', () => ({
 }));
 
 vi.mock('@/components/styles/PsychedelicSpinner.css', () => ({}));
+
+beforeAll(() => {
+  if (!HTMLFormElement.prototype.requestSubmit) {
+    HTMLFormElement.prototype.requestSubmit = function(submitter?: HTMLElement) {
+      if (submitter) {
+        submitter.click();
+      } else {
+        // Disparar el evento submit manualmente
+        const submitEvent = new Event('submit', {
+          bubbles: true,
+          cancelable: true,
+        });
+        this.dispatchEvent(submitEvent);
+      }
+    };
+  }
+});

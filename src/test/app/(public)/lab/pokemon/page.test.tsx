@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import PokemonPage from "@/app/(public)/lab/pokemon/page";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { useMaintenance } from "@/components/maintenance/hooks/useMaintenance";
@@ -25,14 +26,14 @@ describe("PokemonPage", () => {
     });
 
     it("should render maintenance module when in maintenance", () => {
-        mockUseMaintenance.mockReturnValue({ isInMaintenance: true, isAplicationInMaintenance: false, maintenanceData: undefined, isLoading: true });
+        mockUseMaintenance.mockReturnValue({ isInMaintenance: true } as any);
         render(<PokemonPage />);
         expect(screen.getByTestId("maintenance-module")).toBeInTheDocument();
         expect(screen.queryByTestId("pokemon-list")).not.toBeInTheDocument();
     });
 
     it("should render PokemonList when not in maintenance", () => {
-        mockUseMaintenance.mockReturnValue({ isInMaintenance: false, isAplicationInMaintenance: false, maintenanceData: undefined, isLoading: true});
+        mockUseMaintenance.mockReturnValue({ isInMaintenance: false } as any);
         render(<PokemonPage />);
         expect(screen.getByTestId("pokemon-list")).toBeInTheDocument();
         expect(screen.queryByTestId("maintenance-module")).not.toBeInTheDocument();

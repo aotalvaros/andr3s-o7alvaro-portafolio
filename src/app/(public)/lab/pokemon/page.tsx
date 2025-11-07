@@ -6,9 +6,9 @@ import { PokemonList } from '@/components/pokemon/components/PokemonList';
 
 export default function PokemonPage() {
 
-    const { isInMaintenance, isError } = useMaintenance();
+    const { isInMaintenance } = useMaintenance();
 
-    if (isInMaintenance || isError) {
+    if (isInMaintenance) {
         return (<ModuleInMaintenance moduleName="Pokemon" />)
     }
 
