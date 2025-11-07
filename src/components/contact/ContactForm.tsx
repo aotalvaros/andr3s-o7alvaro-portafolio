@@ -24,7 +24,7 @@ export function ContactForm() {
   } =  useContactForm()
   
   return (
-    <section id="contact" className="py-22 container mx-auto px-4">
+    <section id="contact" className="py-22 container mx-auto px-4" data-testid="contact-form">
       <div className="">
          <ScrollReveal>
           <h2 className="text-4xl md:text-5xl font-bold text-center mb-4">
@@ -38,7 +38,7 @@ export function ContactForm() {
 
       <div className="grid md:grid-cols-2 gap-12 max-w-6xl mx-auto">
         {/* Contact Info */}
-        <ScrollReveal delay={200}>
+        <ScrollReveal delay={200} data-testid="contact-info">
           <div className="space-y-8">
             <div>
               <h3 className="text-2xl font-bold mb-6">Información de Contacto</h3>
@@ -53,6 +53,7 @@ export function ContactForm() {
               <a
                 href="mailto:andr3s.o7alvaro@gmail.com"
                 className="flex items-center gap-4 p-4 rounded-xl glass hover:bg-primary/10 transition-all group"
+                data-testid="contact-email"
               >
                 <div className="p-3 rounded-lg bg-primary/10 group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
                   <Mail className="h-6 w-6" />
@@ -68,6 +69,7 @@ export function ContactForm() {
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-4 p-4 rounded-xl glass hover:bg-primary/10 transition-all group"
+                data-testid="contact-linkedin"
               >
                 <div className="p-3 rounded-lg bg-secondary/10 group-hover:bg-secondary group-hover:text-secondary-foreground transition-colors">
                   <FaLinkedin className="h-6 w-6" />
@@ -83,6 +85,7 @@ export function ContactForm() {
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-4 p-4 rounded-xl glass hover:bg-primary/10 transition-all group"
+                data-testid="contact-github"
               >
                 <div className="p-3 rounded-lg bg-accent/10 group-hover:bg-accent group-hover:text-accent-foreground transition-colors">
                   <FaGithub className="h-6 w-6" />
@@ -98,26 +101,26 @@ export function ContactForm() {
 
         <ScrollReveal delay={400}>
           <Card className="p-8 border-2 border-border/50">
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" data-testid="contact-form-element">
               <div>
                  <label htmlFor="name" className="block text-sm font-medium mb-2">
                     Tu nombre
                   </label>
-                  <Input placeholder="Tu nombre" {...register('name')} className='dark:text-white dark:placeholder:text-secondary-foreground transition-all focus:border-primary' />
+                  <Input placeholder="Tu nombre" {...register('name')} className='dark:text-white dark:placeholder:text-secondary-foreground transition-all focus:border-primary' data-testid="contact-name" />
                   {errors.name && <p className="text-red-500 text-sm">{errors.name.message}</p>}
               </div>
               <div>
                 <label htmlFor="email" className="block text-sm font-medium mb-2">
                   Tu correo
                 </label>
-                  <Input placeholder="Tu correo" {...register('email')} className='dark:text-white dark:placeholder:text-secondary-foreground transition-all focus:border-primary' />
+                  <Input placeholder="Tu correo" {...register('email')} className='dark:text-white dark:placeholder:text-secondary-foreground transition-all focus:border-primary' data-testid="contact-email"/>
                 {errors.email && <p className="text-red-500 text-sm">{errors.email.message}</p>}
               </div>
               <div>
                 <label htmlFor="message" className="block text-sm font-medium mb-2">
                   Tu mensaje
                 </label>
-                  <Textarea placeholder="Tu mensaje" rows={5} {...register('message')} className='max-h-[30dvh] dark:text-white dark:placeholder:text-secondary-foreground' />
+                  <Textarea placeholder="Tu mensaje" rows={5} {...register('message')} className='max-h-[30dvh] dark:text-white dark:placeholder:text-secondary-foreground' data-testid="contact-message"/>
                   {errors.message && <p className="text-red-500 text-sm">{errors.message.message}</p>}
               </div>
                <Button
@@ -125,16 +128,18 @@ export function ContactForm() {
                   size="lg"
                   className="w-full bg-gradient-to-r from-primary via-secondary to-accent hover:scale-105 transition-transform"
                   disabled={isButtonDisabled || isSubmitting}
+                  data-testid="contact-submit"
                 >
                   <Send className="mr-2 h-5 w-5" />
                    {isSubmitting ? 'Enviando...' : 'Enviar mensaje'}
               </Button>
-               <ReCAPTCHA
-                  sitekey={process.env.NEXT_PUBLIC_GOOGLE_RECAPTCHA_SITE_KEY ?? ""}
-                  onChange={onChangeReCaptcha}
-                  ref={recaptchaRef}
-                  size={captchaSize}
-                />
+              <ReCAPTCHA
+                sitekey={process.env.NEXT_PUBLIC_GOOGLE_RECAPTCHA_SITE_KEY ?? ""}
+                onChange={onChangeReCaptcha}
+                ref={recaptchaRef}
+                size={captchaSize}
+                data-testid="contact-recaptcha"
+              />
             </form>
           </Card>
         </ScrollReveal> 
