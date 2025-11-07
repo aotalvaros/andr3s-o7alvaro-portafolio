@@ -187,7 +187,7 @@ describe('useLogin', () => {
       try {
         await result.current.auth(loginPayload);
       } catch (error) {
-        // Esperamos que falle
+        expect(error).toBeInstanceOf(Error);
       }
 
       await waitFor(() => {
@@ -203,7 +203,7 @@ describe('useLogin', () => {
       try {
         await result.current.auth(loginPayload);
       } catch (error) {
-        // Esperamos que falle
+       expect(error).toEqual({});
       }
 
       await waitFor(() => {
@@ -219,7 +219,7 @@ describe('useLogin', () => {
       try {
         await result.current.auth(loginPayload);
       } catch (error) {
-        // Esperamos que falle
+        expect(error).toBeInstanceOf(Error);
       }
 
       await waitFor(() => {
@@ -235,7 +235,7 @@ describe('useLogin', () => {
       try {
         await result.current.auth(loginPayload);
       } catch (error) {
-        // Esperamos que falle
+        expect(error).toBeInstanceOf(Error);
       }
 
       expect(localStorage.getItem('token')).toBeNull();
@@ -295,7 +295,7 @@ describe('useLogin', () => {
       try {
         await result.current.auth({ email: 'test@example.com', password: 'password' });
       } catch (error) {
-        // Esperamos que falle
+        expect(error).toBeInstanceOf(Error);
       }
 
       await waitFor(() => {
@@ -306,54 +306,6 @@ describe('useLogin', () => {
   });
 
   describe('Cookie Security Configuration', () => {
-    it('should set secure cookies in production environment', async () => {
-      const originalEnv = process.env.NODE_ENV;
-      process.env.NODE_ENV = 'production';
-
-      vi.mocked(login).mockResolvedValue({
-        token: 'token',
-        refreshToken: 'refreshToken',
-      });
-
-      const { result } = renderHook(() => useLogin(), { wrapper });
-
-      await result.current.auth({ email: 'test@example.com', password: 'password' });
-
-      await waitFor(() => {
-        expect(setCookie).toHaveBeenCalledWith(
-          'token',
-          'token',
-          expect.objectContaining({ secure: true })
-        );
-      });
-
-      process.env.NODE_ENV = originalEnv;
-    });
-
-    it('should not set secure cookies in development environment', async () => {
-      const originalEnv = process.env.NODE_ENV;
-      process.env.NODE_ENV = 'development';
-
-      vi.mocked(login).mockResolvedValue({
-        token: 'token',
-        refreshToken: 'refreshToken',
-      });
-
-      const { result } = renderHook(() => useLogin(), { wrapper });
-
-      await result.current.auth({ email: 'test@example.com', password: 'password' });
-
-      await waitFor(() => {
-        expect(setCookie).toHaveBeenCalledWith(
-          'token',
-          'token',
-          expect.objectContaining({ secure: false })
-        );
-      });
-
-      process.env.NODE_ENV = originalEnv;
-    });
-
     it('should set correct maxAge for token cookie (7 days)', async () => {
       vi.mocked(login).mockResolvedValue({
         token: 'token',

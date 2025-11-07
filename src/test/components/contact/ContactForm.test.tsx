@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { ContactForm } from "@/components/contact/ContactForm";
 import { useContactForm } from "@/components/contact/hook/useContactForm";
 import { render, screen, waitFor } from "@testing-library/react";
