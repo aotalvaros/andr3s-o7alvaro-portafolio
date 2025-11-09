@@ -24,9 +24,9 @@ export const App = ({ children }: { readonly children: React.ReactNode }) => {
     isInitialLoading,
     isFetched
   } = useMaintenance();
-    console.log("🚀 ~ App ~ isAplicationInMaintenance:", isAplicationInMaintenance)
-    console.log("🚀 ~ App ~ isInitialLoading:", isInitialLoading)
-    console.log("🚀 ~ App ~ isInitialLoading:", isInitialLoading)
+  console.log("🚀 ~ App ~ isAplicationInMaintenance:", isAplicationInMaintenance)
+  console.log("🚀 ~ App ~ isInitialLoading:", isInitialLoading)
+  console.log("🚀 ~ App ~ isFetched:", isFetched)
 
   const isDarkMode = useThemeStore((state) => state.isDarkMode);
   const toggleTheme = useThemeStore((state) => state.toggleTheme);
