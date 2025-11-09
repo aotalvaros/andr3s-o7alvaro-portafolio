@@ -181,7 +181,7 @@ describe("ProtectedRoute", () => {
       );
 
       await waitFor(() => {
-        expect(mockReplace).toHaveBeenCalledWith("/login");
+        expect(mockReplace).toHaveBeenCalledWith("/");
       });
 
       expect(screen.queryByText("Protected Content")).not.toBeInTheDocument();
@@ -283,12 +283,12 @@ describe("ProtectedRoute", () => {
       );
 
       await waitFor(() => {
-        expect(mockReplace).toHaveBeenCalledWith("/login");
+        expect(mockReplace).toHaveBeenCalledWith("/");
         expect(mockRouter.push).not.toHaveBeenCalled();
       });
     });
 
-    it("should redirect to /login path specifically", async () => {
+    it("should redirect to / path specifically", async () => {
       mockUseAuth.mockReturnValue({
         isAuthenticated: false,
         user: null,
@@ -304,7 +304,7 @@ describe("ProtectedRoute", () => {
       );
 
       await waitFor(() => {
-        expect(mockReplace).toHaveBeenCalledWith("/login");
+        expect(mockReplace).toHaveBeenCalledWith("/");
         expect(mockReplace).toHaveBeenCalledTimes(1);
       });
     });
@@ -397,7 +397,7 @@ describe("ProtectedRoute", () => {
       );
 
       await waitFor(() => {
-        expect(mockReplace).toHaveBeenCalledWith("/login");
+        expect(mockReplace).toHaveBeenCalledWith("/");
       });
     });
 
@@ -441,7 +441,7 @@ describe("ProtectedRoute", () => {
       );
 
       await waitFor(() => {
-        expect(mockReplace).toHaveBeenCalledWith("/login");
+        expect(mockReplace).toHaveBeenCalledWith("/");
       });
     });
   });
@@ -485,7 +485,7 @@ describe("ProtectedRoute", () => {
       );
 
       await waitFor(() => {
-        expect(mockReplace).toHaveBeenCalledWith("/login");
+        expect(mockReplace).toHaveBeenCalledWith("/");
       });
     });
 
@@ -553,7 +553,7 @@ describe("ProtectedRoute", () => {
       );
 
       await waitFor(() => {
-        expect(mockReplace).toHaveBeenCalledWith("/login");
+        expect(mockReplace).toHaveBeenCalledWith("/");
       });
 
       const callCount = mockReplace.mock.calls.length;
