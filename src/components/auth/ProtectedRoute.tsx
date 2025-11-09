@@ -15,7 +15,7 @@ export default function ProtectedRoute({ children }: Props) {
   useEffect(() => {
     // Solo redirigir si ya se inicializó la autenticación
     if (isInitialized && !isLoading && !isAuthenticated) {
-      router.replace("/login");
+      router.replace("/");
     }
   }, [isAuthenticated, isLoading, isInitialized, router]);
 
