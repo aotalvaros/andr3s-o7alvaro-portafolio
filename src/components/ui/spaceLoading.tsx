@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useState, useRef } from "react"
 import { Progress } from "@/components/ui/progress"
 
 interface SpaceLoadingProps {
@@ -13,7 +13,7 @@ interface SpaceLoadingProps {
 export function SpaceLoading({ isLoading = true, onLoadingComplete, shouldShow = true, hasError = false }: Readonly<SpaceLoadingProps>) {
   const [progress, setProgress] = useState(0)
   const [isComplete, setIsComplete] = useState(false)
-  const [timeoutReached, setTimeoutReached] = useState(false)
+  const progressRef = useRef(0) // Mantener el progreso actual sin causar re-renders
 
   const handleLoadingComplete = () => {
     setIsComplete(true)
@@ -22,50 +22,110 @@ export function SpaceLoading({ isLoading = true, onLoadingComplete, shouldShow =
     }, 800)
   }
 
-   const calculateNextProgress = (prev: number): number => {
-    if (!isLoading || timeoutReached || hasError) {
-      // Completar carga cuando termina, hay error o timeout
-      if (prev >= 98) {
-        handleLoadingComplete()
-        return 100
-      }
-      return Math.min(prev + 5, 100)
+  // Efecto principal que maneja el progreso
+  useEffect(() => {
+    let interval: NodeJS.Timeout | null = null
+
+    // Caso 1: Error - completar inmediatamente
+    if (hasError) {
+      setProgress(100)
+      progressRef.current = 100
+      handleLoadingComplete()
+      return
     }
 
-    // Mientras está cargando
-    if (prev < 40) return prev + Math.random() * 3 + 1 // más rápido al inicio
-    if (prev < 70) return prev + Math.random() * 1.5 + 0.5
-    if (prev < 95) return prev + Math.random() * 0.4 // avanza más lento al final
-    return prev // se queda flotando entre 95–98
-  }
+    // Caso 2: Carga completada - llegar al 100% suavemente
+    if (!isLoading) {
+      // Completar el progreso restante suavemente
+      interval = setInterval(() => {
+        setProgress(() => {
+          const newProgress = Math.min(progressRef.current + 2, 100)
+          progressRef.current = newProgress
+          
+          if (newProgress >= 100) {
+            if (interval) clearInterval(interval)
+            handleLoadingComplete()
+          }
+          
+          return newProgress
+        })
+      }, 50)
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setProgress((prev) => Math.min(100, calculateNextProgress(prev)))
-    }, 120)
+      return () => {
+        if (interval) clearInterval(interval)
+      }
+    }
 
-    return () => clearInterval(interval)
+    // Caso 3: Mientras está cargando - progresar hasta 95%, luego volver a 60-65%
+    interval = setInterval(() => {
+      setProgress(() => {
+        const currentProgress = progressRef.current
+
+        // Si llegamos a 95% y aún está cargando, volver a 60-65%
+        if (currentProgress >= 95) {
+          const resetValue = 60 + Math.random() * 5 // Entre 60 y 65
+          progressRef.current = resetValue
+          return resetValue
+        }
+
+        let increment
+
+        // Progreso rápido al inicio (0-30%)
+        if (currentProgress < 30) {
+          increment = Math.random() * 2 + 1 // 1-3%
+        }
+        // Progreso medio (30-60%)
+        else if (currentProgress < 60) {
+          increment = Math.random() * 1.5 + 0.5 // 0.5-2%
+        }
+        // Progreso lento (60-85%)
+        else if (currentProgress < 85) {
+          increment = Math.random() * 0.8 + 0.2 // 0.2-1%
+        }
+        // Progreso muy lento (85-95%)
+        else {
+          increment = Math.random() * 0.3 + 0.1 // 0.1-0.4%
+        }
+
+        const newProgress = Math.min(currentProgress + increment, 95)
+        progressRef.current = newProgress
+        
+        return newProgress
+      })
+    }, 200)
+
+    return () => {
+      if (interval) clearInterval(interval)
+    }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isLoading, timeoutReached, hasError])
+  }, [isLoading, hasError])
 
-  // 🔹 Fallback de seguridad (por si tarda o hay error)
+  // Timeout de seguridad (50 segundos)
   useEffect(() => {
     const timeout = setTimeout(() => {
-      if (isLoading) setTimeoutReached(true)
-    }, 25000) // 25 segundos máx. de carga
+      if (isLoading && progressRef.current < 100) {
+        console.warn('SpaceLoading: Timeout alcanzado, forzando completado')
+        setProgress(100)
+        progressRef.current = 100
+        handleLoadingComplete()
+      }
+    }, 50000)
+
     return () => clearTimeout(timeout)
-  }, [isLoading])
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   if (!shouldShow) return null
   
   return (
     <div
+      data-testid="space-loading"
       className={`fixed inset-0 z-50 flex items-center justify-center bg-gradient-to-b from-[#0a0e27] via-[#16213e] to-[#0f1729] transition-opacity duration-700 ${
         isComplete ? "opacity-0 pointer-events-none" : "opacity-100"
       }`}
     >
       <div className="absolute inset-0 overflow-hidden">
-        {[...Array(50)].map((_, i) => (
+        {Array.from({ length: 50 }, (_, i) => (
           <div
             key={`star-${i}`}
             className="absolute w-1 h-1 bg-white rounded-full animate-twinkle"
@@ -80,7 +140,7 @@ export function SpaceLoading({ isLoading = true, onLoadingComplete, shouldShow =
       </div>
 
       <div className="absolute inset-0 overflow-hidden">
-        {[...Array(3)].map((_, i) => (
+        {Array.from({ length: 3 }, (_, i) => (
           <div
             key={`shooting-star-${i}`}
             className="absolute w-1 h-1 bg-white rounded-full animate-shooting-star"
@@ -139,26 +199,39 @@ export function SpaceLoading({ isLoading = true, onLoadingComplete, shouldShow =
 
         <div className="w-full max-w-md space-y-6">
           <div className="text-center space-y-2">
-            <h2 className="text-3xl font-bold text-white tracking-tight">Explorando portafolio</h2>
-            <p className="text-blue-200/80 text-sm">Preparando los modulos....</p>
+            <h2 className="text-3xl font-bold text-white tracking-tight">
+              {hasError ? "Error al cargar" : "Explorando portafolio"}
+            </h2>
+            <p className="text-blue-200/80 text-sm">
+              {(() => {
+                if (hasError) return "Hubo un problema al cargar los módulos"
+                if (isLoading) return "Preparando los módulos..."
+                return "¡Listo para despegar!"
+              })()}
+            </p>
           </div>
 
           <div className="space-y-3">
-            <Progress value={progress} className="h-2 bg-white/10 backdrop-blur-sm" />
+            <Progress 
+              value={progress} 
+              className="h-2 bg-white/10 backdrop-blur-sm" 
+              data-testid="space-loading-progress"
+            />
             <div className="flex justify-between items-center text-xs">
               <span className="text-blue-300/70 font-mono">{progress.toFixed(0)}%</span>
               <span className="text-blue-300/70">
                 {progress < 30 && "Iniciando sistemas..."}
                 {progress >= 30 && progress < 60 && "Cargando módulos..."}
-                {progress >= 60 && progress < 98 && "Casi listo..."}
-                {progress >= 98 && "¡Despegando!"}
+                {progress >= 60 && progress < 95 && "Casi listo..."}
+                {progress >= 95 && progress < 100 && "Finalizando..."}
+                {progress >= 100 && "¡Despegando!"}
               </span>
             </div>
           </div>
         </div>
 
         <div className="absolute inset-0 pointer-events-none">
-          {[...Array(8)].map((_, i) => (
+          {Array.from({ length: 8 }, (_, i) => (
             <div
               key={`particle-${i}`}
               className="absolute w-2 h-2 bg-blue-400/30 rounded-full animate-float-particle"
