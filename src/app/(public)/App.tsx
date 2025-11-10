@@ -22,17 +22,25 @@ export const App = ({ children }: { readonly children: React.ReactNode }) => {
   const { 
     isAplicationInMaintenance, 
     isInitialLoading,
-    isFetched
+    isFetched,
+    isError
   } = useMaintenance();
-  console.log("🚀 ~ App ~ isAplicationInMaintenance:", isAplicationInMaintenance)
-  console.log("🚀 ~ App ~ isInitialLoading:", isInitialLoading)
-  console.log("🚀 ~ App ~ isFetched:", isFetched)
 
   const isDarkMode = useThemeStore((state) => state.isDarkMode);
   const toggleTheme = useThemeStore((state) => state.toggleTheme);
 
-  if (!isFetched && isInitialLoading) {
-    return <SpaceLoading isLoading={isInitialLoading} />;
+  // Mostrar SpaceLoading mientras no se haya completado el fetch inicial
+  // O si está cargando y no ha habido error
+  const shouldShowLoading = !isFetched || (isInitialLoading && !isError);
+
+  if (shouldShowLoading) {
+    return (
+      <SpaceLoading 
+        isLoading={isInitialLoading} 
+        hasError={isError}
+        shouldShow={true}
+      />
+    );
   }
 
   if (isAplicationInMaintenance) {

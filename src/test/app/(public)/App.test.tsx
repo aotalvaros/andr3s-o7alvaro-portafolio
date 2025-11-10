@@ -70,7 +70,7 @@ describe("App Component", () => {
             isAplicationInMaintenance: false,
             isInMaintenance: false,
             maintenanceData: undefined,
-            isFetched: false,
+            isFetched: true,
             isInitialLoading: false,
             isError: false,
             error: null
@@ -120,7 +120,7 @@ describe("App Component", () => {
                 isAplicationInMaintenance: true,
                 isInMaintenance: false,
                 maintenanceData: undefined,
-                isFetched: false,
+                isFetched: true,
                 isInitialLoading: false,
                 isError: false,
                 error: null
@@ -139,7 +139,7 @@ describe("App Component", () => {
                 isAplicationInMaintenance: false,
                 isInMaintenance: true,
                 maintenanceData: undefined,
-                isFetched: false,
+                isFetched: true,
                 isInitialLoading: false,
                 isError: false,
                 error: null
@@ -157,7 +157,7 @@ describe("App Component", () => {
                 isAplicationInMaintenance: false,
                 isInMaintenance: false,
                 maintenanceData: undefined,
-                isFetched: false,
+                isFetched: true,
                 isInitialLoading: false,
                 isError: false,
                 error: null
@@ -299,7 +299,7 @@ describe("App Component", () => {
                 isAplicationInMaintenance: false,
                 isInMaintenance: false,
                 maintenanceData: undefined,
-                isFetched: false,
+                isFetched: true,
                 isInitialLoading: false,
                 isError: true,
                 error: new Error("Network error")
@@ -338,7 +338,7 @@ describe("App Component", () => {
                 isAplicationInMaintenance: false,
                 isInMaintenance: false,
                 maintenanceData: undefined,
-                isFetched: false,
+                isFetched: true,
                 isInitialLoading: true,
                 isError: false,
                 error: null
@@ -352,7 +352,7 @@ describe("App Component", () => {
                 isAplicationInMaintenance: false,
                 isInMaintenance: false,
                 maintenanceData: undefined,
-                isFetched: false,
+                isFetched: true,
                 isInitialLoading: false,
                 isError: false,
                 error: null
