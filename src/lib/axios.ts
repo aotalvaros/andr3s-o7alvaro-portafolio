@@ -50,8 +50,8 @@ const api = axios.create({
     'Content-Type': 'application/json',
   },
   timeout: 60000,
-  // ✅ Configuración adicional para mejor performance
-  validateStatus: (status) => status < 500,
+  // ✅ Configuración adicional para mejor performance, solo considerar errores 5xx como fallas
+  validateStatus: (status) => status >= 200 && status < 300,
 });
 
 // ✅ Queue para manejar múltiples refresh token requests
@@ -75,18 +75,71 @@ const processQueue = (error: unknown, token: string | null = null) => {
 
 // ──────────── Interceptors ────────────
 
-// Interceptor para manejar el refresh token
+api.interceptors.request.use((config: InternalAxiosRequestConfig) => {
+  const shouldShowLoading = config.showLoading !== false;
+  
+  if (shouldShowLoading) {
+    loadingController.start();
+  }
+
+  // Authorization header
+  const token = getCookie('token') as string | undefined;
+  if (token) {
+    config.headers["Authorization"] = `Bearer ${token}`;
+  }
+
+  // Request ID para tracking
+  config.metadata = {
+    ...config.metadata,
+    requestId: `req_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+  };
+
+  // Abort controller para timeouts largos
+  if (config.timeout && config.timeout > 30000) {
+    const controller = new AbortController();
+    config.signal = controller.signal;
+    
+    const abortTimer = setTimeout(() => {
+      controller.abort();
+    }, config.timeout);
+    
+    config.metadata.abortTimer = abortTimer;
+  }
+
+  return config;
+});
+
+// ✅ HELPER: Limpiar timers
+function clearTimers(cfg?: AxiosRequestConfig) {
+  if (!cfg?.metadata) return;
+  
+  if (cfg.metadata.slowTimer) {
+    clearTimeout(cfg.metadata.slowTimer);
+  }
+  if (cfg.metadata.abortTimer) {
+    clearTimeout(cfg.metadata.abortTimer);
+  }
+}
+
+// ✅ ÚNICO RESPONSE INTERCEPTOR CONSOLIDADO
 api.interceptors.response.use(
+  // Success handler
   (response) => {
+    loadingController.stop();
     clearTimers(response.config);
     return response;
   },
+  
+  // Error handler
   async (error) => {
     const originalRequest = error.config;
+    
+    // Siempre limpiar loading y timers
+    loadingController.stop();
     clearTimers(originalRequest);
 
-    // ✅ Manejo mejorado de errores de autenticación
-    if (error.response?.status === 401 && !originalRequest._retry) {
+    // ✅ MANEJO DE 401 - REFRESH TOKEN
+    if (error.response?.status === 401 && !originalRequest?._retry) {
       originalRequest._retry = true;
 
       // Si ya hay un refresh en progreso, agregar a la cola
@@ -135,7 +188,7 @@ api.interceptors.response.use(
       } catch (refreshError) {
         processQueue(refreshError, null);
         
-        // Limpiar autenticación completamente
+        // Limpiar autenticación
         setCookie('token', '', { path: '/', expires: new Date(0) });
         setCookie('refreshToken', '', { path: '/', expires: new Date(0) });
         
@@ -143,7 +196,6 @@ api.interceptors.response.use(
           localStorage.removeItem('token');
           localStorage.removeItem('refreshToken');
           
-          // Solo redirigir si no estamos ya en login
           if (!window.location.pathname.includes('/login')) {
             window.location.replace('/login');
           }
@@ -154,74 +206,29 @@ api.interceptors.response.use(
         isRefreshing = false;
       }
     }
-    
-    return Promise.reject(error);
-  }
-);
 
-api.interceptors.request.use((config: InternalAxiosRequestConfig) => {
-  const shouldShowLoading = config.showLoading !== false;
-  
-  if (shouldShowLoading) {
-    loadingController.start();
-  }
+    // ✅ MANEJO DE ERRORES DE RED (ECONNREFUSED, ENOTFOUND, etc.)
+    if (error.code === 'ERR_NETWORK' || error.code === 'ECONNREFUSED' || error.code === 'ENOTFOUND') {
+      if (!originalRequest?.skipErrorToast) {
+        const toastState = useToastMessageStore.getState();
+        if (!toastState.show) {
+          toastState.setParams({
+            show: true,
+            typeMessage: 'error',
+            message: 'Error de conexión',
+            description: 'No se pudo conectar con el servidor. Verifica tu conexión.',
+          });
+        }
+      }
+      
+      // ✅ IMPORTANTE: Rechazar inmediatamente para que React Query maneje el retry
+      return Promise.reject(createCustomError(error));
+    }
 
-  // ✅ Authorization header mejorado
-  const token = getCookie('token') as string | undefined;
-  if (token) {
-    config.headers["Authorization"] = `Bearer ${token}`;
-  }
-
-  config.metadata = {
-    ...config.metadata,
-    requestId: `req_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
-  };
-
-  // ✅ Implementar abort controller si se requiere
-  if (config.timeout && config.timeout > 30000) {
-    const controller = new AbortController();
-    config.signal = controller.signal;
-    
-    const abortTimer = setTimeout(() => {
-      controller.abort();
-    }, config.timeout);
-    
-    config.metadata.abortTimer = abortTimer;
-  }
-
-  return config;
-});
-
-function clearTimers(cfg?: AxiosRequestConfig) {
-  if (!cfg?.metadata) return;
-  
-  if (cfg.metadata.slowTimer) {
-    clearTimeout(cfg.metadata.slowTimer);
-  }
-  if (cfg.metadata.abortTimer) {
-    clearTimeout(cfg.metadata.abortTimer);
-  }
-}
-
-api.interceptors.response.use(
-  (response) => {
-    
-    loadingController.stop();
-    clearTimers(response?.config);
-    return response;
-  },
-
-  // ──────────── error ────────────
-  (error) => {
-      // 🚀 Solo ocultar loading si se mostró inicialmente
-    loadingController.stop();
-    clearTimers(error.config);
-
-   // ✅ Skip toast si se especifica
-    if (!error.config?.skipErrorToast) {
+    // ✅ TOAST DE ERROR (si no se debe omitir)
+    if (!originalRequest?.skipErrorToast) {
       const toastState = useToastMessageStore.getState();
       
-      // ✅ Evitar toast duplicados de forma más elegante
       if (!toastState.show) {
         const errorMessage = getErrorMessage(error);
         toastState.setParams({
@@ -233,25 +240,42 @@ api.interceptors.response.use(
       }
     }
 
-    // ✅ Error customizado mejorado
-    const customError = createCustomError(error);
-    return Promise.reject(customError);
+    // ✅ Error customizado
+    return Promise.reject(createCustomError(error));
   }
 );
 
+// ✅ HELPER: Obtener mensaje de error
 function getErrorMessage(error: any): string {
+  // Errores de red
+  if (error.code === 'ERR_NETWORK') {
+    return 'No se pudo conectar con el servidor';
+  }
+  if (error.code === 'ECONNREFUSED') {
+    return 'Conexión rechazada por el servidor';
+  }
+  if (error.code === 'ENOTFOUND') {
+    return 'Servidor no encontrado';
+  }
   if (error.code === 'ECONNABORTED') {
     return 'La solicitud tardó demasiado tiempo';
   }
+  
+  // Errores HTTP
   if (error.response?.status >= 500) {
     return 'Error interno del servidor';
   }
   if (error.response?.status === 429) {
     return 'Demasiadas solicitudes. Intenta más tarde';
   }
+  if (error.response?.status === 404) {
+    return 'Recurso no encontrado';
+  }
+  
   return error.response?.data?.error ?? error.message ?? 'Error desconocido';
 }
 
+// ✅ HELPER: Crear error customizado
 function createCustomError(error: any): CustomAxiosError {
   const friendly = getErrorMessage(error);
   const customError = new Error(friendly) as CustomAxiosError;

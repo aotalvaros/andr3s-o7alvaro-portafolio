@@ -10,10 +10,11 @@ export function usePokeApi(limit: number) {
     []
   );
   const [selectedPokemon, setSelectedPokemon] = useState<ResponsePokemonDetaexport | null>(null);
+  const [searchTerm, setSearchTerm] = useState("");
 
   const pokeQuery = useQuery({
     queryKey: ["pokemonList", { limit, page }],
-    queryFn: () => fetchPokemonList(limit, (page - 1) * limit),
+    queryFn: () => fetchPokemonList(limit, (page - 1) * limit, searchTerm),
     staleTime: 1000 * 60,
   });
 
@@ -45,6 +46,12 @@ export function usePokeApi(limit: number) {
     }
   };
 
+  const handleSearchChange = (term: string) => {
+    setSearchTerm(term)
+    // setPage(1)
+    
+  }
+
   return {
     ...pokeQuery,
     pokemonData,
@@ -53,6 +60,7 @@ export function usePokeApi(limit: number) {
     selectedPokemon,
 
     handlePageChange,
-    setSelectedPokemon
+    setSelectedPokemon,
+    handleSearchChange
   };
 }

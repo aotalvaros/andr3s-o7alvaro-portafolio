@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { getTypeColor } from "@/lib/pokemonUtils";
 import { ResponsePokemonDetaexport } from "@/services/pokemon/models/responsePokemon.interface";
+import { motion } from "framer-motion"
 import Image from "next/image";
 
 interface PokemonCardProps {
@@ -11,13 +12,13 @@ interface PokemonCardProps {
   onClick?: () => void;
 }
 
-export function PokemonCard({ pokemon, onClick }: PokemonCardProps) {
+export function PokemonCard({ pokemon, onClick }: Readonly<PokemonCardProps>) {
   const primaryType = pokemon.types[0].type.name;
 
   return (
     <Card
       onClick={onClick}
-      className="group relative overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-2xl border-2 cursor-pointer"
+      className="group relative overflow-hidden transition-all duration-300 hover:scale-101 hover:shadow-2xl border-2 cursor-pointer"
       style={{
         borderColor: `${getTypeColor(primaryType)}20`,
       }}
@@ -52,18 +53,20 @@ export function PokemonCard({ pokemon, onClick }: PokemonCardProps) {
 
         <div className="relative aspect-square bg-muted/30 rounded-xl flex items-center justify-center overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-br from-transparent to-muted/20 dark:to-muted/80 " />
-          <Image
-            src={
-              pokemon?.sprites?.other?.["official-artwork"]?.front_default ||
-              pokemon.sprites.front_default
-            }
-            alt={pokemon.name}
-            width={200}
-            height={200}
-            className="relative z-10 w-full h-full object-contain p-4 transition-transform duration-300 group-hover:scale-110"
-            loading="lazy"
-            data-testid="pokemon-image"
-          />
+          <motion.div whileHover={{ scale: 1.1, rotate: 5 }} transition={{ type: "spring", stiffness: 300 }}>
+            <Image
+              src={
+                pokemon?.sprites?.other?.["official-artwork"]?.front_default ||
+                pokemon.sprites.front_default
+              }
+              alt={pokemon.name}
+              width={200}
+              height={200}
+              className="relative z-10 w-full h-full object-contain p-4 transition-transform duration-300 group-hover:scale-110"
+              loading="lazy"
+              data-testid="pokemon-image"
+            />
+          </motion.div>
         </div>
 
         <h3 className="text-xl font-bold capitalize text-center text-balance">
