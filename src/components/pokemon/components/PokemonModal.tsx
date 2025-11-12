@@ -126,8 +126,8 @@ export function PokemonModal({ pokemon: initialPokemon }: Readonly<PokemonModalP
       {/* Header */}
       <header className="text-center">
         <h2 className="text-2xl font-bold capitalize flex items-center justify-center gap-2" ref={imageContainerRef}>
-          <span>{currentPokemon.name}</span>
-          <span className="text-sm font-mono text-muted-foreground">
+          <span data-testid="pokemon-name">{currentPokemon.name}</span>
+          <span className="text-sm font-mono text-muted-foreground" data-testid="pokemon-id">
             #{String(currentPokemon.id).padStart(3, "0")}
           </span>
         </h2>
@@ -148,7 +148,7 @@ export function PokemonModal({ pokemon: initialPokemon }: Readonly<PokemonModalP
       />
 
       {/* Types */}
-      <div className="flex gap-2 justify-center flex-wrap">
+      <div className="flex gap-2 justify-center flex-wrap" data-testid="pokemon-types">
         {currentPokemon.types.map((type) => (
           <Badge
             key={type.type.name}
@@ -175,13 +175,13 @@ export function PokemonModal({ pokemon: initialPokemon }: Readonly<PokemonModalP
       <div className="grid grid-cols-2 gap-4">
         <div className="bg-muted/50 rounded-lg p-4 text-center">
           <p className="text-sm text-muted-foreground">Altura</p>
-          <p className="text-xl font-bold tabular-nums">
+          <p className="text-xl font-bold tabular-nums" data-testid="pokemon-height">
             {(currentPokemon.height / 10).toFixed(1)} m
           </p>
         </div>
         <div className="bg-muted/50 rounded-lg p-4 text-center">
           <p className="text-sm text-muted-foreground">Peso</p>
-          <p className="text-xl font-bold tabular-nums">
+          <p className="text-xl font-bold tabular-nums" data-testid="pokemon-weight">
             {(currentPokemon.weight / 10).toFixed(1)} kg
           </p>
         </div>
@@ -189,12 +189,12 @@ export function PokemonModal({ pokemon: initialPokemon }: Readonly<PokemonModalP
 
       {/* Stats */}
        <div className="space-y-3">
-            <h3 className="font-semibold text-lg">Stats</h3>
+            <h3 className="font-semibold text-lg" data-testid="pokemon-stats">Stats</h3>
             {currentPokemon.stats.map((stat) => (
               <div key={stat.stat.name} className="space-y-1">
                 <div className="flex justify-between text-sm">
-                  <span className="capitalize text-muted-foreground">{stat.stat.name.replace("-", " ")}</span>
-                  <span className="font-bold">{stat.base_stat}</span>
+                  <span className="capitalize text-muted-foreground" data-testid={`pokemon-stat-name-${stat.stat.name}`}>{stat.stat.name.replace("-", " ")}</span>
+                  <span className="font-bold" data-testid={`pokemon-stat-value-${stat.stat.name}`}>{stat.base_stat}</span>
                 </div>
                 <Progress value={(stat.base_stat / 255) * 100} className="h-2" data-testid={`pokemon-stat-${stat.stat.name}`} />
               </div>
