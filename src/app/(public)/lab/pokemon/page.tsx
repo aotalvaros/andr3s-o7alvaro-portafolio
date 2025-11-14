@@ -17,7 +17,7 @@ export default function PokemonPage() {
     }
 
     return (
-        <main className="py-24 px-4 mx-8">
+        <main className="py-24 px-4 mx-2 md:mx-8">
             <PokemonList/>
         </main>
     )
