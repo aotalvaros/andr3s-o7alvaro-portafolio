@@ -3,17 +3,17 @@
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { getTypeColor } from "@/lib/pokemonUtils";
-import { ResponsePokemonDetaexport } from "@/services/pokemon/models/responsePokemon.interface";
+import { IPokemon } from "@/services/pokemon/models/pokemon.interface";
 import { motion } from "framer-motion"
 import Image from "next/image";
 
 interface PokemonCardProps {
-  pokemon: ResponsePokemonDetaexport;
+  pokemon: IPokemon;
   onClick?: () => void;
 }
 
 export function PokemonCard({ pokemon, onClick }: Readonly<PokemonCardProps>) {
-  const primaryType = pokemon.types[0].type.name;
+  const primaryType = pokemon.pokemon_v2_pokemontypes[0].pokemon_v2_type.name;
 
   return (
     <Card
@@ -40,12 +40,12 @@ export function PokemonCard({ pokemon, onClick }: Readonly<PokemonCardProps>) {
             #{String(pokemon.id).padStart(3, "0")}
           </span>
           <div className="flex gap-1">
-            {pokemon.types.map((type) => (
+            {pokemon.pokemon_v2_pokemontypes.map((type) => (
               <div
-                key={type.type.name}
+                key={type.pokemon_v2_type.name}
                 className="w-2 h-2 rounded-full"
-                style={{ backgroundColor: getTypeColor(type.type.name) }}
-                data-testid={`pokemon-type-${type.type.name}`}
+                style={{ backgroundColor: getTypeColor(type.pokemon_v2_type.name) }}
+                data-testid={`pokemon-type-${type.pokemon_v2_type.name}`}
               />
             ))}
           </div>
@@ -56,8 +56,7 @@ export function PokemonCard({ pokemon, onClick }: Readonly<PokemonCardProps>) {
           <motion.div whileHover={{ scale: 1.1, rotate: 5 }} transition={{ type: "spring", stiffness: 300 }}>
             <Image
               src={
-                pokemon?.sprites?.other?.["official-artwork"]?.front_default ||
-                pokemon.sprites.front_default
+                pokemon?.pokemon_v2_pokemonsprites[0]?.sprites.other?.['official-artwork']?.front_default ?? "/assets/imageNoFound.png"
               }
               alt={pokemon.name}
               width={200}
@@ -74,33 +73,31 @@ export function PokemonCard({ pokemon, onClick }: Readonly<PokemonCardProps>) {
         </h3>
 
         <div className="flex gap-2 justify-center flex-wrap">
-          {pokemon.types.map((type) => (
+          {pokemon.pokemon_v2_pokemontypes.map((type) => (
             <Badge
-              key={type.type.name}
+              key={type.pokemon_v2_type.name}
               className="capitalize font-semibold text-xs px-3 py-1 border-0"
               style={{
-                backgroundColor: getTypeColor(type.type.name),
+                backgroundColor: getTypeColor(type.pokemon_v2_type.name),
                 color: "white",
               }}
             >
-              {type.type.name}
+              {type.pokemon_v2_type.name}
             </Badge>
           ))}
         </div>
-
         <div className="grid grid-cols-3 gap-2 pt-2 border-t border-border/50">
-          <div className="text-center">
-            <p className="text-xs text-muted-foreground">HP</p>
-            <p className="text-sm font-bold">{pokemon.stats[0].base_stat}</p>
-          </div>
-          <div className="text-center">
-            <p className="text-xs text-muted-foreground">ATK</p>
-            <p className="text-sm font-bold">{pokemon.stats[1].base_stat}</p>
-          </div>
-          <div className="text-center">
-            <p className="text-xs text-muted-foreground">DEF</p>
-            <p className="text-sm font-bold">{pokemon.stats[2].base_stat}</p>
-          </div>
+          {
+            pokemon?.pokemon_v2_pokemonstats?.slice(0, 3).map((stat) => (
+              <div key={stat.pokemon_v2_stat.name}>
+                <div className="text-center">
+                  <p className="text-xs text-muted-foreground">{stat.pokemon_v2_stat.name.toUpperCase()}</p>
+                  <p className="text-sm font-bold">{stat.base_stat}</p>
+                </div>
+              </div>
+
+            ))
+          }
         </div>
       </div>
     </Card>

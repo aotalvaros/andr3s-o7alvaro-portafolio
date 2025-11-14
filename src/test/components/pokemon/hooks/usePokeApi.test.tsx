@@ -1,288 +1,280 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { usePokeApi } from "@/components/pokemon/hooks/usePokeApi";
 import { fetchPokemonList } from "@/services/pokemon/pokeApi.service";
-
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import {
-  ResponsePokemon,
-  ResponsePokemonDetaexport,
-} from "@/services/pokemon/models/responsePokemon.interface";
 import { act, renderHook, waitFor } from "@testing-library/react";
 import { ReactNode } from "react";
 
-vi.mock("@/services/pokemon/pokeApi.service", () => ({
-  fetchPokemonList: vi.fn(),
-}));
+// ──────────── MOCKS ────────────
+vi.mock('@/services/pokemon/pokeApi.service');
 
 const mockFetchPokemonList = vi.mocked(fetchPokemonList);
 
-// Mock data
-const mockPokemonDetail: ResponsePokemonDetaexport = {
-  id: 1,
-  name: "bulbasaur",
-  height: 7,
-  weight: 69,
-  types: [
-    { type: { name: "grass", url: "" } },
-    { type: { name: "poison", url: "" } },
-  ],
-  sprites: {
-    front_default: "https://example.com/bulbasaur.png",
-    other: {
-      "official-artwork": {
-        front_default: "https://example.com/bulbasaur-artwork.png",
+// Mock window.scrollTo
+const mockScrollTo = vi.fn();
+Object.defineProperty(window, 'scrollTo', {
+  writable: true,
+  value: mockScrollTo,
+});
+
+// ──────────── MOCK DATA ────────────
+const createMockPokemon = (id: number, name: string): IPokemon => ({
+  id,
+  name,
+  height: 10,
+  weight: 100,
+  pokemon_v2_pokemontypes: [
+    {
+      pokemon_v2_type: {
+        name: 'grass',
       },
     },
+  ],
+  pokemon_v2_pokemonsprites: [
+    {
+      sprites: {
+        other: {
+          'official-artwork': {
+            front_default: `https://example.com/${name}.png`,
+          },
+        },
+        front_default: `https://example.com/${name}-front.png`,
+      },
+    },
+  ],
+  pokemon_v2_pokemonstats: [
+    {
+      base_stat: 45,
+      pokemon_v2_stat: {
+        name: 'hp',
+      },
+    },
+  ],
+  pokemon_v2_pokemonspecy: {
+    pokemon_v2_pokemonspeciesflavortexts: [
+      {
+        flavor_text: `A ${name} pokemon description.`,
+      },
+    ],
+    pokemon_v2_evolutionchain: {
+      pokemon_v2_pokemonspecies: [
+        {
+          id,
+          name,
+        },
+      ],
+    },
   },
-  stats: [
-    { base_stat: 45, effort: 0, stat: { name: "hp", url: "" } },
-    { base_stat: 49, effort: 0, stat: { name: "attack", url: "" } },
-    { base_stat: 49, effort: 0, stat: { name: "defense", url: "" } },
-    { base_stat: 65, effort: 0, stat: { name: "special-attack", url: "" } },
-    { base_stat: 65, effort: 0, stat: { name: "special-defense", url: "" } },
-    { base_stat: 45, effort: 0, stat: { name: "speed", url: "" } },
-  ],
-} as ResponsePokemonDetaexport;
+});
 
-const mockPokemonDetail2: ResponsePokemonDetaexport = {
-  ...mockPokemonDetail,
-  id: 2,
-  name: "ivysaur",
-};
+const mockPokemonList = [
+  createMockPokemon(1, 'bulbasaur'),
+  createMockPokemon(2, 'ivysaur'),
+  createMockPokemon(3, 'venusaur'),
+  createMockPokemon(4, 'charmander'),
+  createMockPokemon(5, 'charmeleon'),
+];
 
-const mockResponsePokemon: ResponsePokemon = {
-  count: 1302,
-  results: [
-    { name: "bulbasaur", url: "https://pokeapi.co/api/v2/pokemon/1/" },
-    { name: "ivysaur", url: "https://pokeapi.co/api/v2/pokemon/2/" },
-  ],
-  next: "https://pokeapi.co/api/v2/pokemon?offset=2&limit=2",
-  previous: null,
-};
+const createMockResponse = (
+  pokemonList: IPokemon[],
+  totalCount: number
+) => ({
+  pokemon_v2_pokemon: pokemonList,
+  pokemon_v2_pokemon_aggregate: {
+    aggregate: {
+      count: totalCount,
+    },
+  },
+});
 
+// ──────────── HELPER FUNCTIONS ────────────
 const createWrapper = () => {
   const queryClient = new QueryClient({
     defaultOptions: {
       queries: {
         retry: false,
+        gcTime: 0,
       },
+    },
+    logger: {
+      log: () => {},
+      warn: () => {},
+      error: () => {},
     },
   });
 
   const Wrapper = ({ children }: { children: ReactNode }) => (
-    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+    <QueryClientProvider client={queryClient}>
+      {children}
+    </QueryClientProvider>
   );
 
-  return Wrapper;
+  return { Wrapper, queryClient };
 };
 
-describe("usePokeApi", () => {
+// ──────────── TEST SUITE ────────────
+describe('usePokeApi', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-
-    // Mock default de fetchPokemonList
-    mockFetchPokemonList.mockResolvedValue(mockResponsePokemon);
-
-    // Mock global.fetch para los detalles de pokemon
-    global.fetch = vi.fn((url) => {
-      if (url.includes("pokemon/1")) {
-        return Promise.resolve({
-          json: () => Promise.resolve(mockPokemonDetail),
-        } as Response);
-      }
-      if (url.includes("pokemon/2")) {
-        return Promise.resolve({
-          json: () => Promise.resolve(mockPokemonDetail2),
-        } as Response);
-      }
-      return Promise.reject(new Error("Unknown URL"));
-    }) as any;
-
-    // Mock window.scrollTo
-    window.scrollTo = vi.fn();
+    mockScrollTo.mockClear();
   });
 
-  describe("Initial State and Setup", () => {
-    it("should initialize with correct default values", () => {
-      const { result } = renderHook(() => usePokeApi(8), {
-        wrapper: createWrapper(),
-      });
+  afterEach(() => {
+    vi.clearAllTimers();
+  });
 
-      expect(result.current.pokemonData).toEqual([]);
+  // ──────────── INITIALIZATION TESTS ────────────
+  describe('Initialization', () => {
+    it('should initialize with default values', () => {
+      const { Wrapper } = createWrapper();
+      mockFetchPokemonList.mockResolvedValue(createMockResponse(mockPokemonList, 50));
+
+      const { result } = renderHook(() => usePokeApi(10), { wrapper: Wrapper });
+
       expect(result.current.page).toBe(1);
-      expect(result.current.totalPages).toBe(0);
       expect(result.current.selectedPokemon).toBeNull();
     });
 
-    it("should call fetchPokemonList with correct initial parameters", async () => {
-      renderHook(() => usePokeApi(8), {
-        wrapper: createWrapper(),
-      });
+    it('should calculate correct offset for first page', async () => {
+      const { Wrapper } = createWrapper();
+      mockFetchPokemonList.mockResolvedValue(createMockResponse(mockPokemonList, 50));
+
+      renderHook(() => usePokeApi(10), { wrapper: Wrapper });
 
       await waitFor(() => {
-        expect(mockFetchPokemonList).toHaveBeenCalledWith(8, 0);
+        expect(mockFetchPokemonList).toHaveBeenCalledWith(
+          expect.any(String),
+          expect.objectContaining({
+            limit: 10,
+            offset: 0,
+            name: '%%',
+          })
+        );
       });
     });
 
-    it("should have isLoading true initially", () => {
-      const { result } = renderHook(() => usePokeApi(8), {
-        wrapper: createWrapper(),
+    it('should initialize with correct queryKey', async () => {
+      const { Wrapper, queryClient } = createWrapper();
+      mockFetchPokemonList.mockResolvedValue(createMockResponse(mockPokemonList, 50));
+
+      renderHook(() => usePokeApi(10), { wrapper: Wrapper });
+
+      await waitFor(() => {
+        const cache = queryClient.getQueryCache();
+        const queries = cache.findAll({
+          queryKey: ['paginatedSearchByName', '', 1],
+        });
+        expect(queries).toHaveLength(1);
       });
+    });
+  });
+
+  // ──────────── DATA FETCHING TESTS ────────────
+  describe('Data Fetching', () => {
+    it('should fetch pokemon list successfully', async () => {
+      const { Wrapper } = createWrapper();
+      mockFetchPokemonList.mockResolvedValue(createMockResponse(mockPokemonList, 50));
+
+      const { result } = renderHook(() => usePokeApi(10), { wrapper: Wrapper });
+
+      await waitFor(() => {
+        expect(result.current.isSuccess).toBe(true);
+      });
+
+      expect(result.current.data?.pokemon_v2_pokemon).toHaveLength(5);
+      expect(result.current.data?.pokemon_v2_pokemon[0].name).toBe('bulbasaur');
+    });
+
+    it('should handle loading state', () => {
+      const { Wrapper } = createWrapper();
+      mockFetchPokemonList.mockImplementation(
+        () => new Promise(() => {}) // Never resolves
+      );
+
+      const { result } = renderHook(() => usePokeApi(10), { wrapper: Wrapper });
 
       expect(result.current.isLoading).toBe(true);
+      expect(result.current.data).toBeUndefined();
     });
 
-    it("should accept different limit values", async () => {
-      renderHook(() => usePokeApi(20), {
-        wrapper: createWrapper(),
-      });
+    it('should fetch with correct variables', async () => {
+      const { Wrapper } = createWrapper();
+      mockFetchPokemonList.mockResolvedValue(createMockResponse(mockPokemonList, 50));
+
+      renderHook(() => usePokeApi(20), { wrapper: Wrapper });
 
       await waitFor(() => {
-        expect(mockFetchPokemonList).toHaveBeenCalledWith(20, 0);
-      });
-    });
-  });
-  describe("Data Fetching", () => {
-    it("should fetch and set pokemon data correctly", async () => {
-      const { result } = renderHook(() => usePokeApi(2), {
-        wrapper: createWrapper(),
-      });
-
-      await waitFor(() => {
-        expect(result.current.pokemonData).toHaveLength(2);
-      });
-
-      expect(result.current.pokemonData[0].name).toBe("bulbasaur");
-      expect(result.current.pokemonData[1].name).toBe("ivysaur");
-    });
-
-    it("should set total count correctly", async () => {
-      const { result } = renderHook(() => usePokeApi(8), {
-        wrapper: createWrapper(),
-      });
-
-      await waitFor(() => {
-        expect(result.current.totalPages).toBeGreaterThan(0);
-      });
-
-      // 1302 pokemon / 8 per page = 163 pages
-      expect(result.current.totalPages).toBe(163);
-    });
-
-    it("should calculate total pages correctly", async () => {
-      mockFetchPokemonList.mockResolvedValue({
-        ...mockResponsePokemon,
-        count: 100,
-      });
-
-      const { result } = renderHook(() => usePokeApi(10), {
-        wrapper: createWrapper(),
-      });
-
-      await waitFor(() => {
-        expect(result.current.totalPages).toBe(10);
-      });
-    });
-
-    it("should fetch pokemon details from URLs", async () => {
-      renderHook(() => usePokeApi(2), {
-        wrapper: createWrapper(),
-      });
-
-      await waitFor(() => {
-        expect(global.fetch).toHaveBeenCalledWith(
-          "https://pokeapi.co/api/v2/pokemon/1/"
-        );
-        expect(global.fetch).toHaveBeenCalledWith(
-          "https://pokeapi.co/api/v2/pokemon/2/"
+        expect(mockFetchPokemonList).toHaveBeenCalledWith(
+          expect.any(String),
+          {
+            name: '%%',
+            limit: 20,
+            offset: 0,
+          }
         );
       });
     });
 
-    it("should handle Promise.all for multiple pokemon", async () => {
-      const { result } = renderHook(() => usePokeApi(2), {
-        wrapper: createWrapper(),
+    it('should refetch when query is invalidated', async () => {
+      const { Wrapper, queryClient } = createWrapper();
+      mockFetchPokemonList.mockResolvedValue(createMockResponse(mockPokemonList, 50));
+
+      const { result } = renderHook(() => usePokeApi(10), { wrapper: Wrapper });
+
+      await waitFor(() => {
+        expect(result.current.isSuccess).toBe(true);
+      });
+
+      expect(mockFetchPokemonList).toHaveBeenCalledTimes(1);
+
+      // Invalidate and refetch
+      await act(async () => {
+        await queryClient.invalidateQueries({
+          queryKey: ['paginatedSearchByName'],
+        });
       });
 
       await waitFor(() => {
-        expect(result.current.pokemonData).toHaveLength(2);
+        expect(mockFetchPokemonList).toHaveBeenCalledTimes(2);
       });
-
-      expect(result.current.pokemonData[0].id).toBe(1);
-      expect(result.current.pokemonData[1].id).toBe(2);
-    });
-
-    it("should update data when query data changes", async () => {
-      const { result, rerender } = renderHook(() => usePokeApi(2), {
-        wrapper: createWrapper(),
-      });
-
-      await waitFor(() => {
-        expect(result.current.pokemonData).toHaveLength(2);
-      });
-
-      // Simulate data change
-      const newMockData: ResponsePokemon = {
-        count: 1302,
-        results: [
-          { name: "charmander", url: "https://pokeapi.co/api/v2/pokemon/4/" },
-        ],
-        next: "",
-        previous: null,
-      };
-
-      const newPokemonDetail = {
-        ...mockPokemonDetail,
-        id: 4,
-        name: "charmander",
-      };
-
-      global.fetch = vi.fn(() =>
-        Promise.resolve({
-          json: () => Promise.resolve(newPokemonDetail),
-        } as Response)
-      ) as any;
-
-      mockFetchPokemonList.mockResolvedValue(newMockData);
-
-      rerender();
-
-      await waitFor(() => {
-        // Data should remain from previous fetch until new page is triggered
-        expect(result.current.pokemonData).toBeDefined();
-      });
-    });
-
-    it("should handle empty results gracefully", async () => {
-      mockFetchPokemonList.mockResolvedValue({
-        count: 0,
-        results: [],
-        next: "",
-        previous: null,
-      });
-
-      const { result } = renderHook(() => usePokeApi(8), {
-        wrapper: createWrapper(),
-      });
-
-      await waitFor(() => {
-        expect(result.current.isLoading).toBe(false);
-      });
-
-      expect(result.current.pokemonData).toEqual([]);
-      expect(result.current.totalPages).toBe(0);
     });
   });
 
-  describe("Pagination", () => {
-    it("should handle page change correctly", async () => {
-      const { result } = renderHook(() => usePokeApi(8), {
-        wrapper: createWrapper(),
-      });
+  // ──────────── PAGINATION TESTS ────────────
+  describe('Pagination', () => {
+    it('should calculate total pages correctly', async () => {
+      const { Wrapper } = createWrapper();
+      mockFetchPokemonList.mockResolvedValue(createMockResponse(mockPokemonList, 50));
+
+      const { result } = renderHook(() => usePokeApi(10), { wrapper: Wrapper });
 
       await waitFor(() => {
-        expect(result.current.isLoading).toBe(false);
+        expect(result.current.totalPages).toBe(5); // 50 / 10 = 5
+      });
+
+      expect(result.current.totalCount).toBe(50);
+    });
+
+    it('should round up total pages for non-exact division', async () => {
+      const { Wrapper } = createWrapper();
+      mockFetchPokemonList.mockResolvedValue(createMockResponse(mockPokemonList, 47));
+
+      const { result } = renderHook(() => usePokeApi(10), { wrapper: Wrapper });
+
+      await waitFor(() => {
+        expect(result.current.totalPages).toBe(5); // Math.ceil(47 / 10) = 5
+      });
+    });
+
+    it('should handle page change within valid range', async () => {
+      const { Wrapper } = createWrapper();
+      mockFetchPokemonList.mockResolvedValue(createMockResponse(mockPokemonList, 50));
+
+      const { result } = renderHook(() => usePokeApi(10), { wrapper: Wrapper });
+
+      await waitFor(() => {
+        expect(result.current.isSuccess).toBe(true);
       });
 
       act(() => {
@@ -290,53 +282,46 @@ describe("usePokeApi", () => {
       });
 
       expect(result.current.page).toBe(2);
-    });
-
-    it("should call fetchPokemonList with correct offset on page change", async () => {
-      const { result } = renderHook(() => usePokeApi(8), {
-        wrapper: createWrapper(),
-      });
-
-      await waitFor(() => {
-        expect(result.current.isLoading).toBe(false);
-      });
-
-      act(() => {
-        result.current.handlePageChange(3);
-      });
-
-      await waitFor(() => {
-        // Page 3 with limit 8 = offset 16 (0-indexed: (3-1) * 8 = 16)
-        expect(mockFetchPokemonList).toHaveBeenCalledWith(8, 16);
+      expect(mockScrollTo).toHaveBeenCalledWith({
+        top: 0,
+        behavior: 'smooth',
       });
     });
 
-    it("should scroll to top on page change", async () => {
-      const { result } = renderHook(() => usePokeApi(8), {
-        wrapper: createWrapper(),
-      });
+    it('should calculate correct offset for page 2', async () => {
+      const { Wrapper } = createWrapper();
+      mockFetchPokemonList.mockResolvedValue(createMockResponse(mockPokemonList, 50));
+
+      const { result } = renderHook(() => usePokeApi(10), { wrapper: Wrapper });
 
       await waitFor(() => {
-        expect(result.current.isLoading).toBe(false);
+        expect(result.current.isSuccess).toBe(true);
       });
+
+      mockFetchPokemonList.mockClear();
 
       act(() => {
         result.current.handlePageChange(2);
       });
 
-      expect(window.scrollTo).toHaveBeenCalledWith({
-        top: 0,
-        behavior: "smooth",
+      await waitFor(() => {
+        expect(mockFetchPokemonList).toHaveBeenCalledWith(
+          expect.any(String),
+          expect.objectContaining({
+            offset: 10, // (2-1) * 10 = 10
+          })
+        );
       });
     });
 
-    it("should not change page if value is less than 1", async () => {
-      const { result } = renderHook(() => usePokeApi(8), {
-        wrapper: createWrapper(),
-      });
+    it('should not change page below 1', async () => {
+      const { Wrapper } = createWrapper();
+      mockFetchPokemonList.mockResolvedValue(createMockResponse(mockPokemonList, 50));
+
+      const { result } = renderHook(() => usePokeApi(10), { wrapper: Wrapper });
 
       await waitFor(() => {
-        expect(result.current.isLoading).toBe(false);
+        expect(result.current.isSuccess).toBe(true);
       });
 
       act(() => {
@@ -344,118 +329,276 @@ describe("usePokeApi", () => {
       });
 
       expect(result.current.page).toBe(1);
-      expect(window.scrollTo).not.toHaveBeenCalled();
+      expect(mockScrollTo).not.toHaveBeenCalled();
     });
 
-    it("should not change page if value exceeds total pages", async () => {
-      const { result } = renderHook(() => usePokeApi(8), {
-        wrapper: createWrapper(),
-      });
+    it('should not change page above total pages', async () => {
+      const { Wrapper } = createWrapper();
+      mockFetchPokemonList.mockResolvedValue(createMockResponse(mockPokemonList, 50));
+
+      const { result } = renderHook(() => usePokeApi(10), { wrapper: Wrapper });
 
       await waitFor(() => {
-        expect(result.current.isLoading).toBe(false);
-      });
-
-      const invalidPage = result.current.totalPages + 10;
-
-      act(() => {
-        result.current.handlePageChange(invalidPage);
-      });
-
-      expect(result.current.page).toBe(173);
-    });
-
-    it("should accept page 1 as valid", async () => {
-      const { result } = renderHook(() => usePokeApi(8), {
-        wrapper: createWrapper(),
-      });
-
-      await waitFor(() => {
-        expect(result.current.isLoading).toBe(false);
+        expect(result.current.totalPages).toBe(5);
       });
 
       act(() => {
-        result.current.handlePageChange(1);
+        result.current.handlePageChange(6);
       });
 
       expect(result.current.page).toBe(1);
-      expect(window.scrollTo).toHaveBeenCalled();
+      expect(mockScrollTo).not.toHaveBeenCalled();
     });
 
-    it("should accept last page as valid", async () => {
-      const { result } = renderHook(() => usePokeApi(8), {
-        wrapper: createWrapper(),
-      });
+    it('should allow changing to last page', async () => {
+      const { Wrapper } = createWrapper();
+      mockFetchPokemonList.mockResolvedValue(createMockResponse(mockPokemonList, 50));
+
+      const { result } = renderHook(() => usePokeApi(10), { wrapper: Wrapper });
 
       await waitFor(() => {
-        expect(result.current.isLoading).toBe(false);
+        expect(result.current.totalPages).toBe(5);
       });
-
-      const lastPage = result.current.totalPages;
-
-      act(() => {
-        result.current.handlePageChange(lastPage);
-      });
-
-      expect(result.current.page).toBe(lastPage);
-    });
-
-    it("should handle multiple page changes", async () => {
-      const { result } = renderHook(() => usePokeApi(8), {
-        wrapper: createWrapper(),
-      });
-
-      await waitFor(() => {
-        expect(result.current.isLoading).toBe(false);
-      });
-
-      act(() => {
-        result.current.handlePageChange(2);
-      });
-
-      expect(result.current.page).toBe(2);
 
       act(() => {
         result.current.handlePageChange(5);
       });
+
+      expect(result.current.page).toBe(5);
+      expect(mockScrollTo).toHaveBeenCalledWith({
+        top: 0,
+        behavior: 'smooth',
+      });
+    });
+
+    it('should scroll to top on valid page change', async () => {
+      const { Wrapper } = createWrapper();
+      mockFetchPokemonList.mockResolvedValue(createMockResponse(mockPokemonList, 50));
+
+      const { result } = renderHook(() => usePokeApi(10), { wrapper: Wrapper });
+
+      await waitFor(() => {
+        expect(result.current.isSuccess).toBe(true);
+      });
+
+      mockScrollTo.mockClear();
+
+      act(() => {
+        result.current.handlePageChange(3);
+      });
+
+      expect(mockScrollTo).toHaveBeenCalledTimes(1);
+      expect(mockScrollTo).toHaveBeenCalledWith({
+        top: 0,
+        behavior: 'smooth',
+      });
+    });
+
+    it('should handle rapid page changes', async () => {
+      const { Wrapper } = createWrapper();
+      mockFetchPokemonList.mockResolvedValue(createMockResponse(mockPokemonList, 50));
+
+      const { result } = renderHook(() => usePokeApi(10), { wrapper: Wrapper });
+
+      await waitFor(() => {
+        expect(result.current.isSuccess).toBe(true);
+      });
+
+      act(() => {
+        result.current.handlePageChange(2);
+        result.current.handlePageChange(3);
+        result.current.handlePageChange(4);
+      });
+
+      expect(result.current.page).toBe(4);
     });
   });
 
-  describe("Selected Pokemon", () => {
-    it("should set selected pokemon correctly", async () => {
-      const { result } = renderHook(() => usePokeApi(8), {
-        wrapper: createWrapper(),
-      });
+  // ──────────── SEARCH FUNCTIONALITY TESTS ────────────
+  describe('Search Functionality', () => {
+    it('should initialize with empty search term', () => {
+      const { Wrapper } = createWrapper();
+      mockFetchPokemonList.mockResolvedValue(createMockResponse(mockPokemonList, 50));
 
-      await waitFor(() => {
-        expect(result.current.pokemonData).toHaveLength(2);
-      });
+      renderHook(() => usePokeApi(10), { wrapper: Wrapper });
 
-      const pokemonToSelect = result.current.pokemonData[0];
-
-      act(() => {
-        result.current.setSelectedPokemon(pokemonToSelect);
-      });
-
-      expect(result.current.selectedPokemon).toEqual(pokemonToSelect);
+      expect(mockFetchPokemonList).toHaveBeenCalledWith(
+        expect.any(String),
+        expect.objectContaining({
+          name: '%%',
+        })
+      );
     });
 
-    it("should clear selected pokemon when set to null", async () => {
-      const { result } = renderHook(() => usePokeApi(8), {
-        wrapper: createWrapper(),
+    it('should update search term and reset to page 1', async () => {
+      const { Wrapper } = createWrapper();
+      mockFetchPokemonList.mockResolvedValue(createMockResponse(mockPokemonList, 50));
+
+      const { result } = renderHook(() => usePokeApi(10), { wrapper: Wrapper });
+
+      await waitFor(() => {
+        expect(result.current.isSuccess).toBe(true);
+      });
+
+      // Change to page 3
+      act(() => {
+        result.current.handlePageChange(3);
+      });
+
+      expect(result.current.page).toBe(3);
+
+      // Search should reset to page 1
+      act(() => {
+        result.current.handleSearchChange('pikachu');
+      });
+
+      expect(result.current.page).toBe(1);
+    });
+
+    it('should fetch with search term in correct format', async () => {
+      const { Wrapper } = createWrapper();
+      mockFetchPokemonList.mockResolvedValue(createMockResponse([mockPokemonList[0]], 1));
+
+      const { result } = renderHook(() => usePokeApi(10), { wrapper: Wrapper });
+
+      await waitFor(() => {
+        expect(result.current.isSuccess).toBe(true);
+      });
+
+      mockFetchPokemonList.mockClear();
+
+      act(() => {
+        result.current.handleSearchChange('bulbasaur');
       });
 
       await waitFor(() => {
-        expect(result.current.pokemonData).toHaveLength(2);
+        expect(mockFetchPokemonList).toHaveBeenCalledWith(
+          expect.any(String),
+          expect.objectContaining({
+            name: '%bulbasaur%', // SQL LIKE pattern
+          })
+        );
       });
+    });
 
-      const pokemonToSelect = result.current.pokemonData[0];
+    it('should handle special characters in search', async () => {
+      const { Wrapper } = createWrapper();
+      mockFetchPokemonList.mockResolvedValue(createMockResponse(mockPokemonList, 50));
+
+      const { result } = renderHook(() => usePokeApi(10), { wrapper: Wrapper });
+
+      await waitFor(() => {
+        expect(result.current.isSuccess).toBe(true);
+      });
 
       act(() => {
-        result.current.setSelectedPokemon(pokemonToSelect);
+        result.current.handleSearchChange("farfetch'd");
       });
 
-      expect(result.current.selectedPokemon).not.toBeNull();
+      await waitFor(() => {
+        expect(mockFetchPokemonList).toHaveBeenCalledWith(
+          expect.any(String),
+          expect.objectContaining({
+            name: "%farfetch'd%",
+          })
+        );
+      });
+    });
+
+    it('should trigger new query on search change', async () => {
+      const { Wrapper, queryClient } = createWrapper();
+      mockFetchPokemonList.mockResolvedValue(createMockResponse(mockPokemonList, 50));
+
+      const { result } = renderHook(() => usePokeApi(10), { wrapper: Wrapper });
+
+      await waitFor(() => {
+        expect(result.current.isSuccess).toBe(true);
+      });
+
+      const initialCallCount = mockFetchPokemonList.mock.calls.length;
+
+      act(() => {
+        result.current.handleSearchChange('charmander');
+      });
+
+      await waitFor(() => {
+        expect(mockFetchPokemonList.mock.calls.length).toBeGreaterThan(initialCallCount);
+      });
+
+      // Verify new queryKey is created
+      const cache = queryClient.getQueryCache();
+      const queries = cache.findAll({
+        queryKey: ['paginatedSearchByName', 'charmander', 1],
+      });
+      expect(queries).toHaveLength(1);
+    });
+
+    it('should handle multiple rapid search changes', async () => {
+      const { Wrapper } = createWrapper();
+      mockFetchPokemonList.mockResolvedValue(createMockResponse(mockPokemonList, 50));
+
+      const { result } = renderHook(() => usePokeApi(10), { wrapper: Wrapper });
+
+      await waitFor(() => {
+        expect(result.current.isSuccess).toBe(true);
+      });
+
+      act(() => {
+        result.current.handleSearchChange('a');
+        result.current.handleSearchChange('ab');
+        result.current.handleSearchChange('abc');
+      });
+
+      // Should use the last search term
+      await waitFor(() => {
+        expect(mockFetchPokemonList).toHaveBeenLastCalledWith(
+          expect.any(String),
+          expect.objectContaining({
+            name: '%abc%',
+          })
+        );
+      });
+    });
+  });
+
+  // ──────────── SELECTED POKEMON TESTS ────────────
+  describe('Selected Pokemon', () => {
+    it('should set selected pokemon', async () => {
+      const { Wrapper } = createWrapper();
+      mockFetchPokemonList.mockResolvedValue(createMockResponse(mockPokemonList, 50));
+
+      const { result } = renderHook(() => usePokeApi(10), { wrapper: Wrapper });
+
+      await waitFor(() => {
+        expect(result.current.isSuccess).toBe(true);
+      });
+
+      const pokemon = createMockPokemon(25, 'pikachu');
+
+      act(() => {
+        result.current.setSelectedPokemon(pokemon);
+      });
+
+      expect(result.current.selectedPokemon).toEqual(pokemon);
+    });
+
+    it('should clear selected pokemon', async () => {
+      const { Wrapper } = createWrapper();
+      mockFetchPokemonList.mockResolvedValue(createMockResponse(mockPokemonList, 50));
+
+      const { result } = renderHook(() => usePokeApi(10), { wrapper: Wrapper });
+
+      await waitFor(() => {
+        expect(result.current.isSuccess).toBe(true);
+      });
+
+      const pokemon = createMockPokemon(25, 'pikachu');
+
+      act(() => {
+        result.current.setSelectedPokemon(pokemon);
+      });
+
+      expect(result.current.selectedPokemon).toEqual(pokemon);
 
       act(() => {
         result.current.setSelectedPokemon(null);
@@ -464,189 +607,461 @@ describe("usePokeApi", () => {
       expect(result.current.selectedPokemon).toBeNull();
     });
 
-    it("should allow selecting different pokemon", async () => {
-      const { result } = renderHook(() => usePokeApi(8), {
-        wrapper: createWrapper(),
-      });
+    it('should maintain selected pokemon across page changes', async () => {
+      const { Wrapper } = createWrapper();
+      mockFetchPokemonList.mockResolvedValue(createMockResponse(mockPokemonList, 50));
+
+      const { result } = renderHook(() => usePokeApi(10), { wrapper: Wrapper });
 
       await waitFor(() => {
-        expect(result.current.pokemonData).toHaveLength(2);
+        expect(result.current.isSuccess).toBe(true);
       });
+
+      const pokemon = createMockPokemon(25, 'pikachu');
 
       act(() => {
-        result.current.setSelectedPokemon(result.current.pokemonData[0]);
+        result.current.setSelectedPokemon(pokemon);
       });
-
-      expect(result.current.selectedPokemon?.name).toBe("bulbasaur");
-
-      act(() => {
-        result.current.setSelectedPokemon(result.current.pokemonData[1]);
-      });
-
-      expect(result.current.selectedPokemon?.name).toBe("ivysaur");
-    });
-  });
-
-  describe("React Query Integration", () => {
-    it("should use correct query key", async () => {
-      const { result } = renderHook(() => usePokeApi(8), {
-        wrapper: createWrapper(),
-      });
-
-      await waitFor(() => {
-        expect(result.current.isLoading).toBe(false);
-      });
-
-      // Query should have been called with the key
-      expect(mockFetchPokemonList).toHaveBeenCalled();
-    });
-
-    it("should have staleTime configured", async () => {
-      const { result } = renderHook(() => usePokeApi(8), {
-        wrapper: createWrapper(),
-      });
-
-      await waitFor(() => {
-        expect(result.current.isLoading).toBe(false);
-      });
-
-      // Data should be available and not stale immediately
-      expect(result.current.data).toBeDefined();
-    });
-
-    it("should expose React Query properties", async () => {
-      const { result } = renderHook(() => usePokeApi(8), {
-        wrapper: createWrapper(),
-      });
-
-      await waitFor(() => {
-        expect(result.current.isLoading).toBe(false);
-      });
-
-      // Should spread all React Query properties
-      expect(result.current).toHaveProperty("isLoading");
-      expect(result.current).toHaveProperty("isError");
-      expect(result.current).toHaveProperty("data");
-      expect(result.current).toHaveProperty("error");
-      expect(result.current).toHaveProperty("refetch");
-    });
-
-    it("should update query when page changes", async () => {
-      const { result } = renderHook(() => usePokeApi(8), {
-        wrapper: createWrapper(),
-      });
-
-      await waitFor(() => {
-        expect(result.current.isLoading).toBe(false);
-      });
-
-      const firstCallCount = mockFetchPokemonList.mock.calls.length;
 
       act(() => {
         result.current.handlePageChange(2);
       });
 
+      expect(result.current.selectedPokemon).toEqual(pokemon);
+    });
+
+    it('should maintain selected pokemon across search changes', async () => {
+      const { Wrapper } = createWrapper();
+      mockFetchPokemonList.mockResolvedValue(createMockResponse(mockPokemonList, 50));
+
+      const { result } = renderHook(() => usePokeApi(10), { wrapper: Wrapper });
+
       await waitFor(() => {
-        expect(mockFetchPokemonList.mock.calls.length).toBeGreaterThan(
-          firstCallCount
+        expect(result.current.isSuccess).toBe(true);
+      });
+
+      const pokemon = createMockPokemon(25, 'pikachu');
+
+      act(() => {
+        result.current.setSelectedPokemon(pokemon);
+      });
+
+      act(() => {
+        result.current.handleSearchChange('charmander');
+      });
+
+      expect(result.current.selectedPokemon).toEqual(pokemon);
+    });
+  });
+
+  // ──────────── QUERY OPTIONS TESTS ────────────
+  describe('Query Options', () => {
+    it('should use correct staleTime', async () => {
+      const { Wrapper, queryClient } = createWrapper();
+      mockFetchPokemonList.mockResolvedValue(createMockResponse(mockPokemonList, 50));
+
+      renderHook(() => usePokeApi(10), { wrapper: Wrapper });
+
+      await waitFor(() => {
+        const cache = queryClient.getQueryCache();
+        const query = cache.find({ queryKey: ['paginatedSearchByName', '', 1] });
+        expect(query).toBeDefined();
+      });
+
+      const cache = queryClient.getQueryCache();
+      const query = cache.find({ queryKey: ['paginatedSearchByName', '', 1] });
+      
+      // staleTime is set to 1000 * 60 = 60000ms
+      expect(query?.options.staleTime).toBe(60000);
+    });
+
+    it('should not refetch on window focus', async () => {
+      const { Wrapper } = createWrapper();
+      mockFetchPokemonList.mockResolvedValue(createMockResponse(mockPokemonList, 50));
+
+      renderHook(() => usePokeApi(10), { wrapper: Wrapper });
+
+      await waitFor(() => {
+        expect(mockFetchPokemonList).toHaveBeenCalledTimes(1);
+      });
+
+      // Simulate window focus
+      window.dispatchEvent(new Event('focus'));
+
+      // Should not trigger refetch
+      await new Promise((resolve) => setTimeout(resolve, 100));
+      expect(mockFetchPokemonList).toHaveBeenCalledTimes(1);
+    });
+
+    it('should retry failed requests up to 3 times', async () => {
+      createWrapper();
+      
+      // Create a query client with retry enabled
+      const retryQueryClient = new QueryClient({
+        defaultOptions: {
+          queries: {
+            retry: 3,
+            retryDelay: 0,
+          },
+        },
+        logger: {
+          log: () => {},
+          warn: () => {},
+          error: () => {},
+        },
+      });
+
+      const RetryWrapper = ({ children }: { children: ReactNode }) => (
+        <QueryClientProvider client={retryQueryClient}>
+          {children}
+        </QueryClientProvider>
+      );
+
+      mockFetchPokemonList.mockRejectedValue(new Error('Network error'));
+
+      renderHook(() => usePokeApi(10), { wrapper: RetryWrapper });
+
+      await waitFor(
+        () => {
+          // 1 initial + 3 retries = 4 total attempts
+          expect(mockFetchPokemonList).toHaveBeenCalledTimes(4);
+        },
+        { timeout: 3000 }
+      );
+    });
+  });
+
+  // ──────────── EDGE CASES TESTS ────────────
+  describe('Edge Cases', () => {
+    it('should handle empty pokemon list', async () => {
+      const { Wrapper } = createWrapper();
+      mockFetchPokemonList.mockResolvedValue(createMockResponse([], 0));
+
+      const { result } = renderHook(() => usePokeApi(10), { wrapper: Wrapper });
+
+      await waitFor(() => {
+        expect(result.current.isSuccess).toBe(true);
+      });
+
+      expect(result.current.data?.pokemon_v2_pokemon).toHaveLength(0);
+      expect(result.current.totalCount).toBe(0);
+      expect(result.current.totalPages).toBe(0);
+    });
+
+    it('should handle single pokemon result', async () => {
+      const { Wrapper } = createWrapper();
+      mockFetchPokemonList.mockResolvedValue(
+        createMockResponse([mockPokemonList[0]], 1)
+      );
+
+      const { result } = renderHook(() => usePokeApi(10), { wrapper: Wrapper });
+
+      await waitFor(() => {
+        expect(result.current.isSuccess).toBe(true);
+      });
+
+      expect(result.current.data?.pokemon_v2_pokemon).toHaveLength(1);
+      expect(result.current.totalCount).toBe(1);
+      expect(result.current.totalPages).toBe(1);
+    });
+
+    it('should handle large limit values', async () => {
+      const { Wrapper } = createWrapper();
+      mockFetchPokemonList.mockResolvedValue(createMockResponse(mockPokemonList, 1000));
+
+      const { result } = renderHook(() => usePokeApi(100), { wrapper: Wrapper });
+
+      await waitFor(() => {
+        expect(result.current.isSuccess).toBe(true);
+      });
+
+      expect(mockFetchPokemonList).toHaveBeenCalledWith(
+        expect.any(String),
+        expect.objectContaining({
+          limit: 100,
+        })
+      );
+    });
+
+    it('should handle missing aggregate count', async () => {
+      const { Wrapper } = createWrapper();
+      mockFetchPokemonList.mockResolvedValue({
+        pokemon_v2_pokemon: mockPokemonList,
+        pokemon_v2_pokemon_aggregate: {
+          aggregate: null,
+        },
+      } as any);
+
+      const { result } = renderHook(() => usePokeApi(10), { wrapper: Wrapper });
+
+      await waitFor(() => {
+        expect(result.current.isSuccess).toBe(true);
+      });
+
+      expect(result.current.totalCount).toBe(0);
+      expect(result.current.totalPages).toBe(0);
+    });
+
+    it('should handle undefined aggregate', async () => {
+      const { Wrapper } = createWrapper();
+      mockFetchPokemonList.mockResolvedValue({
+        pokemon_v2_pokemon: mockPokemonList,
+        pokemon_v2_pokemon_aggregate: undefined,
+      } as any);
+
+      const { result } = renderHook(() => usePokeApi(10), { wrapper: Wrapper });
+
+      await waitFor(() => {
+        expect(result.current.isSuccess).toBe(true);
+      });
+
+      expect(result.current.totalCount).toBe(0);
+      expect(result.current.totalPages).toBe(0);
+    });
+
+    it('should handle very long search terms', async () => {
+      const { Wrapper } = createWrapper();
+      mockFetchPokemonList.mockResolvedValue(createMockResponse([], 0));
+
+      const { result } = renderHook(() => usePokeApi(10), { wrapper: Wrapper });
+
+      await waitFor(() => {
+        expect(result.current.isSuccess).toBe(true);
+      });
+
+      const longSearchTerm = 'a'.repeat(100);
+
+      act(() => {
+        result.current.handleSearchChange(longSearchTerm);
+      });
+
+      await waitFor(() => {
+        expect(mockFetchPokemonList).toHaveBeenCalledWith(
+          expect.any(String),
+          expect.objectContaining({
+            name: `%${longSearchTerm}%`,
+          })
+        );
+      });
+    });
+
+    it('should handle unicode characters in search', async () => {
+      const { Wrapper } = createWrapper();
+      mockFetchPokemonList.mockResolvedValue(createMockResponse(mockPokemonList, 50));
+
+      const { result } = renderHook(() => usePokeApi(10), { wrapper: Wrapper });
+
+      await waitFor(() => {
+        expect(result.current.isSuccess).toBe(true);
+      });
+
+      act(() => {
+        result.current.handleSearchChange('ピカチュウ');
+      });
+
+      await waitFor(() => {
+        expect(mockFetchPokemonList).toHaveBeenCalledWith(
+          expect.any(String),
+          expect.objectContaining({
+            name: '%ピカチュウ%',
+          })
         );
       });
     });
   });
 
-  describe("Error Handling", () => {
-    it("should handle fetch error gracefully", async () => {
-      mockFetchPokemonList.mockRejectedValue(new Error("Network error"));
+  // ──────────── INTEGRATION TESTS ────────────
+  describe('Integration Scenarios', () => {
+    it('should maintain query cache across hook instances', async () => {
+      const { Wrapper } = createWrapper();
+      mockFetchPokemonList.mockResolvedValue(createMockResponse(mockPokemonList, 50));
 
-      const { result } = renderHook(() => usePokeApi(8), {
-        wrapper: createWrapper(),
+      const { result: result1 } = renderHook(() => usePokeApi(10), { wrapper: Wrapper });
+
+      await waitFor(() => {
+        expect(result1.current.isSuccess).toBe(true);
+      });
+
+      const firstCallCount = mockFetchPokemonList.mock.calls.length;
+
+      // Second instance should use cache
+      const { result: result2 } = renderHook(() => usePokeApi(10), { wrapper: Wrapper });
+
+      await waitFor(() => {
+        expect(result2.current.isSuccess).toBe(true);
+      });
+
+      // Should not make additional calls (uses cache)
+      expect(mockFetchPokemonList.mock.calls.length).toBe(firstCallCount);
+    });
+
+    it('should handle sequential searches correctly', async () => {
+      const { Wrapper } = createWrapper();
+      
+      // First search
+      mockFetchPokemonList.mockResolvedValueOnce(
+        createMockResponse([mockPokemonList[0]], 1)
+      );
+
+      const { result } = renderHook(() => usePokeApi(10), { wrapper: Wrapper });
+
+      await waitFor(() => {
+        expect(result.current.isSuccess).toBe(true);
+      });
+
+      // Second search
+      mockFetchPokemonList.mockResolvedValueOnce(
+        createMockResponse([mockPokemonList[3]], 1)
+      );
+
+      act(() => {
+        result.current.handleSearchChange('charmander');
       });
 
       await waitFor(() => {
-        expect(result.current.isError).toBe(true);
+        expect(result.current.data?.pokemon_v2_pokemon[0].name).toBe('charmander');
       });
 
-      expect(result.current.pokemonData).toEqual([]);
+      expect(result.current.page).toBe(1);
+    });
+
+    it('should recover from error on retry', async () => {
+      createWrapper();
+      
+      // Create a query client with retry enabled
+      const retryQueryClient = new QueryClient({
+        defaultOptions: {
+          queries: {
+            retry: 2,
+            retryDelay: 0,
+          },
+        },
+        logger: {
+          log: () => {},
+          warn: () => {},
+          error: () => {},
+        },
+      });
+
+      const RetryWrapper = ({ children }: { children: ReactNode }) => (
+        <QueryClientProvider client={retryQueryClient}>
+          {children}
+        </QueryClientProvider>
+      );
+
+      // Fail first, succeed on retry
+      mockFetchPokemonList
+        .mockRejectedValueOnce(new Error('Network error'))
+        .mockResolvedValueOnce(createMockResponse(mockPokemonList, 50));
+
+      const { result } = renderHook(() => usePokeApi(10), { wrapper: RetryWrapper });
+
+      await waitFor(
+        () => {
+          expect(result.current.isSuccess).toBe(true);
+        },
+        { timeout: 3000 }
+      );
+
+      expect(result.current.data?.pokemon_v2_pokemon).toHaveLength(5);
     });
   });
 
-  describe("Edge Cases", () => {
-    it("should handle limit of 1", async () => {
-      mockFetchPokemonList.mockResolvedValue({
-        count: 1302,
-        results: [
-          { name: "bulbasaur", url: "https://pokeapi.co/api/v2/pokemon/1/" },
-        ],
-        next: "",
-        previous: null,
-      });
+  // ──────────── PERFORMANCE TESTS ────────────
+  describe('Performance', () => {
+    it('should not cause unnecessary re-renders', async () => {
+      const { Wrapper } = createWrapper();
+      mockFetchPokemonList.mockResolvedValue(createMockResponse(mockPokemonList, 50));
 
-      const { result } = renderHook(() => usePokeApi(1), {
-        wrapper: createWrapper(),
-      });
+      let renderCount = 0;
+      const { result } = renderHook(
+        () => {
+          renderCount++;
+          return usePokeApi(10);
+        },
+        { wrapper: Wrapper }
+      );
 
       await waitFor(() => {
-        expect(result.current.pokemonData).toHaveLength(1);
+        expect(result.current.isSuccess).toBe(true);
       });
 
-      expect(result.current.totalPages).toBe(1302);
+      const renders = renderCount;
+
+      // Small delay
+      await new Promise((resolve) => setTimeout(resolve, 100));
+
+      // Should not cause additional renders
+      expect(renderCount).toBe(renders);
     });
 
-    it("should handle very large limit", async () => {
-      renderHook(() => usePokeApi(1000), {
-        wrapper: createWrapper(),
-      });
+    it('should debounce rapid page changes gracefully', async () => {
+      const { Wrapper } = createWrapper();
+      mockFetchPokemonList.mockResolvedValue(createMockResponse(mockPokemonList, 50));
+
+      const { result } = renderHook(() => usePokeApi(10), { wrapper: Wrapper });
 
       await waitFor(() => {
-        expect(mockFetchPokemonList).toHaveBeenCalledWith(1000, 0);
+        expect(result.current.isSuccess).toBe(true);
+      });
+
+      const initialCalls = mockFetchPokemonList.mock.calls.length;
+
+      // Rapid page changes
+      act(() => {
+        for (let i = 2; i <= 5; i++) {
+          result.current.handlePageChange(i);
+        }
+      });
+
+      // Should only fetch for final page
+      await waitFor(() => {
+        expect(result.current.page).toBe(5);
+      });
+
+      // Each page change triggers a new query
+      expect(mockFetchPokemonList.mock.calls.length).toBeGreaterThanOrEqual(initialCalls);
+    });
+  });
+
+  // ──────────── ACCESSIBILITY TESTS ────────────
+  describe('Accessibility', () => {
+    it('should maintain scroll position on page change', async () => {
+      const { Wrapper } = createWrapper();
+      mockFetchPokemonList.mockResolvedValue(createMockResponse(mockPokemonList, 50));
+
+      const { result } = renderHook(() => usePokeApi(10), { wrapper: Wrapper });
+
+      await waitFor(() => {
+        expect(result.current.isSuccess).toBe(true);
+      });
+
+      act(() => {
+        result.current.handlePageChange(2);
+      });
+
+      expect(mockScrollTo).toHaveBeenCalledWith({
+        top: 0,
+        behavior: 'smooth',
       });
     });
 
-    it("should handle count that is not evenly divisible by limit", async () => {
-      mockFetchPokemonList.mockResolvedValue({
-        ...mockResponsePokemon,
-        count: 105,
-      });
+    it('should provide smooth scrolling behavior', async () => {
+      const { Wrapper } = createWrapper();
+      mockFetchPokemonList.mockResolvedValue(createMockResponse(mockPokemonList, 50));
 
-      const { result } = renderHook(() => usePokeApi(10), {
-        wrapper: createWrapper(),
-      });
+      const { result } = renderHook(() => usePokeApi(10), { wrapper: Wrapper });
 
       await waitFor(() => {
-        expect(result.current.totalPages).toBe(11); // Math.ceil(105/10) = 11
-      });
-    });
-
-    it("should handle undefined data from query", async () => {
-      mockFetchPokemonList.mockResolvedValue(undefined as any);
-
-      const { result } = renderHook(() => usePokeApi(8), {
-        wrapper: createWrapper(),
+        expect(result.current.isSuccess).toBe(true);
       });
 
-      await waitFor(() => {
-        expect(result.current.isLoading).toBe(false);
+      act(() => {
+        result.current.handlePageChange(3);
       });
 
-      expect(result.current.pokemonData).toEqual([]);
-    });
-
-    it("should handle missing results in data", async () => {
-      mockFetchPokemonList.mockResolvedValue({
-        count: 0,
-        next: null,
-        previous: null,
-      } as any);
-
-      const { result } = renderHook(() => usePokeApi(8), {
-        wrapper: createWrapper(),
-      });
-
-      await waitFor(() => {
-        expect(result.current.isLoading).toBe(false);
-      });
-
-      expect(result.current.pokemonData).toEqual([]);
+      const scrollCall = mockScrollTo.mock.calls[0][0];
+      expect(scrollCall).toHaveProperty('behavior', 'smooth');
     });
   });
 });

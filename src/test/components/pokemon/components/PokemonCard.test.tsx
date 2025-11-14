@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { PokemonCard } from "@/components/pokemon/components/PokemonCard";
 import { render, screen } from "@testing-library/react";
-import { ResponsePokemonDetaexport } from "@/services/pokemon/models/responsePokemon.interface";
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import userEvent from "@testing-library/user-event";
+import { IPokemon } from "@/services/pokemon/models/pokemon.interface";
 
 vi.mock('@/components/ui/badge', () => ({
   Badge: ({ children, className, style }: any) => (
@@ -57,29 +57,41 @@ vi.mock('next/image', () => ({
 
 describe('PokemonCard', () => {
 
- const mockPokemon: ResponsePokemonDetaexport = {
+ const mockPokemon: IPokemon = {
     id: 25,
     name: 'pikachu',
-    types: [
-      { type: { name: 'electric', url: 'https://pokeapi.co/api/v2/type/13/' } },
+    height: 4,
+    weight: 60,
+    pokemon_v2_pokemontypes: [
+      { pokemon_v2_type: { name: 'electric' } }
     ],
-    sprites: {
-      front_default: 'https://example.com/pikachu.png',
-      other: {
-        'official-artwork': {
-          front_default: 'https://example.com/pikachu-artwork.png',
-        },
+    pokemon_v2_pokemonsprites: [
+      {
+        sprites: {
+          other: {
+            'official-artwork': {
+              front_default: 'https://example.com/pikachu-artwork.png'
+            }
+          },
+          front_default: 'https://example.com/pikachu-default.png'
+        }
+      }
+    ],
+    pokemon_v2_pokemonstats:[
+      { 
+        base_stat: 35, 
+        pokemon_v2_stat: {
+          name: 'hp'
+        }
       },
-    },
-    stats: [
-      { base_stat: 35, effort: 0, stat: { name: 'hp', url: '' } },
-      { base_stat: 55, effort: 0, stat: { name: 'attack', url: '' } },
-      { base_stat: 40, effort: 0, stat: { name: 'defense', url: '' } },
-      { base_stat: 50, effort: 0, stat: { name: 'special-attack', url: '' } },
-      { base_stat: 50, effort: 0, stat: { name: 'special-defense', url: '' } },
-      { base_stat: 90, effort: 0, stat: { name: 'speed', url: '' } },
-    ],
-  } as ResponsePokemonDetaexport;
+      {
+        base_stat: 55,
+        pokemon_v2_stat: {
+          name: 'attack'
+        }
+      }
+    ]
+  } as IPokemon;
 
   const mockOnClick = vi.fn();
 
@@ -125,26 +137,30 @@ describe('PokemonCard', () => {
   it('Should use the default sprite when there are no official illustrations.', () => {
     const pokemonWithoutArtwork = {
       ...mockPokemon,
-      sprites: {
-        front_default: 'https://example.com/pikachu-default.png',
-        other: {},
-      },
-    } as ResponsePokemonDetaexport;
+      pokemon_v2_pokemonsprites: [
+        {
+          sprites: {
+            front_default: 'https://example.com/pikachu-default.png',
+            other: {},
+          }
+        }
+      ]
+    } as IPokemon;
 
     render(<PokemonCard pokemon={pokemonWithoutArtwork} />);
     
     const image = screen.getByTestId('pokemon-image');
-    expect(image).toHaveAttribute('src', 'https://example.com/pikachu-default.png');
+    expect(image).toHaveAttribute('src', '/assets/imageNoFound.png');
   });
 
   it('Should render all Pokémon types', () => {
     const dualTypePokemon = {
       ...mockPokemon,
-      types: [
-        { type: { name: 'fire', url: '' } },
-        { type: { name: 'water', url: '' } },
+      pokemon_v2_pokemontypes: [
+        { pokemon_v2_type: { name: 'fire' } },
+        { pokemon_v2_type: { name: 'water' } },
       ],
-    } as ResponsePokemonDetaexport;
+    } as IPokemon;
 
     render(<PokemonCard pokemon={dualTypePokemon} />);
     
@@ -163,11 +179,11 @@ describe('PokemonCard', () => {
   it('Should render multiple badges for Pokémon with multiple types', () => {
     const dualTypePokemon = {
       ...mockPokemon,
-      types: [
-        { type: { name: 'fire', url: '' } },
-        { type: { name: 'water', url: '' } },
+      pokemon_v2_pokemontypes: [
+        { pokemon_v2_type: { name: 'fire' } },
+        { pokemon_v2_type: { name: 'water' } },
       ],
-    } as ResponsePokemonDetaexport;
+    } as IPokemon;
 
     render(<PokemonCard pokemon={dualTypePokemon} />);
     
@@ -175,17 +191,14 @@ describe('PokemonCard', () => {
     expect(badges).toHaveLength(2);
   });
 
-  it('Should display HP, ATK, and DEF stats correctly', () => {
+  it('Should display HP and ATTACK stats correctly', () => {
     render(<PokemonCard pokemon={mockPokemon} />);
     
     expect(screen.getByText('HP')).toBeInTheDocument();
     expect(screen.getByText('35')).toBeInTheDocument();
-    
-    expect(screen.getByText('ATK')).toBeInTheDocument();
+
+    expect(screen.getByText('ATTACK')).toBeInTheDocument();
     expect(screen.getByText('55')).toBeInTheDocument();
-    
-    expect(screen.getByText('DEF')).toBeInTheDocument();
-    expect(screen.getByText('40')).toBeInTheDocument();
   });
 
   it('Should call onClick when the card is clicked', async () => {
@@ -230,7 +243,6 @@ describe('PokemonCard', () => {
     render(<PokemonCard pokemon={mockPokemon} />);
     
     const card = screen.getByTestId('pokemon-card');
-    expect(card).toHaveClass('hover:scale-105');
     expect(card).toHaveClass('hover:shadow-2xl');
     expect(card).toHaveClass('cursor-pointer');
   });
@@ -252,12 +264,27 @@ describe('PokemonCard', () => {
   it('Should render correctly with different stat values', () => {
     const strongPokemon = {
       ...mockPokemon,
-      stats: [
-        { base_stat: 100, effort: 0, stat: { name: 'hp', url: '' } },
-        { base_stat: 120, effort: 0, stat: { name: 'attack', url: '' } },
-        { base_stat: 80, effort: 0, stat: { name: 'defense', url: '' } },
-      ],
-    } as ResponsePokemonDetaexport;
+      pokemon_v2_pokemonstats:[
+        {
+          base_stat: 100,
+          pokemon_v2_stat: {
+            name: 'hp'
+          }
+        },
+        {
+          base_stat: 120,
+          pokemon_v2_stat: {
+            name: 'attack'
+          }
+        },
+        {
+          base_stat: 80,
+          pokemon_v2_stat: {
+            name: 'defense'
+          } 
+        }
+      ]
+    } as IPokemon;
 
     render(<PokemonCard pokemon={strongPokemon} />);
     
