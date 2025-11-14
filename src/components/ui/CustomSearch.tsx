@@ -96,7 +96,7 @@ export function CustomSearch({ onSearch, isSearching, placeholder, textExample }
                 onFocus={() => setIsFocused(true)}
                 onBlur={() => setIsFocused(false)}
                 placeholder={placeholder}
-                className="w-full h-14 pl-14 pr-24 rounded-2xl border-2 border-border bg-background/80 backdrop-blur-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-4 focus:ring-primary/10 transition-all duration-300 font-medium"
+                className="w-full h-14 pl-14 pr-36 md:pr-24 rounded-2xl border-2 border-border bg-background/80 backdrop-blur-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-4 focus:ring-primary/10 transition-all duration-300 font-medium text-[12px] md:text-[16px] truncate" //coloca puntos suspensivos cuando el texto es muy largo
               />
 
               {/* Clear button */}
