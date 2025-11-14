@@ -17,6 +17,14 @@ vi.mock("@/components/pokemon/components/PokemonList", () => ({
     PokemonList: () => <div data-testid="pokemon-list">Pokemon List</div>,
 }));
 
+vi.mock("next/dynamic", () => ({
+  __esModule: true,
+  default: () => {
+    const Comp = () => <div data-testid="maintenance-module">Módulo en mantenimiento</div>;
+    return Comp;
+  },
+}));
+
 const mockUseMaintenance = vi.mocked(useMaintenance);
 
 describe("PokemonPage", () => {

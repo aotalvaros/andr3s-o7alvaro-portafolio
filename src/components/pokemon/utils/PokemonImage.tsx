@@ -2,16 +2,16 @@ import React from 'react';
 import Image from 'next/image';
 import { Sparkles } from 'lucide-react';
 import { getTypeColor } from '@/lib/pokemonUtils';
-import { ResponsePokemonDetaexport } from '@/services/pokemon/models/responsePokemon.interface';
+import { IPokemon } from '@/services/pokemon/models/pokemon.interface';
 
 interface PokemonImageProps {
-  pokemon: ResponsePokemonDetaexport;
-  isEvolving: boolean;
+  pokemon: IPokemon;
+  isEvolving?: boolean;
   className?: string;
 }
 
 export const PokemonImage = ({ pokemon, isEvolving, className = '' }: PokemonImageProps) => {
-  const primaryType = pokemon.types[0].type.name;
+  const primaryType = pokemon.pokemon_v2_pokemontypes[0]?.pokemon_v2_type?.name || 'normal';
 
   return (
     <div 
@@ -34,11 +34,7 @@ export const PokemonImage = ({ pokemon, isEvolving, className = '' }: PokemonIma
         }`}
       >
         <Image
-          src={
-            pokemon?.sprites?.other?.['official-artwork'].front_default ||
-            pokemon.sprites.front_default ||
-            '/placeholder.svg'
-          }
+          src={ pokemon?.pokemon_v2_pokemonsprites[0]?.sprites.other?.['official-artwork']?.front_default ?? "/assets/imageNoFound.png"}
           alt={`${pokemon.name} - Pokémon #${pokemon.id}`}
           width={400}
           height={400}

@@ -1,8 +1,12 @@
 'use client'
 
 import { useMaintenance } from '@/components/maintenance/hooks/useMaintenance';
-import ModuleInMaintenance from '@/components/maintenance/ModuleInMaintenance';
-import { PokemonList } from '@/components/pokemon/components/PokemonList';
+import dynamic from 'next/dynamic';
+import { PokemonList }  from '@/components/pokemon/components/PokemonList';
+
+const ModuleInMaintenance = dynamic(() => import('@/components/maintenance/ModuleInMaintenance'), {
+  loading: () => <div>Cargando...</div>,
+});
 
 export default function PokemonPage() {
 
@@ -13,7 +17,7 @@ export default function PokemonPage() {
     }
 
     return (
-        <main className="py-24 px-4">
+        <main className="py-24 px-4 mx-8">
             <PokemonList/>
         </main>
     )

@@ -1,58 +1,54 @@
-import { ResponsePokemonDetaexport } from "@/services/pokemon/models/responsePokemon.interface";
 import { fetchPokemonList } from "@/services/pokemon/pokeApi.service";
 import { useQuery } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import { SEARCH_POKEMONS_PAGINATED } from "../constants/graphQLQueryPokemon";
+import { IPokemon } from "@/services/pokemon/models/pokemon.interface";
 
 export function usePokeApi(limit: number) {
-  const [totalCount, setTotalCount] = useState(0);
   const [page, setPage] = useState(1);
-  const [pokemonData, setPokemonData] = useState<ResponsePokemonDetaexport[]>(
-    []
-  );
-  const [selectedPokemon, setSelectedPokemon] = useState<ResponsePokemonDetaexport | null>(null);
+  const [selectedPokemon, setSelectedPokemon] = useState<IPokemon | null>(null);
+  const [searchTerm, setSearchTerm] = useState("");
+
+   const offset = (page - 1) * limit;
+
+  const variables = {
+    name: `%${searchTerm}%`,
+    limit,
+    offset,
+  };
 
   const pokeQuery = useQuery({
-    queryKey: ["pokemonList", { limit, page }],
-    queryFn: () => fetchPokemonList(limit, (page - 1) * limit),
+    queryKey: ["paginatedSearchByName", searchTerm, page],
+    queryFn: () => fetchPokemonList(SEARCH_POKEMONS_PAGINATED, variables),
     staleTime: 1000 * 60,
+    refetchOnWindowFocus: false,
+    retry: 3
   });
 
-  useEffect(() => {
-    const fetchPokemonDetails = async () => {
-      if (pokeQuery.data?.results) {
-        setTotalCount(pokeQuery.data.count);
-        const detailedPokemon = await Promise.all(
-          pokeQuery.data.results.map(async (p) => {
-            const res = await fetch(p.url);
-            return res.json();
-          })
-        );
-        setPokemonData(detailedPokemon);
-      }
-    };
-
-    fetchPokemonDetails();
-  }, [pokeQuery.data]);
-
+  const totalCount = pokeQuery.data?.pokemon_v2_pokemon_aggregate?.aggregate?.count || 0
   const totalPages = Math.ceil(totalCount / limit)
 
-  const handlePageChange = (valuePage: number) => {
-    const totalPages = Math.ceil(pokeQuery?.data?.count ?? 0 / limit);
-
-    if (valuePage >= 1 && valuePage <= totalPages) {
-      setPage(valuePage);
+  const handlePageChange = (newPage: number) => {
+    if (newPage >= 1 && newPage <= totalPages) {
+      setPage(newPage);
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
   };
 
+  const handleSearchChange = (term: string) => {
+    setSearchTerm(term)
+    setPage(1)
+  }
+
   return {
     ...pokeQuery,
-    pokemonData,
+    totalCount,
     page,
     totalPages,
     selectedPokemon,
 
     handlePageChange,
-    setSelectedPokemon
+    setSelectedPokemon,
+    handleSearchChange
   };
 }

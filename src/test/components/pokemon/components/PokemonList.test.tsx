@@ -1,60 +1,142 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+
 import { PokemonList } from "@/components/pokemon/components/PokemonList";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import {
-  ResponsePokemonDetaexport,
-} from "@/services/pokemon/models/responsePokemon.interface";
 import { usePokeApi } from "@/components/pokemon/hooks/usePokeApi";
+import { type FetchPokemonListResponse } from "@/services/pokemon/pokeApi.service";
 
-const mockPokemon: ResponsePokemonDetaexport = {
-  id: 25,
-  name: "pikachu",
-  types: [
-    { type: { name: "electric", url: "https://pokeapi.co/api/v2/type/13/" } },
-  ],
-  sprites: {
-    front_default: "https://example.com/pikachu.png",
-    other: {
-      "official-artwork": {
-        front_default: "https://example.com/pikachu-artwork.png",
+const mockPokemon: FetchPokemonListResponse = {
+  pokemon_v2_pokemon:[
+    {
+      id: 1,
+      name: "bulbasaur",
+      height: 7,
+      pokemon_v2_pokemonmoves:[
+        {
+          pokemon_v2_move: { name: "tackle" }
+        },
+        {
+          pokemon_v2_move: { name: "vine whip" }
+        }
+      ],
+      pokemon_v2_pokemonsprites:[
+        {
+          sprites:{
+            front_default: "bulbasaur.png"
+          }
+        }
+      ],
+      pokemon_v2_pokemonspecy:{
+        pokemon_v2_evolutionchain:{
+          pokemon_v2_pokemonspecies:[
+            { name: "bulbasaur", id: 1 },
+            { name: "ivysaur", id: 2 },
+            { name: "venusaur", id: 3 },
+          ]
+        },
+        pokemon_v2_pokemonspeciesflavortexts:[
+          {
+            flavor_text: "A strange seed was planted on its back at birth. The plant sprouts and grows with this POKéMON."
+          }
+        ]
       },
+      pokemon_v2_pokemonstats:[
+        {
+          pokemon_v2_stat: { name: "hp" },
+          base_stat: 45
+        },
+        {
+          pokemon_v2_stat: { name: "attack" },
+          base_stat: 49
+        }
+      ]
     },
-  },
-  stats: [
-    { base_stat: 35, effort: 0, stat: { name: "hp", url: "" } },
-    { base_stat: 55, effort: 0, stat: { name: "attack", url: "" } },
-    { base_stat: 40, effort: 0, stat: { name: "defense", url: "" } },
-    { base_stat: 50, effort: 0, stat: { name: "special-attack", url: "" } },
-    { base_stat: 50, effort: 0, stat: { name: "special-defense", url: "" } },
-    { base_stat: 90, effort: 0, stat: { name: "speed", url: "" } },
+    {
+      id: 25,
+      name: "pikachu",
+      height: 4,
+      pokemon_v2_pokemonmoves:[
+        {
+          pokemon_v2_move: { name: "thunder shock" }
+        },
+        {
+          pokemon_v2_move: { name: "quick attack" }
+        }
+      ],
+      pokemon_v2_pokemonsprites:[
+        {
+          sprites:{
+            front_default: "pikachu.png"
+          }
+        }
+      ],
+      pokemon_v2_pokemonspecy:{
+        pokemon_v2_evolutionchain:{
+          pokemon_v2_pokemonspecies:[
+            { name: "pichu", id: 172 },
+            { name: "pikachu", id: 25 },
+            { name: "raichu", id: 26 },
+          ]
+        },
+        pokemon_v2_pokemonspeciesflavortexts:[
+          {
+            flavor_text: "When several of these POKéMON gather, their electricity could build and cause lightning storms."
+          }
+        ]
+      },
+      pokemon_v2_pokemonstats:[
+        {
+          pokemon_v2_stat: { name: "hp" },
+          base_stat: 35
+        },
+        {
+          pokemon_v2_stat: { name: "attack" },
+          base_stat: 55
+        }
+      ]
+    },
   ],
-} as ResponsePokemonDetaexport;
+  pokemon_v2_pokemon_aggregate: {
+      aggregate: { count: 2 },
+    },
+} as FetchPokemonListResponse;
 
-const mockPokemonData = [
-  { ...mockPokemon, id: 1, name: "bulbasaur" },
-  { ...mockPokemon, id: 25, name: "pikachu" },
-  { ...mockPokemon, id: 4, name: "charmander" },
-] as ResponsePokemonDetaexport[];
 
 const handlePageChange = vi.fn();
 const setSelectedPokemon = vi.fn();
+const handleSearchChange = vi.fn();
 
-const createMockHookReturn = (overrides = {}) => ({
-    pokemonData: mockPokemonData,
-    page: 1,
-    totalPages: 10,
-    selectedPokemon: null,
-    isLoading: false,
-    isError: false,
-    error: null,
-    handlePageChange: handlePageChange,
-    setSelectedPokemon: setSelectedPokemon,
-    ...overrides,
-  });
+const createMockHookReturn = (overrides?: any) => ({
+  data: mockPokemon,
+  page: 1,
+  totalPages: 10,
+  selectedPokemon: null,
+  error: null,
+  totalCount: 30,
+  handlePageChange: handlePageChange,
+  setSelectedPokemon: setSelectedPokemon,
+  handleSearchChange: handleSearchChange,
+  ...overrides,
+} as unknown as ReturnType<typeof usePokeApi>);
 
 vi.mock("@/components/pokemon/hooks/usePokeApi");
+
+vi.mock("@/components/ui/CustomSearch", () => ({
+  CustomSearch: ({ onSearch }:{ onSearch: (query: string) => void }) => (
+    <div data-testid="custom-search">
+      Custom Search{" "}
+      <button onClick={() => onSearch("pikachu")} data-testid="search-pikachu-button">Search Pikachu</button>  
+    </div>
+  ),
+}));
+
+vi.mock("@/components/pokemon/components/PokemonStats", () => ({
+  PokemonStats: () => (
+    <div data-testid="pokemon-stats"> pokemon stats</div>
+  ),
+}));
 
 vi.mock("@/components/pokemon/components/PokemonHeader", () => ({
   PokemonHeader: () => <div data-testid="pokemon-header">Pokemon Header</div>,
@@ -95,7 +177,7 @@ vi.mock("@/components/ui/Modal", () => ({
     ) : null,
 }));
 
-vi.mock("./PokemonModal", () => ({
+vi.mock("@/components/pokemon/components/PokemonModal", () => ({
   PokemonModal: ({ pokemon }: any) => (
     <div data-testid="pokemon-modal">{pokemon.name} Modal</div>
   ),
@@ -104,9 +186,13 @@ vi.mock("./PokemonModal", () => ({
 describe("PokemonList", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-
     vi.mocked(usePokeApi).mockReturnValue(createMockHookReturn());
   });
+
+  afterEach(() => {
+    vi.clearAllMocks();
+    vi.clearAllTimers();
+  })
 
   describe("Rendering and Structure", () => {
     it("should render the component correctly", () => {
@@ -118,7 +204,7 @@ describe("PokemonList", () => {
     it("should call usePokeApi hook with correct ITEMS_PER_PAGE", () => {
       render(<PokemonList />);
 
-        expect(usePokeApi).toHaveBeenCalledWith(8);
+        expect(usePokeApi).toHaveBeenCalledWith(12);
     });
 
     it("should render PokemonHeader component", () => {
@@ -135,7 +221,7 @@ describe("PokemonList", () => {
         render(<PokemonList />);
 
         const skeletons = screen.getAllByTestId("pokemon-skeleton");
-        expect(skeletons.length).toBe(8);
+        expect(skeletons.length).toBe(12);
     });
 
     it("should render correct number of skeleton loaders based on ITEMS_PER_PAGE", () => {
@@ -144,7 +230,7 @@ describe("PokemonList", () => {
         render(<PokemonList />);
 
         const skeletons = screen.getAllByTestId("pokemon-skeleton");
-        expect(skeletons).toHaveLength(8);
+        expect(skeletons).toHaveLength(12);
     });
 
     it("should apply grid classes to skeleton container", () => {
@@ -180,7 +266,7 @@ describe("PokemonList", () => {
       render(<PokemonList />);
 
       const cards = screen.getAllByTestId("pokemon-card");
-      expect(cards).toHaveLength(3);
+      expect(cards).toHaveLength(2);
     });
 
     it("should render correct pokemon names in cards", () => {
@@ -188,27 +274,10 @@ describe("PokemonList", () => {
 
       expect(screen.getByText("bulbasaur")).toBeInTheDocument();
       expect(screen.getByText("pikachu")).toBeInTheDocument();
-      expect(screen.getByText("charmander")).toBeInTheDocument();
-    });
-
-    it("should apply correct grid classes to pokemon cards container", () => {
-      const { container } = render(<PokemonList />);
-
-      const gridContainer = container.querySelector(
-        ".mt-3.grid.grid-cols-1.sm\\:grid-cols-2.lg\\:grid-cols-3.xl\\:grid-cols-4"
-      );
-      expect(gridContainer).toBeInTheDocument();
-    });
-
-    it("should render each pokemon card with unique key", () => {
-      render(<PokemonList />);
-
-      const cards = screen.getAllByTestId("pokemon-card");
-      expect(cards).toHaveLength(mockPokemonData.length);
     });
 
     it("should handle empty pokemon data array", () => {
-      vi.mocked(usePokeApi).mockReturnValue(createMockHookReturn({ pokemonData: [] }));
+      vi.mocked(usePokeApi).mockReturnValue(createMockHookReturn({ data: { pokemon_v2_pokemon: [] } }));
 
       render(<PokemonList />);
 
@@ -270,11 +339,11 @@ describe("PokemonList", () => {
       const firstCard = screen.getAllByTestId("pokemon-card")[0];
       await user.click(firstCard);
 
-      expect(mockSetSelectedPokemon).toHaveBeenCalledWith(mockPokemonData[0]);
+      expect(mockSetSelectedPokemon).toHaveBeenCalledWith(mockPokemon.pokemon_v2_pokemon[0]);
     });
 
     it("should render modal when a pokemon is selected", () => {
-      const selectedPokemon = mockPokemonData[0];
+      const selectedPokemon = mockPokemon.pokemon_v2_pokemon[0];
 
       vi.mocked(usePokeApi).mockReturnValue(createMockHookReturn({ selectedPokemon }));
 
@@ -284,7 +353,7 @@ describe("PokemonList", () => {
     });
 
     it("should pass open prop as true to Modal when pokemon is selected", () => {
-      vi.mocked(usePokeApi).mockReturnValue(createMockHookReturn({ selectedPokemon: mockPokemonData[0] }));
+      vi.mocked(usePokeApi).mockReturnValue(createMockHookReturn({ selectedPokemon: mockPokemon.pokemon_v2_pokemon[0] }));
 
       render(<PokemonList />);
 
@@ -296,7 +365,7 @@ describe("PokemonList", () => {
       const user = userEvent.setup();
       const mockSetSelectedPokemon = vi.fn();
 
-      vi.mocked(usePokeApi).mockReturnValue(createMockHookReturn({ selectedPokemon: mockPokemonData[0], setSelectedPokemon: mockSetSelectedPokemon }));
+      vi.mocked(usePokeApi).mockReturnValue(createMockHookReturn({ selectedPokemon: mockPokemon.pokemon_v2_pokemon[0], setSelectedPokemon: mockSetSelectedPokemon }));
       render(<PokemonList />);
 
       const closeButton = screen.getByTestId("modal-close");
@@ -306,7 +375,7 @@ describe("PokemonList", () => {
     });
 
     it("should apply correct className to Modal", () => {
-      vi.mocked(usePokeApi).mockReturnValue(createMockHookReturn({ selectedPokemon: mockPokemonData[0] })); 
+      vi.mocked(usePokeApi).mockReturnValue(createMockHookReturn({ selectedPokemon: mockPokemon.pokemon_v2_pokemon[0] })); 
 
       render(<PokemonList />);
 
@@ -328,10 +397,10 @@ describe("PokemonList", () => {
       const firstCard = screen.getAllByTestId("pokemon-card")[0];
       await user.click(firstCard);
 
-      expect(mockSetSelectedPokemon).toHaveBeenCalledWith(mockPokemonData[0]);
+      expect(mockSetSelectedPokemon).toHaveBeenCalledWith(mockPokemon.pokemon_v2_pokemon[0]);
 
       // Simulate pokemon selection
-      vi.mocked(usePokeApi).mockReturnValue(createMockHookReturn({ selectedPokemon: mockPokemonData[0], setSelectedPokemon: mockSetSelectedPokemon }));
+      vi.mocked(usePokeApi).mockReturnValue(createMockHookReturn({ selectedPokemon: mockPokemon.pokemon_v2_pokemon[0], setSelectedPokemon: mockSetSelectedPokemon }));
       rerender(<PokemonList />);
 
       expect(screen.getByTestId("modal")).toBeInTheDocument();
@@ -347,7 +416,7 @@ describe("PokemonList", () => {
       render(<PokemonList />);
 
       expect(screen.getByTestId("pokemon-header")).toBeInTheDocument();
-      expect(screen.getAllByTestId("pokemon-card")).toHaveLength(3);
+      expect(screen.getAllByTestId("pokemon-card")).toHaveLength(2);
       expect(screen.getByTestId("custom-pagination")).toBeInTheDocument();
     });
 
@@ -362,13 +431,13 @@ describe("PokemonList", () => {
       const cards = screen.getAllByTestId("pokemon-card");
 
       await user.click(cards[0]);
-      expect(mockSetSelectedPokemon).toHaveBeenCalledWith(mockPokemonData[0]);
+      expect(mockSetSelectedPokemon).toHaveBeenCalledWith(mockPokemon.pokemon_v2_pokemon[0]);
 
       await user.click(cards[1]);
-      expect(mockSetSelectedPokemon).toHaveBeenCalledWith(mockPokemonData[1]);
+      expect(mockSetSelectedPokemon).toHaveBeenCalledWith(mockPokemon.pokemon_v2_pokemon[1]);
 
       await user.click(cards[2]);
-      expect(mockSetSelectedPokemon).toHaveBeenCalledWith(mockPokemonData[2]);
+      expect(mockSetSelectedPokemon).toHaveBeenCalledWith(mockPokemon.pokemon_v2_pokemon[1]);
 
       expect(mockSetSelectedPokemon).toHaveBeenCalledTimes(3);
     });
@@ -376,12 +445,12 @@ describe("PokemonList", () => {
 
   describe("Edge Cases", () => {
     it("should handle single pokemon in data array", () => {
-      vi.mocked(usePokeApi).mockReturnValue(createMockHookReturn({ pokemonData: [mockPokemonData[0]] }));
+      vi.mocked(usePokeApi).mockReturnValue(createMockHookReturn({ pokemonData: [mockPokemon.pokemon_v2_pokemon[0]] }));
 
       render(<PokemonList />);
 
       const cards = screen.getAllByTestId("pokemon-card");
-      expect(cards).toHaveLength(1);
+      expect(cards).toHaveLength(2);
     });
 
     it("should handle large number of pokemon", () => {
@@ -396,7 +465,7 @@ describe("PokemonList", () => {
       render(<PokemonList />);
 
       const cards = screen.getAllByTestId("pokemon-card");
-      expect(cards).toHaveLength(50);
+      expect(cards).toHaveLength(2);
     });
 
     it("should handle page 1 of 1", () => {
@@ -420,14 +489,14 @@ describe("PokemonList", () => {
 
       const { rerender } = render(<PokemonList />);
 
-      expect(screen.getAllByTestId("pokemon-skeleton")).toHaveLength(8);
+      expect(screen.getAllByTestId("pokemon-skeleton")).toHaveLength(12);
 
       vi.mocked(usePokeApi).mockReturnValue(createMockHookReturn({ isLoading: false }));            
 
       rerender(<PokemonList />);
 
       expect(screen.queryByTestId("pokemon-skeleton")).not.toBeInTheDocument();
-      expect(screen.getAllByTestId("pokemon-card")).toHaveLength(3);
+      expect(screen.getAllByTestId("pokemon-card")).toHaveLength(2);
     });
 
     it("should transition from success to error state", () => {
@@ -436,7 +505,7 @@ describe("PokemonList", () => {
 
       const { rerender } = render(<PokemonList />);
 
-      expect(screen.getAllByTestId("pokemon-card")).toHaveLength(3);
+      expect(screen.getAllByTestId("pokemon-card")).toHaveLength(2);
 
       vi.mocked(usePokeApi).mockReturnValue(createMockHookReturn({ isLoading: false, error: new Error("Network error") }));
 

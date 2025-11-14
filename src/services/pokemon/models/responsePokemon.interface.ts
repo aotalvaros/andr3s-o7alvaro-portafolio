@@ -1,3 +1,5 @@
+
+//TODO: eliminar este archivo y usar los modelos generados por graphql code generator
 export interface ResponsePokemon {
     count:    number;
     next:     string;

@@ -10,13 +10,17 @@ export const useGetStatusMaintenance = () => {
         queryFn: getMaintenanceStatus,
         staleTime: 1000 * 60 * 5, // 5 min
         refetchOnWindowFocus: false,
-        retry: (failureCount) => {
-            if (failureCount >= 3) return false;
-            return true;
+        retry: 3, // Máximo 3 reintentos
+        retryDelay: (attemptIndex) => {
+            const base = 1000 * 2 ** attemptIndex;
+            const jitter = Math.random() * 1000;
+            return Math.min(base + jitter, 30000);
         },
-        retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
+        refetchOnMount: false,
+        refetchOnReconnect: true,
         // ✅ Configurar comportamiento en caso de error
         throwOnError: false, // No lanzar errores, manejarlos gracefully
+        networkMode: 'online', // Solo hacer peticiones cuando hay conexión
     });
 
     const isInMaintenance = maintenanceData?.data?.data.some((module) => module.isActive) || false;
