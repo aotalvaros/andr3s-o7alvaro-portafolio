@@ -3,6 +3,7 @@
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuSub, DropdownMenuSubTrigger, DropdownMenuPortal, DropdownMenuSubContent, DropdownMenuItem } from '@radix-ui/react-dropdown-menu'
 import Link from 'next/link'
 import Image from 'next/image'
+import { DropdownMenuSeparator } from '@/components/ui/dropdown-menu'
 
 interface MobileMenuProps {
   isOpen: boolean
@@ -78,7 +79,7 @@ export function MobileMenu({ isOpen, onContactClick, onLinkClick, onClose }: Rea
               </DropdownMenuSubContent>
             </DropdownMenuPortal>
           </DropdownMenuSub>
-
+          <DropdownMenuSeparator />
           <DropdownMenuItem asChild>
             <Link 
               href="/lab/pokemon" 
@@ -88,7 +89,18 @@ export function MobileMenu({ isOpen, onContactClick, onLinkClick, onClose }: Rea
             > 
               🐲 Pokédex 
             </Link>
-          </DropdownMenuItem>  
+          </DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem asChild>
+            <Link 
+              href="/lab/weather" 
+              onClick={handleLinkClick} 
+              className="w-full p-1" 
+              data-testid="api-lab-weather-link"
+            > 
+              <span>🌤️</span> Weather
+            </Link>
+          </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
       

@@ -11,6 +11,7 @@ export const useNavbar = () => {
   const isHome = pathname === "/"
   
   const isDarkMode = useThemeStore((state) => state.isDarkMode)
+  
   const toggleTheme = useThemeStore((state) => state.toggleTheme)
   const setLoading = useLoadingStore((state) => state.setLoading)
   

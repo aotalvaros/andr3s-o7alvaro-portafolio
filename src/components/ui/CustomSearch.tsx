@@ -1,55 +1,39 @@
-"use client"
+"use client";
 
-import { useRef, useState } from "react"
-import { motion, AnimatePresence } from "framer-motion"
-import { Search, Sparkles, X  } from "lucide-react"
+import { motion, AnimatePresence } from "framer-motion";
+import { Search, Sparkles, X } from "lucide-react";
+import { useCustomSearch } from "./hooks/useCustomSearch";
+import { ICustomSearchProps } from "./types/customSearchProps.interface";
 
-interface CustomSearchProps {
-  onSearch: (query: string) => void
-  isSearching: boolean,
-  placeholder: string,
-  textExample: string[]
-}
+const ANIMATION_DURATION = 0.8;
 
-export function CustomSearch({ onSearch, isSearching, placeholder, textExample }: Readonly<CustomSearchProps>) {
-  const [query, setQuery] = useState("")
-  const [isFocused, setIsFocused] = useState(false)
-  const inputRef = useRef<HTMLInputElement>(null)
-  const [particles, setParticles] = useState<Array<{ id: number; x: number; y: number }>>([])
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    if (query.trim()) {
-      onSearch(query.trim())
-      createParticles()
-    }
-  }
-
-  const createParticles = () => {
-    const newParticles = Array.from({ length: 12 }, (_, i) => ({
-      id: Date.now() + i,
-      x: Math.random() * 100,
-      y: Math.random() * 100,
-    }))
-    setParticles(newParticles)
-    setTimeout(() => setParticles([]), 1000)
-  }
-
-  const clearSearch = () => {
-    setQuery("")
-    onSearch("")
-    inputRef.current?.focus()
-  }
-
-  const handleExampleClick = (example: string) => {
-    setQuery(example)
-    onSearch(example)
-    createParticles()
-    inputRef.current?.focus()
-  }
+export function CustomSearch<T = unknown>({
+  onSearch,
+  placeholder,
+  textExample,
+  disabled,
+  propsAnimate,
+  isSearching = false,
+}: Readonly<ICustomSearchProps<T>>) {
+  const {
+    query,
+    isFocused,
+    inputRef,
+    particleEffects,
+    blurTimeoutRef,
+    handleSubmit,
+    handleInputChange,
+    clearSearch,
+    handleExampleClick,
+    setIsFocused,
+  } = useCustomSearch({ onSearch });
 
   return (
-    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: 0.2 }}
+    >
       <div className="relative w-full max-w-2xl mx-auto">
         <form onSubmit={handleSubmit} className="relative">
           {/* Animated background glow */}
@@ -64,7 +48,11 @@ export function CustomSearch({ onSearch, isSearching, placeholder, textExample }
                   ]
                 : "linear-gradient(45deg, transparent, transparent)",
             }}
-            transition={{ duration: 3, repeat: Number.POSITIVE_INFINITY, ease: "linear" }}
+            transition={{
+              duration: 3,
+              repeat: Number.POSITIVE_INFINITY,
+              ease: "linear",
+            }}
           />
 
           {/* Main search container */}
@@ -76,26 +64,30 @@ export function CustomSearch({ onSearch, isSearching, placeholder, textExample }
             transition={{ type: "spring", stiffness: 300, damping: 20 }}
           >
             <div className="relative flex items-center">
-              {/* Search icon with animation */}
-              <motion.div
-                className="absolute left-5 z-10"
-                animate={{
-                  rotate: isSearching ? 360 : 0,
-                  scale: isFocused ? 1.1 : 1,
-                }}
-              >
+              <div className="absolute left-5 z-10">
                 <Search className="h-5 w-5 text-muted-foreground " />
-              </motion.div>
+              </div>
 
               {/* Input field */}
               <input
                 ref={inputRef}
                 type="text"
                 value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                onFocus={() => setIsFocused(true)}
-                onBlur={() => setIsFocused(false)}
+                onChange={handleInputChange}
+                onFocus={() => {
+                  if (blurTimeoutRef.current) {
+                    clearTimeout(blurTimeoutRef.current);
+                    blurTimeoutRef.current = null;
+                  }
+                  setIsFocused(true);
+                }}
+                onBlur={() => {
+                  blurTimeoutRef.current = setTimeout(() => {
+                    setIsFocused(false);
+                  }, 150);
+                }}
                 placeholder={placeholder}
+                disabled={disabled}
                 className="w-full h-14 pl-14 pr-36 md:pr-24 rounded-2xl border-2 border-border bg-background/80 backdrop-blur-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-4 focus:ring-primary/10 transition-all duration-300 font-medium text-[12px] md:text-[16px] truncate" //coloca puntos suspensivos cuando el texto es muy largo
               />
 
@@ -116,24 +108,30 @@ export function CustomSearch({ onSearch, isSearching, placeholder, textExample }
               </AnimatePresence>
 
               {/* Submit button */}
-              <motion.button
-                type="submit"
-                disabled={!query.trim() || isSearching}
-                className="absolute right-2 h-10 px-6 rounded-xl bg-primary text-primary-foreground font-semibold disabled:opacity-50 disabled:cursor-not-allowed hover:bg-primary/90 transition-colors"
-                whileHover={{ scale: query.trim() && !isSearching ? 1.05 : 1 }}
-                whileTap={{ scale: query.trim() && !isSearching ? 0.95 : 1 }}
-              >
-                <span className="flex items-center gap-2">
-                  <Sparkles className="h-4 w-4" />
+              {propsAnimate?.childrenButton ? (
+                propsAnimate?.childrenButton
+              ) : (
+                <motion.button
+                  type="submit"
+                  disabled={!query.trim() || isSearching || disabled}
+                  className="absolute right-2 h-10 px-6 rounded-xl bg-primary text-primary-foreground font-semibold disabled:opacity-50 disabled:cursor-not-allowed hover:bg-primary/90 transition-colors"
+                  whileHover={{
+                    scale: query.trim() && !isSearching ? 1.05 : 1,
+                  }}
+                  whileTap={{ scale: query.trim() && !isSearching ? 0.95 : 1 }}
+                >
+                  <span className="flex items-center gap-2">
+                    <Sparkles className="h-4 w-4" />
                     Buscar
-                </span>
-              </motion.button>
+                  </span>
+                </motion.button>
+              )}
             </div>
           </motion.div>
 
           {/* Particle effects */}
           <AnimatePresence>
-            {particles.map((particle) => (
+            {particleEffects.map((particle) => (
               <motion.div
                 key={particle.id}
                 initial={{ opacity: 0, scale: 0, x: "50%", y: "50%" }}
@@ -144,7 +142,7 @@ export function CustomSearch({ onSearch, isSearching, placeholder, textExample }
                   y: `${particle.y}%`,
                 }}
                 exit={{ opacity: 0 }}
-                transition={{ duration: 0.8 }}
+                transition={{ duration: ANIMATION_DURATION }}
                 className="absolute w-2 h-2 rounded-full bg-primary pointer-events-none"
                 style={{ left: "50%", top: "50%" }}
               />
@@ -154,7 +152,7 @@ export function CustomSearch({ onSearch, isSearching, placeholder, textExample }
 
         {/* Animated hint text */}
         <AnimatePresence mode="wait">
-          {isFocused && !query && (
+          {isFocused && !query && !disabled && (
             <motion.div
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
@@ -163,29 +161,49 @@ export function CustomSearch({ onSearch, isSearching, placeholder, textExample }
             >
               <p className="text-sm text-muted-foreground">
                 Prueba con{" "}
-                  {
-                    textExample.map((example, index) => (
-                      <span key={index}>
-                        <button
-                          type="button"
-                          onMouseDown={(e) => {
-                            e.preventDefault()
-                            handleExampleClick(example)
-                          }}
-                          className="text-primary hover:underline font-medium"
-                        >
-                          {example}
-                        </button>
-                        {index < textExample.length - 1 ? ", " : ""}
-                      </span>
-                    ))
-                      
-                  }
+                {textExample.map((example, index) => (
+                  <span key={index}>
+                    <button
+                      type="button"
+                      onMouseDown={(e) => {
+                        e.preventDefault();
+                        handleExampleClick(example);
+                      }}
+                      className="text-primary hover:underline font-medium"
+                    >
+                      {example}
+                    </button>
+                    {index < textExample.length - 1 ? ", " : ""}
+                  </span>
+                ))}
               </p>
             </motion.div>
           )}
         </AnimatePresence>
+
+        {propsAnimate && propsAnimate.results.length > 0 && (
+          <AnimatePresence>
+            <motion.div
+              initial={{ opacity: 0, y: -10, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -10, scale: 0.95 }}
+              transition={{ duration: 0.2 }}
+              className="absolute top-full mt-2 w-full bg-background/95 backdrop-blur-xl border border-border rounded-xl shadow-2xl overflow-hidden z-50"
+              onMouseDown={(e) => {
+                e.preventDefault();
+                if (blurTimeoutRef.current) {
+                  clearTimeout(blurTimeoutRef.current);
+                  blurTimeoutRef.current = null;
+                }
+              }}
+            >
+              {propsAnimate.results.map((result, index) => (
+                <div key={index}>{propsAnimate.children(result, index)}</div>
+              ))}
+            </motion.div>
+          </AnimatePresence>
+        )}
       </div>
     </motion.div>
-  )
+  );
 }
