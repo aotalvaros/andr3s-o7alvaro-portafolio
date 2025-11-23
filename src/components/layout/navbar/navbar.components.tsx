@@ -1,4 +1,3 @@
-'use client'
 
 import { useNavbar } from './hooks/useNavbar'
 import { Logo, CommandPaletteButton, DesktopMenu,

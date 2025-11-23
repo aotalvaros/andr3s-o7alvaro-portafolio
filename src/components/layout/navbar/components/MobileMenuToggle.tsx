@@ -1,4 +1,3 @@
-"use client"
 
 import { Menu, X } from 'lucide-react'
 
