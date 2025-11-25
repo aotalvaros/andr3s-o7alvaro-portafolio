@@ -25,7 +25,8 @@ export const useMaintenance = () => {
     if ( maintenanceData) {
       const currentPath = paths(pathname);
       setIsInMaintenance(Boolean(
-        maintenanceData.data.find((m: responseModuleData) => m.moduleName === currentPath)?.isActive
+        maintenanceData.status === 'error' ||
+        maintenanceData.data.find((m: responseModuleData) => m.moduleName === currentPath)?.isActive 
       ));
       setIsAplicationInMaintenance(Boolean(
         maintenanceData.data.find((m: responseModuleData) => m.moduleName === 'allAplications')?.isActive

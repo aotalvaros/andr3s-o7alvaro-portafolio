@@ -1,4 +1,3 @@
-"'use client'"
 
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuSub, DropdownMenuSubTrigger, DropdownMenuPortal, DropdownMenuSubContent, DropdownMenuItem } from '@radix-ui/react-dropdown-menu'
 import Link from 'next/link'

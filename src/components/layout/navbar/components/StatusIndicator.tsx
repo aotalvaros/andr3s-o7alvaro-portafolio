@@ -1,4 +1,3 @@
-"use client"
 
 import { OnlineStatus } from '@/components/ui/OnlineStatus'
 

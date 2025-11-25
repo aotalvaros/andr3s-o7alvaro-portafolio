@@ -61,9 +61,9 @@ export function SpaceLoading({ isLoading = true, onLoadingComplete, shouldShow =
       setProgress(() => {
         const currentProgress = progressRef.current
 
-        // Si llegamos a 95% y aún está cargando, volver a 60-65%
+        // Si llegamos a 95% y aún está cargando, volver a 60-85%
         if (currentProgress >= 95) {
-          const resetValue = 60 + Math.random() * 5 // Entre 60 y 65
+          const resetValue = 60 + Math.random() * 25 // Entre 60 y 85
           progressRef.current = resetValue
           return resetValue
         }
