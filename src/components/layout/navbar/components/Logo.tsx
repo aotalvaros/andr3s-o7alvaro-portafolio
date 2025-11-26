@@ -1,7 +1,7 @@
-"use client"
 
 import Link from 'next/link'
-import { FallbackImage } from '@/components/layout/FallbackImage'
+import { FallbackImage } from '@/components/layout/FallbackImage';
+
 
 interface LogoProps {
   logoSrc: string
@@ -16,11 +16,11 @@ export function Logo({ logoSrc }: Readonly<LogoProps>) {
     >
       <FallbackImage
         src={logoSrc}
-        alt="Logo"
+        alt='Logo'
+        className="object-contain w-full h-auto max-w-full max-h-full select-none"
         width={155}
         height={90}
-        className="object-contain w-full h-auto max-w-full max-h-full select-none"
-        loading="lazy"
+        fallbackSrc="/assets/imageNoFound.png"
       />
     </Link>
   )

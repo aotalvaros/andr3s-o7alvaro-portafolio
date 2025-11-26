@@ -14,9 +14,9 @@ const ModuleInMaintenance = dynamic(
 export default function WeatherPage() {
   const { isInMaintenance } = useMaintenance();
 
-  // if (isInMaintenance) {
-  //   return <ModuleInMaintenance moduleName="Weather" />;
-  // }
+  if (isInMaintenance) {
+    return <ModuleInMaintenance moduleName="Weather" />;
+  }
 
   return (
     <main className="pt-20">
