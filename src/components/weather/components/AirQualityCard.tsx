@@ -1,4 +1,3 @@
-"use client"
 
 import { Wind, AlertTriangle } from 'lucide-react'
 import { Card } from "@/components/ui/card"

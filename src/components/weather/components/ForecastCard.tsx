@@ -1,11 +1,8 @@
-"use client"
-
 
 import { FallbackImage } from "@/components/layout/FallbackImage"
 import { formatDate } from "@/services/weather/utils/weatherFormatters"
 import { getWeatherIcon } from "@/services/weather/utils/weatherHelpers"
 import { ForecastItem } from "@/types/weather.interface"
-
 
 interface ForecastCardProps {
   forecast: ForecastItem[]

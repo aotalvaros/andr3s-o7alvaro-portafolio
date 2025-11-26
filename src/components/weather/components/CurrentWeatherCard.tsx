@@ -1,4 +1,3 @@
-'use client'
 
 import { Wind, Droplets, Eye, Gauge, Sunrise, Sunset, MapPin } from "lucide-react"
 import { WeatherDetail } from "./WeatherDetail";

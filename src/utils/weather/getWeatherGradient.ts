@@ -22,7 +22,7 @@ const gradients: Record<
   Clouds: {
     //Nublado
     day: "from-gray-200 via-gray-100 to-slate-50",
-    night: "from-slate-600 via-slate-500 to-gray-600",
+    night: "from-slate-300 via-slate-100 to-gray-300",
     dark: "from-slate-800 via-slate-700 to-gray-700",
   },
   Rain: {

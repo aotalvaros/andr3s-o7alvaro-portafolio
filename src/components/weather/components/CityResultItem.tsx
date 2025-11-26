@@ -1,5 +1,3 @@
-// src/components/ui/CityResultItem.tsx
-"use client"
 
 import { CitySearchResult } from "@/types/weather.interface"
 import { motion } from "framer-motion"

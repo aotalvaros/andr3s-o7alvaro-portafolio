@@ -1,4 +1,4 @@
-"use client"
+
 import { motion } from "framer-motion"
 import { Sunrise, Sunset } from 'lucide-react'
 import { Card } from "@/components/ui/card"

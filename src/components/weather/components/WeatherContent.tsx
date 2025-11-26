@@ -45,12 +45,12 @@ export function WeatherContent() {
           Tablero meteorológico
         </h1>
         <div className="flex flex-row items-center gap-2">
-          <p className={`text-muted-foreground ${isNighttime && "text-white"}`}>
+          <p className={`text-muted-foreground`}>
             Clima en tiempo real, pronóstico extendido y calidad del aire para{" "}
             {cityName}
           </p>
           {isNighttime ? (
-            <MoonStar className=" h-6 w-6 text-white" />
+            <MoonStar className={`h-6 w-6 text-muted-foreground`} />
           ) : (
             <Sun className=" h-6 w-6 text-yellow-400" />
           )}

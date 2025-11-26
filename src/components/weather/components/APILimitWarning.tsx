@@ -1,4 +1,3 @@
-"use client"
 
 import { AlertCircle, ExternalLink } from 'lucide-react'
 import { Card } from "@/components/ui/card"
