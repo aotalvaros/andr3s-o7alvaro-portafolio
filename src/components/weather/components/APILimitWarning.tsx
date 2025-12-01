@@ -10,7 +10,7 @@ export function APILimitWarning() {
           <div
             className="p-3 rounded-full bg-yellow-500/20 flex-shrink-0"
           >
-            <AlertCircle className="h-6 w-6 text-yellow-600 dark:text-yellow-400" />
+            <AlertCircle className="h-6 w-6 text-yellow-600 dark:text-yellow-400" data-testid="alert-circle-icon"/>
           </div>
           <div className="flex-1">
             <h3 className="text-lg font-bold text-yellow-700 dark:text-yellow-300 mb-2">
@@ -29,9 +29,10 @@ export function APILimitWarning() {
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-yellow-600 hover:bg-yellow-700 text-white text-sm font-medium transition-colors"
+                data-testid="openweathermap-plans-link"
               >
                 Ver planes de OpenWeatherMap
-                <ExternalLink className="h-4 w-4" />
+                <ExternalLink className="h-4 w-4" data-testid="external-link-icon"/>
               </a>
             </div>
           </div>

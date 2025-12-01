@@ -21,9 +21,10 @@ export function CityResultItem({ result, index, onSelect }: CityResultItemProps)
         onSelect(result)
       }}
       className="w-full flex items-center gap-3 px-4 py-3 hover:bg-primary/10 transition-colors group"
+      data-testid="motion-button"
     >
       <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-all">
-        <MapPin className="h-5 w-5" />
+        <MapPin className="h-5 w-5"  data-testid="map-pin-icon"/>
       </div>
       <div className="flex-1 text-left">
         <div className="font-medium text-sm">

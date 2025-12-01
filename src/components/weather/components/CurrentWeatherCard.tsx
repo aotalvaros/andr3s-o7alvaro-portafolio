@@ -22,7 +22,7 @@ export function CurrentWeatherCard({ weather }: Readonly<CurrentWeatherCardProps
       <div className="relative">
         <div className="flex items-start justify-between mb-6">
           <div className="flex items-center gap-2">
-            <MapPin className="h-5 w-5 text-primary" />
+            <MapPin className="h-5 w-5 text-primary" data-testid="map-pin-icon" />
             <div>
               <h2 className="text-2xl font-bold">{weather.name}</h2>
               <p className="text-sm text-muted-foreground">{weather.country}</p>
@@ -48,19 +48,19 @@ export function CurrentWeatherCard({ weather }: Readonly<CurrentWeatherCardProps
 
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
           <WeatherDetail
-            icon={<Wind className="h-4 w-4" />}
+            icon={<Wind className="h-4 w-4" data-testid="wind-icon"/>}
             label="Viento"
             value={`${weather.wind_speed} m/s ${getWindDirection(weather.wind_deg)}`}
           />
-          <WeatherDetail icon={<Droplets className="h-4 w-4" />} label="Humedad" value={`${weather.humidity}%`} />
+          <WeatherDetail icon={<Droplets className="h-4 w-4" data-testid="droplets-icon"/>} label="Humedad" value={`${weather.humidity}%`} />
           <WeatherDetail
-            icon={<Eye className="h-4 w-4" />}
+            icon={<Eye className="h-4 w-4" data-testid="eye-icon"/>}
             label="Visibilidad"
             value={`${(weather.visibility / 1000).toFixed(1)} km`}
           />
-          <WeatherDetail icon={<Gauge className="h-4 w-4" />} label="Presión" value={`${weather.pressure} hPa`} />
-          <WeatherDetail icon={<Sunrise className="h-4 w-4" />} label="Amanecer" value={formatTime(weather.sunrise)} />
-          <WeatherDetail icon={<Sunset className="h-4 w-4" />} label="Atardecer" value={formatTime(weather.sunset)} />
+          <WeatherDetail icon={<Gauge className="h-4 w-4" data-testid="gauge-icon"/>} label="Presión" value={`${weather.pressure} hPa`} />
+          <WeatherDetail icon={<Sunrise className="h-4 w-4" data-testid="sunrise-icon" />} label="Amanecer" value={formatTime(weather.sunrise)} />
+          <WeatherDetail icon={<Sunset className="h-4 w-4" data-testid="sunset-icon" />} label="Atardecer" value={formatTime(weather.sunset)} />
         </div>
       </div>
     </div>
