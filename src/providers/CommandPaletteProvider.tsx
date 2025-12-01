@@ -140,6 +140,7 @@ export function CommandPaletteProvider({ children }: { readonly children: React.
     ]
 
     defaultCommands.forEach(registerCommand)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [registerCommand, router, pathname, navigateToSection])
 
   return (

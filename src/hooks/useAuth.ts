@@ -70,6 +70,7 @@ export const useAuth = () => {
     };
 
     checkAuth();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return { 

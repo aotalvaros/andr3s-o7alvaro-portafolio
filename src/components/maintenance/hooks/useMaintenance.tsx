@@ -5,12 +5,14 @@ import { usePathname } from 'next/navigation';
 import { useContext, useEffect, useState } from 'react';
 import { useGetStatusMaintenance } from './useGetStatusMaintenance';
 import { responseModuleData } from '@/services/maintenance/models/maintenaceResponseStatus.interface';
+import { useLoadingStore } from '@/store/loadingStore';
 
 export const useMaintenance = () => {
   const pathname = usePathname();
   const { socket } = useContext(SocketContext);
   const [isInMaintenance, setIsInMaintenance] = useState(false);
   const [isAplicationInMaintenance, setIsAplicationInMaintenance] = useState(false);
+  const setLoading = useLoadingStore((state) => state.setLoading);
 
   const { 
     data: maintenanceData, 
@@ -19,6 +21,11 @@ export const useMaintenance = () => {
     isError,
     error
   } = useGetStatusMaintenance();
+
+  useEffect(() => {
+    setLoading(false);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  },[])
   
   useEffect(() => {
     

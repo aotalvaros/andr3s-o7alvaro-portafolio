@@ -7,46 +7,46 @@ import { IPokemon } from '../../../../services/pokemon/models/pokemon.interface'
 vi.mock('next/image', () => ({
   __esModule: true,
   default: (props: any) => {
-      // eslint-disable-next-line @next/next/no-img-element
-    return <img {...props} />;
+    // eslint-disable-next-line @next/next/no-img-element
+    return <img {...props} alt={props.alt || ''} />;
   },
 }));
 
- const mockPokemon: IPokemon = {
-    id: 25,
-    name: 'pikachu',
-    height: 4,
-    weight: 60,
-    pokemon_v2_pokemontypes: [
-      { pokemon_v2_type: { name: 'electric' } }
-    ],
-    pokemon_v2_pokemonsprites: [
-      {
-        sprites: {
-          other: {
-            'official-artwork': {
-              front_default: 'https://example.com/pikachu-artwork.png'
-            }
-          },
-          front_default: 'https://example.com/pikachu-default.png'
-        }
+const mockPokemon: IPokemon = {
+  id: 25,
+  name: 'pikachu',
+  height: 4,
+  weight: 60,
+  pokemon_v2_pokemontypes: [
+    { pokemon_v2_type: { name: 'electric' } }
+  ],
+  pokemon_v2_pokemonsprites: [
+    {
+      sprites: {
+        other: {
+          'official-artwork': {
+            front_default: 'https://example.com/pikachu-artwork.png'
+          }
+        },
+        front_default: 'https://example.com/pikachu-default.png'
       }
-    ],
-    pokemon_v2_pokemonstats:[
-      { 
-        base_stat: 35, 
-        pokemon_v2_stat: {
-          name: 'hp'
-        }
-      },
-      {
-        base_stat: 55,
-        pokemon_v2_stat: {
-          name: 'attack'
-        }
+    }
+  ],
+  pokemon_v2_pokemonstats:[
+    { 
+      base_stat: 35, 
+      pokemon_v2_stat: {
+        name: 'hp'
       }
-    ]
-  } as IPokemon;
+    },
+    {
+      base_stat: 55,
+      pokemon_v2_stat: {
+        name: 'attack'
+      }
+    }
+  ]
+} as IPokemon;
 
 describe('PokemonImage Component', () => {
 

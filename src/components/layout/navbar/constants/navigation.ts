@@ -34,6 +34,11 @@ export const NAVIGATION_ITEMS = {
         href: '/lab/pokemon',
         label: '🐲 Pokédex',
         testId: 'api-lab-pokemon-link'
+      },
+      weather: {
+        href: '/lab/weather',
+        label: '🌤️ Weather Dashboard',
+        testId: 'api-lab-weather-link'
       }
     }
   }
