@@ -5,7 +5,7 @@ import { useRouter, usePathname } from 'next/navigation'
 import { useThemeStore } from '@/store/themeStore'
 import { 
   Home, User, Code2, Mail, Moon, Sun, 
-  Rocket, Gamepad2 
+  Rocket, Gamepad2, CloudSun 
 } from 'lucide-react'
 import { FaGithub, FaLinkedin } from 'react-icons/fa'
 import { useCommandPaletteStore } from '@/store/commandPaletteStore'
@@ -102,6 +102,16 @@ export function CommandPaletteProvider({ children }: { readonly children: React.
         keywords: ['pokemon', 'pokédex', 'pokedex', 'lab', 'laboratorio'],
         category: 'lab' as const,
         priority: 3,
+      },
+      {
+        id: 'lab-weather',
+        label: 'Clima Actual',
+        description: 'Ver el clima actual de una ubicación',
+        icon: <CloudSun className="h-4 w-4" />,
+        action: () => router.push('/lab/weather'),
+        keywords: ['clima', 'weather', 'temperatura', 'lab', 'laboratorio'],
+        category: 'lab' as const,
+        priority: 2,
       },
       {
         id: 'theme-toggle',

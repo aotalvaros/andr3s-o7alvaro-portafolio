@@ -75,7 +75,8 @@ export function WeatherContent() {
                 <button
                   onClick={handleUseCurrentLocation}
                   disabled={isLoadingLocation || isRateLimited}
-                  className="absolute right-2 flex flex-row gap-1 items-center h-10 px-6 rounded-xl bg-primary text-primary-foreground font-semibold disabled:opacity-50 disabled:cursor-not-allowed hover:bg-primary/90 transition-colors"
+                  className="absolute right-2 flex flex-row gap-1 items-center h-10 px-6.5 rounded-xl bg-primary text-primary-foreground font-semibold disabled:opacity-50 disabled:cursor-not-allowed hover:bg-primary/90 transition-colors"
+                  data-testid="use-current-location-button"
                 >
                   {isLoadingLocation ? (
                     <Loader2 className="h-4 w-4 animate-spin" />
@@ -98,6 +99,7 @@ export function WeatherContent() {
             <X
               className="h-5 w-5 text-destructive ml-auto cursor-pointer"
               onClick={() => setError(null)}
+              data-testid="close-error-button"
             />
           </div>
         )}

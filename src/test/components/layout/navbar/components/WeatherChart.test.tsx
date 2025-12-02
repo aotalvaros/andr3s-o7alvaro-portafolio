@@ -1,6 +1,7 @@
 import { WeatherChart } from '../../../../../components/layout/navbar/components/WeatherChart';
  import { render, screen } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { ForecastItem } from '../../../../../types/weather.interface';
 
 
 vi.mock('@/services/weather/utils/weatherFormatters', () => ({
@@ -64,7 +65,7 @@ describe('WeatherChart', () => {
       humidity: 72,
       weather: [{ main: 'Cloudy', description: 'few clouds', icon: '02d' }]
     }
-  ];
+  ] as ForecastItem[];
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -145,7 +146,7 @@ describe('WeatherChart', () => {
           humidity: 60,
           weather: [{ main: 'Clear', description: 'clear sky', icon: '01d' }]
         }
-      ];
+      ] as ForecastItem[];
 
       render(<WeatherChart forecast={testData} />);
       
@@ -286,7 +287,7 @@ describe('WeatherChart', () => {
           humidity: 20,
           weather: [{ main: 'Clear', description: 'hot day', icon: '01d' }]
         }
-      ];
+      ] as ForecastItem[];
 
       render(<WeatherChart forecast={extremeData} />);
       
