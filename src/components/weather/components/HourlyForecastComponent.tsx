@@ -23,13 +23,13 @@ export function HourlyForecastComponent({ hourly }: HourlyForecastProps) {
       </div>
 
       <div className="overflow-x-auto -mx-6 px-6">
-        <div className="flex gap-3 pb-2 min-w-max">
+        <div className="grid grid-cols-3 lg:grid-cols-8 gap-3 pb-2 min-w-max">
           {next24Hours.map((hour) => (
             <div
               key={hour.dt}
               className="flex flex-col items-center gap-2 p-3 rounded-xl bg-muted/50 hover:bg-muted transition-colors min-w-[80px]"
             >
-              <div className="text-sm font-medium">{formatTime(hour.dt)}</div>
+              <div className="text-sm font-medium">{formatTime(hour.dt)} h</div>
                 <FallbackImage 
                   src={getWeatherIcon(hour.weather[0].icon)} 
                   alt={`icon-weather-${hour.weather[0].icon}`}

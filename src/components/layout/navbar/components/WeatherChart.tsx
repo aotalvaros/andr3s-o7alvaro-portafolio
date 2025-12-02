@@ -1,4 +1,3 @@
-"use client"
 
 import { formatDate } from "@/services/weather/utils/weatherFormatters"
 import { ForecastItem } from "@/types/weather.interface"

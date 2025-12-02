@@ -100,9 +100,9 @@ export function CustomSearch<T = unknown>({
                     exit={{ opacity: 0, scale: 0.8 }}
                     type="button"
                     onClick={clearSearch}
-                    className="group absolute right-36 z-10 p-1.5 rounded-full transition-colors hover:bg-primary focus:outline-none "
+                    className="group absolute right-37 z-10 p-1.5 rounded-full transition-colors hover:bg-primary focus:outline-none "
                   >
-                    <X className="h-4 w-4 text-muted-foreground transition-colors group-hover:text-muted" />
+                    <X className="h-4 w-4 text-primary-foreground transition-colors group-hover:text-muted" />
                   </motion.button>
                 )}
               </AnimatePresence>
