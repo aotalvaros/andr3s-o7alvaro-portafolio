@@ -9,7 +9,7 @@ import { BackToTop } from "@/components/ui/BackToTop";
 import { FloatingActionButton } from "@/components/ui/FloatingActionButton";
 import { useThemeStore } from "@/store/themeStore";
 import { Moon, Sun } from "lucide-react";
-import Image from "next/image";
+import { FallbackImage } from '@/components/layout/FallbackImage';
 
 const ModuleInMaintenance = dynamic(
   () => import("@/components/maintenance/ModuleInMaintenance"),
@@ -29,8 +29,7 @@ export const App = ({ children }: { readonly children: React.ReactNode }) => {
   const isDarkMode = useThemeStore((state) => state.isDarkMode);
   const toggleTheme = useThemeStore((state) => state.toggleTheme);
 
-  // Mostrar SpaceLoading mientras no se haya completado el fetch inicial
-  // O si está cargando y no ha habido error
+  // Mostrar SpaceLoading mientras no se haya completado el fetch inicial O si está cargando y no ha habido error
   const shouldShowLoading = !isFetched || (isInitialLoading && !isError);
 
   if (shouldShowLoading) {
@@ -59,7 +58,7 @@ export const App = ({ children }: { readonly children: React.ReactNode }) => {
         icon={isDarkMode ? <Sun className="h-5 w-5" data-testid="sun-icon" /> : <Moon className="h-5 w-5" data-testid="moon-icon" />}
         data-testid="theme-toggle-button"    
       />
-      <Image
+      <FallbackImage
         src="/assets/iconoBlackAndWhite.png"
         alt="Background Pattern"
         width={155}

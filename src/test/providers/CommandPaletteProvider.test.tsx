@@ -32,6 +32,7 @@ vi.mock('lucide-react', () => ({
   Sun: () => <div data-testid="sun-icon">Sun</div>,
   Rocket: () => <div data-testid="rocket-icon">Rocket</div>,
   Gamepad2: () => <div data-testid="gamepad-icon">Gamepad</div>,
+  CloudSun: () => <div data-testid="cloudsun-icon">CloudSun</div>,
 }))
 
 // Mock react-icons
@@ -138,7 +139,7 @@ describe('CommandPaletteProvider', () => {
       )
 
       await waitFor(() => {
-        expect(mockRegisterCommand).toHaveBeenCalledTimes(10)
+        expect(mockRegisterCommand).toHaveBeenCalledTimes(11)
       })
     })
 
@@ -168,7 +169,7 @@ describe('CommandPaletteProvider', () => {
       await waitFor(() => {
         const calls = mockRegisterCommand.mock.calls
         const labCommands = calls.filter(([cmd]) => cmd.category === 'lab')
-        expect(labCommands).toHaveLength(3)
+        expect(labCommands).toHaveLength(4)
       })
     })
 
@@ -735,7 +736,7 @@ describe('CommandPaletteProvider', () => {
       )
 
       await waitFor(() => {
-        expect(mockRegisterCommand).toHaveBeenCalledTimes(10)
+        expect(mockRegisterCommand).toHaveBeenCalledTimes(11)
       })
 
       vi.clearAllMocks()
@@ -748,7 +749,7 @@ describe('CommandPaletteProvider', () => {
       )
 
       await waitFor(() => {
-        expect(mockRegisterCommand).toHaveBeenCalledTimes(10)
+        expect(mockRegisterCommand).toHaveBeenCalledTimes(11)
       })
     })
 
