@@ -14,8 +14,12 @@ import {
   searchCities,
 } from "@/services/weather";
 import { useDebounce } from "@/hooks/useDebounce";
+import { useDynamicIcon } from '../../../hooks/useDynamicIcon';
 
 export const useWeatherContent = () => {
+
+  const { updateIcon, resetIcon } = useDynamicIcon();
+
   const setLoading = useLoadingStore((state) => state.setLoading);
   const isDarkMode = useThemeStore((state) => state.isDarkMode);
   const [weatherData, setWeatherData] = useState<OneCallWeatherData | null>(
@@ -40,7 +44,9 @@ export const useWeatherContent = () => {
         currentTime < weatherData.current.sunrise ||
         currentTime > weatherData.current.sunset;
       setIsNighttime(isNight);
+      updateIcon('weather', weatherData.current.weather[0].main);
     }
+    
   }, [weatherData]);
 
   useEffect(() => {
@@ -59,6 +65,12 @@ export const useWeatherContent = () => {
     setLoading(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    return () => {  
+      resetIcon();
+    }
+  },[])
 
   const loadWeather = async (lat: number, lon: number, city?: string) => {
     try {

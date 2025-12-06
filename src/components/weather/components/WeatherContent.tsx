@@ -126,7 +126,7 @@ export function WeatherContent() {
                 <WeatherChart forecast={weatherData.daily} />
               </div>
 
-              <div className="space-y-8">
+              <div className="relative space-y-8">
                 <SunTimeline
                   sunrise={weatherData.current.sunrise}
                   sunset={weatherData.current.sunset}

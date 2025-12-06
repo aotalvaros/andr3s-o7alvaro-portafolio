@@ -17,7 +17,7 @@ export function WeatherChart({ forecast }: WeatherChartProps) {
   }))
 
   return (
-    <div className="rounded-2xl border border-border bg-gradient-to-br from-background/80 via-background/60 to-background/80 backdrop-blur-xl p-6 shadow-2xl">
+    <div className="relative rounded-2xl border border-border bg-gradient-to-br from-background/80 via-background/60 to-background/80 backdrop-blur-xl p-6 shadow-2xl">
       <h3 className="text-xl font-bold mb-6">Gráfica de temperatura</h3>
 
       <ResponsiveContainer width="100%" height={300}>

@@ -270,3 +270,35 @@ html, body {
   backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
+
+/* Este código lo añadirías a tu archivo CSS principal (ej. index.css) */
+.mask-fade-out {
+  /* La máscara oculta las áreas negras y revela las blancas. */
+  /* El centro es blanco (visible) y los bordes son transparentes (ocultos). */
+  -webkit-mask-image: radial-gradient(
+    circle at center, 
+    white 60%, 
+    transparent 100%
+  );
+  mask-image: radial-gradient(
+    circle at center, 
+    white 60%, 
+    transparent 100%
+  );
+}
+
+/* Opcional: Para esquinas no circulares, puedes usar 'linear-gradient' */
+.mask-fade-linear {
+  -webkit-mask-image: linear-gradient(
+    to bottom, 
+    black 0%, 
+    black 90%, 
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    to bottom, 
+    black 0%, 
+    black 90%, 
+    transparent 100%
+  );
+}

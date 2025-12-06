@@ -10,6 +10,8 @@ import { FloatingActionButton } from "@/components/ui/FloatingActionButton";
 import { useThemeStore } from "@/store/themeStore";
 import { Moon, Sun } from "lucide-react";
 import { FallbackImage } from '@/components/layout/FallbackImage';
+import { useDynamicIcon } from "@/hooks/useDynamicIcon";
+import { DEFAULT_ICON } from '@/config/iconMappings';
 
 const ModuleInMaintenance = dynamic(
   () => import("@/components/maintenance/ModuleInMaintenance"),
@@ -28,6 +30,7 @@ export const App = ({ children }: { readonly children: React.ReactNode }) => {
 
   const isDarkMode = useThemeStore((state) => state.isDarkMode);
   const toggleTheme = useThemeStore((state) => state.toggleTheme);
+  const { currentIcon } = useDynamicIcon();
 
   // Mostrar SpaceLoading mientras no se haya completado el fetch inicial O si está cargando y no ha habido error
   const shouldShowLoading = !isFetched || (isInitialLoading && !isError);
@@ -59,12 +62,13 @@ export const App = ({ children }: { readonly children: React.ReactNode }) => {
         data-testid="theme-toggle-button"    
       />
       <FallbackImage
-        src="/assets/iconoBlackAndWhite.png"
-        alt="Background Pattern"
+        src={currentIcon.src}
+        alt={currentIcon.alt}
         width={155}
         height={90}
-        className="fixed top-20 right-0 w-36 h-36 md:w-60 md:h-60 opacity-8 pointer-events-none"
+        className={`fixed top-20 right-0 w-36 h-36 md:w-60 md:h-60 ${currentIcon.alt !== DEFAULT_ICON.alt ? "opacity-38" : "opacity-9"} pointer-events-none rounded-xl shadow-2xl mask-fade-out`}
         loading="eager"
+        fallbackSrc={currentIcon.fallbackSrc}
       />
       {children}
       <footer className="border-t border-border/70 py-8 bg-muted/30">
