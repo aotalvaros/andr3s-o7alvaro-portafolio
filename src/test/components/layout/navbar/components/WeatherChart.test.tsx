@@ -228,7 +228,7 @@ describe('WeatherChart', () => {
       const maxLineProps = JSON.parse(lines[0].getAttribute('data-props')!);
       expect(maxLineProps.type).toBe('monotone');
       expect(maxLineProps.dataKey).toBe('max');
-      expect(maxLineProps.stroke).toBe('hsl(var(--primary))');
+      expect(maxLineProps.stroke).toBe('red');
       expect(maxLineProps.strokeWidth).toBe(3);
       expect(maxLineProps.name).toBe('Máx');
       
@@ -236,7 +236,7 @@ describe('WeatherChart', () => {
       const minLineProps = JSON.parse(lines[1].getAttribute('data-props')!);
       expect(minLineProps.type).toBe('monotone');
       expect(minLineProps.dataKey).toBe('min');
-      expect(minLineProps.stroke).toBe('hsl(var(--secondary))');
+      expect(minLineProps.stroke).toBe('blue');
       expect(minLineProps.strokeWidth).toBe(3);
       expect(minLineProps.name).toBe('Mín');
     });

@@ -14,7 +14,7 @@ import {
   searchCities,
 } from "@/services/weather";
 import { useDebounce } from "@/hooks/useDebounce";
-import { useDynamicIcon } from '../../../hooks/useDynamicIcon';
+import { useDynamicIcon } from '@/hooks/useDynamicIcon';
 
 export const useWeatherContent = () => {
 
