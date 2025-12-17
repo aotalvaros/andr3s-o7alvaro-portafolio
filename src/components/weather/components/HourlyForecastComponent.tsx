@@ -15,7 +15,7 @@ export function HourlyForecastComponent({ hourly }: HourlyForecastProps) {
   const next24Hours = hourly.slice(0, 24)
 
   return (
-    <Card className="p-6 bg-gradient-to-br from-background to-muted/30 border-2">
+    <Card className="relative p-6 bg-gradient-to-br from-background to-muted/30 border-2">
       <div className="flex items-center gap-2 mb-4">
         <Clock className="h-5 w-5 text-primary" />
         <h3 className="text-lg font-semibold">Pronóstico por Hora</h3>
