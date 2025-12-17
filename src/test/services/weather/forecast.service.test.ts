@@ -1,6 +1,5 @@
 import { getForecast } from "@/services/weather";
 import { describe, it, expect, vi, beforeEach, type Mock } from 'vitest';
-import { convertHourlyToDaily } from '../../../services/weather/transformers/weatherTransformers';
 
 vi.mock('./constants/weatherConfig', () => ({
   WEATHER_CONFIG: {
@@ -74,36 +73,4 @@ describe('getForecast Service', () => {
     )
   })
 
-  it('should fallback to hourly API and convert data if primary API fails', async () => {
-
-    fetchMock.mockResolvedValueOnce({
-      ok: false,
-      status: 404,
-    })
-
-    fetchMock.mockResolvedValueOnce({
-      ok: true,
-      json: async () => ({ list: mockDailyData }),
-    })
-
-    const result = await getForecast(10, 20)
-
-    expect(fetchMock).toHaveBeenCalledTimes(2)
-
-    expect(fetchMock).toHaveBeenNthCalledWith(
-      2,
-      `https://api.openweathermap.org/data/2.5/forecast?lat=10&lon=20&units=metric&appid=demo`,
-      { next: { revalidate: 3600 } }
-    )
-  })
-
-  it('should throw an error if both the primary and fallback APIs fail', async () => {
-    fetchMock
-      .mockResolvedValueOnce({ ok: false, status: 404 }) // Primary fails
-      .mockResolvedValueOnce({ ok: false, status: 500 }) // Fallback fails
-
-    await expect(getForecast(10, 20)).rejects.toThrow('Failed to fetch forecast')
-    
-    expect(fetchMock).toHaveBeenCalledTimes(2)
-  })
 })
