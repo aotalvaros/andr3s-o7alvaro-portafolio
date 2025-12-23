@@ -16,8 +16,8 @@ import { useToastMessageStore } from '@/store/ToastMessageStore';
 export function createHttpClient(): HttpClient {
   // Services
   const storageService = new CookieStorageService();
-  const loadingService = new LoadingService(useLoadingStore.getState().setLoading);
-  const notificationService = new ToastNotificationService(useToastMessageStore.getState().setParams);
+  const loadingService = new LoadingService(useLoadingStore.getState()?.setLoading);
+  const notificationService = new ToastNotificationService(useToastMessageStore.getState()?.setParams);
 
   // Auth repository (temporal - se debe inyectar correctamente)
   const authRepository = {

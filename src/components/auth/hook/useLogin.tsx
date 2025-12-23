@@ -36,10 +36,6 @@ export const useLogin = () => {
             
             toast.success('Inicio de sesión exitoso');
         },
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        onError: (error: any) => {
-            toast.error(error.message ?? 'Error al iniciar sesión');
-        },
     });
 
     useEffect(() => {

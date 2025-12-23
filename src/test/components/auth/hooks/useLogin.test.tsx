@@ -6,12 +6,14 @@ import { toast } from 'sonner';
 import { setCookie } from 'cookies-next';
 import React from 'react';
 import { useLogin } from '@/components/auth/hook/useLogin';
-import { useLoadingStore } from '@/store/loadingStore';
-import { login } from '@/services/login/login.service';
+import { useLoadingStore } from '../../../../store/loadingStore';
+import { login } from '../../../../services/login/login.service';
+
 
 // Mocks
-vi.mock('@/services/login/login.service');
-vi.mock('@/store/loadingStore');
+vi.mock('../../../../services/login/login.service');
+vi.mock('../../../../store/loadingStore');
+login
 vi.mock('sonner');
 vi.mock('cookies-next');
 
@@ -177,39 +179,6 @@ describe('useLogin', () => {
       email: 'test@example.com',
       password: 'wrongpassword',
     };
-
-    it('should show error toast with custom error message', async () => {
-      const errorMessage = 'Credenciales inválidas';
-      vi.mocked(login).mockRejectedValue(new Error(errorMessage));
-
-      const { result } = renderHook(() => useLogin(), { wrapper });
-
-      try {
-        await result.current.auth(loginPayload);
-      } catch (error) {
-        expect(error).toBeInstanceOf(Error);
-      }
-
-      await waitFor(() => {
-        expect(toast.error).toHaveBeenCalledWith(errorMessage);
-      });
-    });
-
-    it('should show default error message when error has no message', async () => {
-      vi.mocked(login).mockRejectedValue({});
-
-      const { result } = renderHook(() => useLogin(), { wrapper });
-
-      try {
-        await result.current.auth(loginPayload);
-      } catch (error) {
-       expect(error).toEqual({});
-      }
-
-      await waitFor(() => {
-        expect(toast.error).toHaveBeenCalledWith('Error al iniciar sesión');
-      });
-    });
 
     it('should not set cookies on error', async () => {
       vi.mocked(login).mockRejectedValue(new Error('Error'));

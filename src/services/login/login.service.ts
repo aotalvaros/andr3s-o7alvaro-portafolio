@@ -1,4 +1,4 @@
-import api from '@/lib/axios';
+import { httpClient } from '@/core/infrastructure/http/httpClientFactory';
 import { LoginResponse } from './models/loginResponse.interface';
 
 export interface LoginPayload {
@@ -7,6 +7,6 @@ export interface LoginPayload {
 }
 
 export async function login(payload: LoginPayload): Promise<LoginResponse> {
-  const { data } = await api.post('/auth/login', payload);
+  const data = await httpClient.post<LoginResponse>('/auth/login', payload);
   return data;
 }
