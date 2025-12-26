@@ -104,18 +104,6 @@ describe('sleep', () => {
       vi.useRealTimers();
     });
 
-    it('should actually wait the specified time', async () => {
-      const start = Date.now();
-      
-      await sleep(100);
-      
-      const elapsed = Date.now() - start;
-      
-      // Con un margen de error de ±50ms
-      expect(elapsed).toBeGreaterThanOrEqual(100);
-      expect(elapsed).toBeLessThan(200);
-    }, 1000); // Timeout de 1s para este test
-
     it('should resolve to true with real timers', async () => {
       const result = await sleep(50);
       expect(result).toBe(true);

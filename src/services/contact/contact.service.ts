@@ -1,4 +1,4 @@
-import api from '@/lib/axios';
+import { httpClient } from '@/core/infrastructure/http/httpClientFactory';
 
 export interface ContactPayload {
   name: string;
@@ -7,6 +7,6 @@ export interface ContactPayload {
 }
 
 export async function sendContact(payload: ContactPayload) {
-  const { data } = await api.post('/contact', payload);
+  const data = await httpClient.post('/contact', payload);
   return data;
 }

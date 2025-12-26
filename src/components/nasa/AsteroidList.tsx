@@ -21,7 +21,7 @@ export function AsteroidList() {
     const skeletons = Array.from({ length: skeletonCount }, (_, index) => index);
 
    const loadAsteroids = async (page = 0) => {
-        const data = await fetchAsteroids(page);
+        const data: any = await fetchAsteroids(page);
         setAsteroids(data.near_earth_objects);
         setPageInfo({
             current: data.page.number,

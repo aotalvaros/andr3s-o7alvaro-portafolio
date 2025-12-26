@@ -30,7 +30,7 @@ export const useContactForm = () => {
 
     const onSubmit = async (data: ContactFormData) => {
         await sendEmail(data, {
-            onSuccess: (data) => {
+            onSuccess: (data: any) => {
                 setParams({
                     message: "¡Éxito!",
                     description: data.message,

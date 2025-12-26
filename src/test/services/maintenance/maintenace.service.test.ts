@@ -1,23 +1,26 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { getMaintenanceStatus } from "@/services/maintenance/maintenace.service";
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import api from "@/lib/axios";
-// Mock de axios
-vi.mock('@/lib/axios', () => ({
-  default: {
+import { httpClient } from '@/core/infrastructure/http/httpClientFactory';
+import { MaintenanceResponseStatus } from '../../../services/maintenance/models/maintenaceResponseStatus.interface';
+
+// Mock httpClient factory
+vi.mock('@/core/infrastructure/http/httpClientFactory', () => ({
+  httpClient: {
     get: vi.fn(),
+    post: vi.fn(),
+    put: vi.fn(),
+    delete: vi.fn(),
+    patch: vi.fn(),
   },
 }));
 
-const mockApi = vi.mocked(api);
-
-describe('Maintenance Service - getMaintenanceStatus', () => {
-  let consoleErrorSpy: any;
+describe('Maintenance Status Service', () => {
+  const mockHttpClient = vi.mocked(httpClient);
+  let consoleErrorSpy: ReturnType<typeof vi.spyOn>;
 
   beforeEach(() => {
     vi.clearAllMocks();
-    
-    // Silenciar console.error para evitar ruido en los tests
     consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
   });
 
@@ -25,430 +28,423 @@ describe('Maintenance Service - getMaintenanceStatus', () => {
     consoleErrorSpy.mockRestore();
   });
 
-  describe('Successful Responses', () => {
+  describe('getMaintenanceStatus - Success cases', () => {
     it('should fetch maintenance status successfully', async () => {
       const mockResponse: MaintenanceResponseStatus = {
         data: [
-          { module: 'Module1', status: 'active' },
-          { module: 'Module2', status: 'inactive' },
+          { _id: '1', name: 'Module A', isActive: true, __v:0, moduleName:'ModuleA' },
+          { _id: '2', name: 'Module B', isActive: false, __v:0, moduleName:'ModuleB' }
         ],
         status: 'success',
-        cache: true,
+        cache: true
       };
 
-      mockApi.get.mockResolvedValue({ data: mockResponse });
+      mockHttpClient.get.mockResolvedValue(mockResponse);
 
-      const response = await getMaintenanceStatus();
+      const result = await getMaintenanceStatus();
 
-      expect(response).toEqual(mockResponse);
-      expect(mockApi.get).toHaveBeenCalledTimes(1);
+      expect(mockHttpClient.get).toHaveBeenCalledWith('/modules', {
+        showLoading: false,
+        skipErrorToast: true
+      });
+      expect(result).toEqual(mockResponse);
     });
 
-    it('should call API with correct endpoint and configuration', async () => {
+    it('should call the correct endpoint /modules', async () => {
       const mockResponse: MaintenanceResponseStatus = {
         data: [],
         status: 'success',
-        cache: false,
+        cache: false
       };
 
-      mockApi.get.mockResolvedValue({ data: mockResponse });
+      mockHttpClient.get.mockResolvedValue(mockResponse);
 
       await getMaintenanceStatus();
 
-      expect(mockApi.get).toHaveBeenCalledWith('/modules', {
-        showLoading: false,
-        skipErrorToast: true,
-      });
+      const callArgs = mockHttpClient.get.mock.calls[0];
+      expect(callArgs[0]).toBe('/modules');
     });
 
-    it('should return data with cache enabled', async () => {
-      const mockResponse: MaintenanceResponseStatus = {
-        data: [{ module: 'CachedModule', status: 'active' }],
-        status: 'success',
-        cache: true,
-      };
-
-      mockApi.get.mockResolvedValue({ data: mockResponse });
-
-      const response = await getMaintenanceStatus();
-
-      expect(response.cache).toBe(true);
-      expect(response.data).toHaveLength(1);
-    });
-
-    it('should return empty data array', async () => {
+    it('should pass custom config with showLoading: false', async () => {
       const mockResponse: MaintenanceResponseStatus = {
         data: [],
         status: 'success',
-        cache: false,
+        cache: false
       };
 
-      mockApi.get.mockResolvedValue({ data: mockResponse });
+      mockHttpClient.get.mockResolvedValue(mockResponse);
 
-      const response = await getMaintenanceStatus();
+      await getMaintenanceStatus();
 
-      expect(response.data).toEqual([]);
-      expect(response.status).toBe('success');
+      expect(mockHttpClient.get).toHaveBeenCalledWith(
+        '/modules',
+        expect.objectContaining({
+          showLoading: false
+        })
+      );
     });
 
-    it('should handle multiple modules in response', async () => {
+    it('should pass custom config with skipErrorToast: true', async () => {
       const mockResponse: MaintenanceResponseStatus = {
-        data: [
-          { module: 'Module1', status: 'active' },
-          { module: 'Module2', status: 'inactive' },
-          { module: 'Module3', status: 'maintenance' },
-          { module: 'Module4', status: 'active' },
-        ],
+        data: [],
         status: 'success',
-        cache: true,
+        cache: false
       };
 
-      mockApi.get.mockResolvedValue({ data: mockResponse });
+      mockHttpClient.get.mockResolvedValue(mockResponse);
 
-      const response = await getMaintenanceStatus();
+      await getMaintenanceStatus();
 
-      expect(response.data).toHaveLength(4);
-      expect(response.data[2].status).toBe('maintenance');
+      expect(mockHttpClient.get).toHaveBeenCalledWith(
+        '/modules',
+        expect.objectContaining({
+          skipErrorToast: true
+        })
+      );
+    });
+
+    it('should return response with empty data array', async () => {
+      const mockResponse: MaintenanceResponseStatus = {
+        data: [],
+        status: 'success',
+        cache: false
+      };
+
+      mockHttpClient.get.mockResolvedValue(mockResponse);
+
+      const result = await getMaintenanceStatus();
+
+      expect(result).toEqual(mockResponse);
+      expect(result.data).toEqual([]);
+    });
+
+    it('should return response with multiple modules', async () => {
+      const mockResponse: MaintenanceResponseStatus = {
+        data: [
+          { _id: '1', name: 'Auth', isActive: true, __v:0, moduleName:'Auth' },
+          { _id: '2', name: 'Payments', isActive: true, __v:0, moduleName:'Payments' },
+          { _id: '3', name: 'Reports', isActive: false, __v:0, moduleName:'Reports' }
+        ],
+        status: 'success',
+        cache: true
+      };
+
+      mockHttpClient.get.mockResolvedValue(mockResponse);
+
+      const result = await getMaintenanceStatus();
+
+      expect(result.data).toHaveLength(3);
+      expect(result.data[0].name).toBe('Auth');
+    });
+
+    it('should handle cached responses', async () => {
+      const mockResponse: MaintenanceResponseStatus = {
+        data: [{ _id: '1', name: 'Module', isActive: true, __v:0, moduleName:'Module' }],
+        status: 'success',
+        cache: true
+      };
+
+      mockHttpClient.get.mockResolvedValue(mockResponse);
+
+      const result = await getMaintenanceStatus();
+
+      expect(result.cache).toBe(true);
+    });
+
+    it('should handle non-cached responses', async () => {
+      const mockResponse: MaintenanceResponseStatus = {
+        data: [{ _id: '1', name: 'Module', isActive: true, __v:0, moduleName:'Module' }],
+        status: 'success',
+        cache: false
+      };
+
+      mockHttpClient.get.mockResolvedValue(mockResponse);
+
+      const result = await getMaintenanceStatus();
+
+      expect(result.cache).toBe(false);
     });
   });
 
-  describe('Error Handling', () => {
-    it('should return error state when API call fails', async () => {
-      mockApi.get.mockRejectedValue(new Error('Network Error'));
+  describe('getMaintenanceStatus - Error handling', () => {
+    it('should return default error state when request fails', async () => {
+      const networkError = new Error('Network error');
+      mockHttpClient.get.mockRejectedValue(networkError);
 
-      const response = await getMaintenanceStatus();
+      const result = await getMaintenanceStatus();
 
-      expect(response).toEqual({
+      expect(result).toEqual({
         data: [],
         status: 'error',
-        cache: false,
+        cache: false
       });
     });
 
     it('should log error to console when request fails', async () => {
-      const error = new Error('Network Error');
-      mockApi.get.mockRejectedValue(error);
+      const testError = new Error('Test error');
+      mockHttpClient.get.mockRejectedValue(testError);
 
       await getMaintenanceStatus();
 
       expect(consoleErrorSpy).toHaveBeenCalledWith(
         '[getMaintenanceStatus] Error fetching maintenance status:',
-        error
+        testError
       );
     });
 
-    it('should not throw error when API fails', async () => {
-      mockApi.get.mockRejectedValue(new Error('Network Error'));
+    it('should handle 500 server error gracefully', async () => {
+      const serverError = new Error('Internal server error');
+      mockHttpClient.get.mockRejectedValue(serverError);
+
+      const result = await getMaintenanceStatus();
+
+      expect(result.status).toBe('error');
+      expect(result.data).toEqual([]);
+    });
+
+    it('should handle 404 not found error gracefully', async () => {
+      const notFoundError = new Error('Not found');
+      mockHttpClient.get.mockRejectedValue(notFoundError);
+
+      const result = await getMaintenanceStatus();
+
+      expect(result.status).toBe('error');
+      expect(result.data).toEqual([]);
+    });
+
+    it('should handle timeout errors gracefully', async () => {
+      const timeoutError = new Error('Request timeout');
+      mockHttpClient.get.mockRejectedValue(timeoutError);
+
+      const result = await getMaintenanceStatus();
+
+      expect(result.status).toBe('error');
+      expect(result.cache).toBe(false);
+    });
+
+    it('should not throw error when request fails', async () => {
+      mockHttpClient.get.mockRejectedValue(new Error('Fatal error'));
 
       await expect(getMaintenanceStatus()).resolves.toBeDefined();
     });
 
-    it('should return default state on 500 error', async () => {
-      mockApi.get.mockRejectedValue({
-        response: {
-          status: 500,
-          data: { message: 'Internal Server Error' },
-        },
-      });
+    it('should return consistent error structure', async () => {
+      mockHttpClient.get.mockRejectedValue(new Error('Error'));
 
-      const response = await getMaintenanceStatus();
+      const result = await getMaintenanceStatus();
 
-      expect(response).toEqual({
-        data: [],
-        status: 'error',
-        cache: false,
-      });
+      expect(result).toHaveProperty('data');
+      expect(result).toHaveProperty('status');
+      expect(result).toHaveProperty('cache');
     });
 
-    it('should return default state on 404 error', async () => {
-      mockApi.get.mockRejectedValue({
-        response: {
-          status: 404,
-          data: { message: 'Not Found' },
-        },
-      });
+    it('should handle undefined error objects', async () => {
+      mockHttpClient.get.mockRejectedValue(undefined);
 
-      const response = await getMaintenanceStatus();
+      const result = await getMaintenanceStatus();
 
-      expect(response.status).toBe('error');
-      expect(response.data).toEqual([]);
+      expect(result.status).toBe('error');
+      expect(consoleErrorSpy).toHaveBeenCalled();
     });
 
-    it('should return default state on timeout error', async () => {
-      mockApi.get.mockRejectedValue({
-        code: 'ECONNABORTED',
-        message: 'timeout of 5000ms exceeded',
-      });
+    it('should handle null error objects', async () => {
+      mockHttpClient.get.mockRejectedValue(null);
 
-      const response = await getMaintenanceStatus();
+      const result = await getMaintenanceStatus();
 
-      expect(response).toEqual({
-        data: [],
-        status: 'error',
-        cache: false,
-      });
+      expect(result.status).toBe('error');
     });
 
-    it('should handle network error gracefully', async () => {
-      mockApi.get.mockRejectedValue({
-        message: 'Network Error',
-        code: 'ERR_NETWORK',
-      });
+    it('should handle string error messages', async () => {
+      mockHttpClient.get.mockRejectedValue('String error message');
 
-      const response = await getMaintenanceStatus();
+      const result = await getMaintenanceStatus();
 
-      expect(response.status).toBe('error');
-      expect(response.cache).toBe(false);
-    });
-
-    it('should handle undefined error', async () => {
-      mockApi.get.mockRejectedValue(undefined);
-
-      const response = await getMaintenanceStatus();
-
-      expect(response).toEqual({
-        data: [],
-        status: 'error',
-        cache: false,
-      });
-    });
-
-    it('should handle null error', async () => {
-      mockApi.get.mockRejectedValue(null);
-
-      const response = await getMaintenanceStatus();
-
-      expect(response.status).toBe('error');
-    });
-
-    it('should handle string error', async () => {
-      mockApi.get.mockRejectedValue('Something went wrong');
-
-      const response = await getMaintenanceStatus();
-
-      expect(response).toEqual({
-        data: [],
-        status: 'error',
-        cache: false,
-      });
+      expect(result.status).toBe('error');
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
+        '[getMaintenanceStatus] Error fetching maintenance status:',
+        'String error message'
+      );
     });
   });
 
-  describe('API Configuration', () => {
-    it('should call API with showLoading set to false', async () => {
+  describe('getMaintenanceStatus - Integration with httpClient', () => {
+    it('should use only GET method', async () => {
       const mockResponse: MaintenanceResponseStatus = {
         data: [],
         status: 'success',
-        cache: false,
+        cache: false
       };
 
-      mockApi.get.mockResolvedValue({ data: mockResponse });
+      mockHttpClient.get.mockResolvedValue(mockResponse);
 
       await getMaintenanceStatus();
 
-      expect(mockApi.get).toHaveBeenCalledWith(
-        expect.any(String),
+      expect(mockHttpClient.get).toHaveBeenCalled();
+      expect(mockHttpClient.post).not.toHaveBeenCalled();
+      expect(mockHttpClient.put).not.toHaveBeenCalled();
+      expect(mockHttpClient.delete).not.toHaveBeenCalled();
+      expect(mockHttpClient.patch).not.toHaveBeenCalled();
+    });
+
+    it('should be called with generic type MaintenanceResponseStatus', async () => {
+      const mockResponse: MaintenanceResponseStatus = {
+        data: [{ _id: '1', name: 'Test', isActive: true, __v:0, moduleName:'Test' }],
+        status: 'success',
+        cache: true
+      };
+
+      mockHttpClient.get.mockResolvedValue(mockResponse);
+
+      const result = await getMaintenanceStatus();
+
+      // TypeScript should infer correct types
+      expect(result.data).toBeDefined();
+      expect(result.status).toBeDefined();
+      expect(result.cache).toBeDefined();
+    });
+
+    it('should not trigger loading indicator', async () => {
+      const mockResponse: MaintenanceResponseStatus = {
+        data: [],
+        status: 'success',
+        cache: false
+      };
+
+      mockHttpClient.get.mockResolvedValue(mockResponse);
+
+      await getMaintenanceStatus();
+
+      const config = mockHttpClient.get.mock.calls[0][1];
+      expect(config?.showLoading).toBe(false);
+    });
+
+    it('should not trigger error toast notifications', async () => {
+      const mockResponse: MaintenanceResponseStatus = {
+        data: [],
+        status: 'success',
+        cache: false
+      };
+
+      mockHttpClient.get.mockResolvedValue(mockResponse);
+
+      await getMaintenanceStatus();
+
+      const config = mockHttpClient.get.mock.calls[0][1];
+      expect(config?.skipErrorToast).toBe(true);
+    });
+  });
+
+  describe('getMaintenanceStatus - React Query integration scenarios', () => {
+    it('should prevent infinite retry loops by returning default state', async () => {
+      mockHttpClient.get.mockRejectedValue(new Error('Network unstable'));
+
+      const result = await getMaintenanceStatus();
+
+      // Should return a valid response to stop React Query retries
+      expect(result).toBeDefined();
+      expect(result.status).toBe('error');
+      expect(typeof result).toBe('object');
+    });
+
+    it('should be safe for background polling', async () => {
+      const mockResponse: MaintenanceResponseStatus = {
+        data: [{ _id: '1', name: 'Service', isActive: true, __v:0, moduleName:'Service' }],
+        status: 'success',
+        cache: true
+      };
+
+      mockHttpClient.get.mockResolvedValue(mockResponse);
+
+      // Simulate multiple calls (polling)
+      await getMaintenanceStatus();
+      await getMaintenanceStatus();
+      await getMaintenanceStatus();
+
+      expect(mockHttpClient.get).toHaveBeenCalledTimes(3);
+      expect(mockHttpClient.get).toHaveBeenCalledWith(
+        '/modules',
         expect.objectContaining({
           showLoading: false,
+          skipErrorToast: true
         })
       );
     });
 
-    it('should call API with skipErrorToast set to true', async () => {
+    it('should handle rapid successive calls', async () => {
       const mockResponse: MaintenanceResponseStatus = {
         data: [],
         status: 'success',
-        cache: false,
+        cache: false
       };
 
-      mockApi.get.mockResolvedValue({ data: mockResponse });
+      mockHttpClient.get.mockResolvedValue(mockResponse);
 
-      await getMaintenanceStatus();
+      const promises = [
+        getMaintenanceStatus(),
+        getMaintenanceStatus(),
+        getMaintenanceStatus()
+      ];
 
-      expect(mockApi.get).toHaveBeenCalledWith(
-        expect.any(String),
-        expect.objectContaining({
-          skipErrorToast: true,
-        })
-      );
-    });
+      const results = await Promise.all(promises);
 
-    it('should use /modules endpoint', async () => {
-      const mockResponse: MaintenanceResponseStatus = {
-        data: [],
-        status: 'success',
-        cache: false,
-      };
-
-      mockApi.get.mockResolvedValue({ data: mockResponse });
-
-      await getMaintenanceStatus();
-
-      expect(mockApi.get).toHaveBeenCalledWith(
-        '/modules',
-        expect.any(Object)
-      );
+      expect(results).toHaveLength(3);
+      results.forEach(result => {
+        expect(result).toEqual(mockResponse);
+      });
     });
   });
 
-  describe('Response Structure', () => {
-    it('should return response with data property', async () => {
-      const mockResponse: MaintenanceResponseStatus = {
-        data: [{ module: 'Test', status: 'active' }],
-        status: 'success',
-        cache: true,
-      };
-
-      mockApi.get.mockResolvedValue({ data: mockResponse });
-
-      const response = await getMaintenanceStatus();
-
-      expect(response).toHaveProperty('data');
-      expect(Array.isArray(response.data)).toBe(true);
-    });
-
-    it('should return response with status property', async () => {
+  describe('getMaintenanceStatus - Edge cases', () => {
+    it('should handle response with additional unexpected fields', async () => {
       const mockResponse: MaintenanceResponseStatus = {
         data: [],
         status: 'success',
         cache: false,
-      };
+        // Extra fields
+        timestamp: '2025-12-22T10:00:00Z',
+        version: '1.0'
+      } as any;
 
-      mockApi.get.mockResolvedValue({ data: mockResponse });
+      mockHttpClient.get.mockResolvedValue(mockResponse);
 
-      const response = await getMaintenanceStatus();
+      const result = await getMaintenanceStatus();
 
-      expect(response).toHaveProperty('status');
-      expect(typeof response.status).toBe('string');
-    });
-
-    it('should return response with cache property', async () => {
-      const mockResponse: MaintenanceResponseStatus = {
-        data: [],
-        status: 'success',
-        cache: true,
-      };
-
-      mockApi.get.mockResolvedValue({ data: mockResponse });
-
-      const response = await getMaintenanceStatus();
-
-      expect(response).toHaveProperty('cache');
-      expect(typeof response.cache).toBe('boolean');
-    });
-
-    it('should return all required properties on error', async () => {
-      mockApi.get.mockRejectedValue(new Error('Test Error'));
-
-      const response = await getMaintenanceStatus();
-
-      expect(response).toHaveProperty('data');
-      expect(response).toHaveProperty('status');
-      expect(response).toHaveProperty('cache');
-    });
-  });
-
-  describe('Edge Cases', () => {
-    it('should handle malformed response data', async () => {
-      mockApi.get.mockResolvedValue({ data: null });
-
-      const response = await getMaintenanceStatus();
-
-      expect(response).toBeNull();
-    });
-
-    it('should handle response without data property', async () => {
-      mockApi.get.mockResolvedValue({});
-
-      const response = await getMaintenanceStatus();
-
-      expect(response).toBeUndefined();
+      expect(result).toEqual(mockResponse);
     });
 
     it('should handle very large data arrays', async () => {
-      const largeDataArray = Array.from({ length: 1000 }, (_, i) => ({
-        module: `Module${i}`,
-        status: i % 2 === 0 ? 'active' : 'inactive',
+      const largeData = Array.from({ length: 1000 }, (_, i) => ({
+        _id: `${i}`,
+        name: `Module ${i}`,
+        isActive: i % 2 === 0,
+        __v: 0,
+        moduleName: `Module${i}`
       }));
 
       const mockResponse: MaintenanceResponseStatus = {
-        data: largeDataArray,
+        data: largeData,
         status: 'success',
-        cache: true,
+        cache: true
       };
 
-      mockApi.get.mockResolvedValue({ data: mockResponse });
+      mockHttpClient.get.mockResolvedValue(mockResponse);
 
-      const response = await getMaintenanceStatus();
+      const result = await getMaintenanceStatus();
 
-      expect(response.data).toHaveLength(1000);
-      expect(response.data[999].module).toBe('Module999');
+      expect(result.data).toHaveLength(1000);
     });
 
-    it('should handle concurrent calls', async () => {
-      const mockResponse: MaintenanceResponseStatus = {
-        data: [{ module: 'Test', status: 'active' }],
-        status: 'success',
-        cache: false,
-      };
+    it('should maintain type safety in error responses', async () => {
+      mockHttpClient.get.mockRejectedValue(new Error('Error'));
 
-      mockApi.get.mockResolvedValue({ data: mockResponse });
+      const result = await getMaintenanceStatus();
 
-      const [response1, response2, response3] = await Promise.all([
-        getMaintenanceStatus(),
-        getMaintenanceStatus(),
-        getMaintenanceStatus(),
-      ]);
-
-      expect(response1).toEqual(mockResponse);
-      expect(response2).toEqual(mockResponse);
-      expect(response3).toEqual(mockResponse);
-      expect(mockApi.get).toHaveBeenCalledTimes(3);
-    });
-
-    it('should handle slow API response', async () => {
-      const mockResponse: MaintenanceResponseStatus = {
-        data: [],
-        status: 'success',
-        cache: false,
-      };
-
-      mockApi.get.mockImplementation(
-        () =>
-          new Promise((resolve) =>
-            setTimeout(() => resolve({ data: mockResponse }), 100)
-          )
-      );
-
-      const response = await getMaintenanceStatus();
-
-      expect(response).toEqual(mockResponse);
-    });
-  });
-
-  describe('Type Safety', () => {
-    it('should return correct TypeScript type', async () => {
-      const mockResponse: MaintenanceResponseStatus = {
-        data: [],
-        status: 'success',
-        cache: false,
-      };
-
-      mockApi.get.mockResolvedValue({ data: mockResponse });
-
-      const response: MaintenanceResponseStatus = await getMaintenanceStatus();
-
-      expect(response).toBeDefined();
-    });
-
-    it('should maintain type structure on error', async () => {
-      mockApi.get.mockRejectedValue(new Error('Test'));
-
-      const response: MaintenanceResponseStatus = await getMaintenanceStatus();
-
-      expect(response.data).toEqual([]);
-      expect(response.status).toBe('error');
-      expect(response.cache).toBe(false);
+      // Ensure the error response matches MaintenanceResponseStatus interface
+      const testTyping: MaintenanceResponseStatus = result;
+      expect(testTyping.data).toEqual([]);
+      expect(testTyping.status).toBe('error');
+      expect(testTyping.cache).toBe(false);
     });
   });
 });
