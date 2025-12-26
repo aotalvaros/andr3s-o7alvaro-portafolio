@@ -1,6 +1,7 @@
-import api from "@/lib/axios";
+
 import { MarsPhotosResponse } from "./models/marsPhotosResponse.interface";
 import { IFetchMarsPhotosParams } from "./models/fetchMarsPhotosParams.interface";
+import { nasaHttpClient } from '@/core/infrastructure/http/nasaHttpClientFactory';
 
 export async function fetchMarsPhotos({ rover, sol, earth_date, camera, page = 1}: IFetchMarsPhotosParams) : Promise<MarsPhotosResponse[]> {
 
@@ -15,10 +16,10 @@ export async function fetchMarsPhotos({ rover, sol, earth_date, camera, page = 1
   if (earth_date) params.earth_date = earth_date;
   if (camera) params.camera = camera;
 
-  const { data } = await api.get(`/mars-photos/api/v1/rovers/${rover}/photos`, {
-    baseURL: 'https://api.nasa.gov',
-    params,
-  });
+  const data = await nasaHttpClient.get<{ photos: MarsPhotosResponse[] }>(
+    `/mars-photos/api/v1/rovers/${rover}/photos`,
+    { params, showLoading: false }
+  );
 
   return data.photos;
 } 

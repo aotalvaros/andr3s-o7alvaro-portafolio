@@ -9,8 +9,9 @@ const { mockGet, mockPost, mockPut, mockDelete, mockPatch } = vi.hoisted(() => (
   mockPatch: vi.fn(),
 }));
 
-vi.mock('@/core/infrastructure/http/httpClientFactory', () => ({
-  httpClient: {
+
+vi.mock('@/core/infrastructure/http/nasaHttpClientFactory', () => ({
+  nasaHttpClient: {
     get: mockGet,
     post: mockPost,
     put: mockPut,
@@ -40,7 +41,7 @@ describe('Asteroids Service', () => {
       it('should fetch asteroids successfully with default page 0', async () => {
         
         const mockResponse = {
-          links: { self: 'https://api.nasa.gov/neo/rest/v1/neo/browse?page=0' },
+          links: { self: '/neo/rest/v1/neo/browse?page=0' },
           page: { size: 20, total_elements: 1000, total_pages: 50, number: 0 },
           near_earth_objects: [
             { id: '2000433', name: '433 Eros', is_potentially_hazardous_asteroid: false },
@@ -53,11 +54,11 @@ describe('Asteroids Service', () => {
         const result = await fetchAsteroids();
 
         expect(mockGet).toHaveBeenCalledWith(
-          'https://api.nasa.gov/neo/rest/v1/neo/browse',
+          '/neo/rest/v1/neo/browse',
           expect.objectContaining({
             params: {
               page: 0,
-              api_key: expect.any(String)
+              api_key: "DEMO_KEY"
             }
           })
         );
@@ -71,11 +72,11 @@ describe('Asteroids Service', () => {
         await fetchAsteroids(5);
 
         expect(mockGet).toHaveBeenCalledWith(
-          'https://api.nasa.gov/neo/rest/v1/neo/browse',
+          '/neo/rest/v1/neo/browse',
           expect.objectContaining({
             params: {
               page: 5,
-              api_key: expect.any(String)
+              api_key: "DEMO_KEY"
             }
           })
         );
@@ -120,7 +121,7 @@ describe('Asteroids Service', () => {
         await fetchAsteroids();
 
         const url = mockGet.mock.calls[0][0];
-        expect(url).toBe('https://api.nasa.gov/neo/rest/v1/neo/browse');
+        expect(url).toBe('/neo/rest/v1/neo/browse');
       });
 
       it('should include api_key in params', async () => {
@@ -143,9 +144,9 @@ describe('Asteroids Service', () => {
         
         const mockResponse = {
           links: {
-            next: 'https://api.nasa.gov/neo/rest/v1/neo/browse?page=1',
-            prev: 'https://api.nasa.gov/neo/rest/v1/neo/browse?page=0',
-            self: 'https://api.nasa.gov/neo/rest/v1/neo/browse?page=0'
+            next: '/neo/rest/v1/neo/browse?page=1',
+            prev: '/neo/rest/v1/neo/browse?page=0',
+            self: '/neo/rest/v1/neo/browse?page=0'
           },
           page: {
             size: 20,
@@ -288,10 +289,10 @@ describe('Asteroids Service', () => {
         const result = await fetchAsteroidById('3542519');
 
         expect(mockGet).toHaveBeenCalledWith(
-          'https://api.nasa.gov/neo/rest/v1/neo/3542519',
+          '/neo/rest/v1/neo/3542519',
           expect.objectContaining({
             params: {
-              api_key: expect.any(String)
+              api_key: "DEMO_KEY"
             }
           })
         );
@@ -321,7 +322,7 @@ describe('Asteroids Service', () => {
         await fetchAsteroidById('12345');
 
         const url = mockGet.mock.calls[0][0];
-        expect(url).toBe('https://api.nasa.gov/neo/rest/v1/neo/12345');
+        expect(url).toBe('/neo/rest/v1/neo/12345');
       });
 
       it('should include api_key in params', async () => {
@@ -446,7 +447,7 @@ describe('Asteroids Service', () => {
         await fetchAsteroidById('');
 
         expect(mockGet).toHaveBeenCalledWith(
-          'https://api.nasa.gov/neo/rest/v1/neo/',
+          '/neo/rest/v1/neo/',
           expect.any(Object)
         );
       });
@@ -458,7 +459,7 @@ describe('Asteroids Service', () => {
         await fetchAsteroidById('2010-PK9');
 
         expect(mockGet).toHaveBeenCalledWith(
-          'https://api.nasa.gov/neo/rest/v1/neo/2010-PK9',
+          '/neo/rest/v1/neo/2010-PK9',
           expect.any(Object)
         );
       });
@@ -471,7 +472,7 @@ describe('Asteroids Service', () => {
         await fetchAsteroidById(longId);
 
         expect(mockGet).toHaveBeenCalledWith(
-          `https://api.nasa.gov/neo/rest/v1/neo/${longId}`,
+          `/neo/rest/v1/neo/${longId}`,
           expect.any(Object)
         );
       });
@@ -501,10 +502,10 @@ describe('Asteroids Service', () => {
       await fetchAsteroidById('123');
 
       const calls = mockGet.mock.calls;
-      expect(calls[0][0]).toMatch(/^https:\/\//);
-      expect(calls[1][0]).toMatch(/^https:\/\//);
-      expect(calls[0][0]).toContain('api.nasa.gov');
-      expect(calls[1][0]).toContain('api.nasa.gov');
+      expect(calls[0][0]).toMatch(/\/neo\/rest\/v1\/neo\//);
+      expect(calls[1][0]).toMatch(/\/neo\/rest\/v1\/neo\//);
+      expect(calls[0][0]).toContain('/neo/rest/v1/neo/browse');
+      expect(calls[1][0]).toContain('/neo/rest/v1/neo/123');
     });
   });
 

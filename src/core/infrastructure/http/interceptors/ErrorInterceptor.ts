@@ -49,7 +49,7 @@ export class ErrorInterceptor implements Interceptor {
     const axiosError = error as AxiosError;
     const customError = this.mapError(axiosError);
 
-    if (!axiosError.config?.skipErrorToast) {
+    if (!(axiosError.config as any)?.skipErrorToast) {
       this.notificationService.error(customError.message);
     }
 

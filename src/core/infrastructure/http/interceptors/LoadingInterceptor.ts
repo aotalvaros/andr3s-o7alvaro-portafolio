@@ -15,7 +15,7 @@ export class LoadingInterceptor implements Interceptor {
   constructor(private loadingService: ILoadingService) {}
 
   async onRequest(config: InternalAxiosRequestConfig): Promise<InternalAxiosRequestConfig> {
-    if (config.showLoading !== false) {
+    if ((config as any).showLoading !== false) {
       this.loadingService.start();
     }
     return config;
