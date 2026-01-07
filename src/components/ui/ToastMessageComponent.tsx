@@ -19,7 +19,6 @@ const getIcon = (type: string) => {
 
 const ToastMessageComponent = () => {
     const {message, show, description, typeMessage, setParams } = useToastMessageStore((state) => state)
-    console.log("🚀 ~ ToastMessageComponent ~ message:", message)
 
     useEffect(() => {
         if (!show) return;

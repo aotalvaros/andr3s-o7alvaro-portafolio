@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useRef } from "react"
 import { Progress } from "@/components/ui/progress"
+import { getSecureRandomInRange } from '@/utils/randomValues';
 
 interface SpaceLoadingProps {
   isLoading?: boolean
@@ -63,7 +64,7 @@ export function SpaceLoading({ isLoading = true, onLoadingComplete, shouldShow =
 
         // Si llegamos a 95% y aún está cargando, volver a 60-85%
         if (currentProgress >= 95) {
-          const resetValue = 60 + Math.random() * 25 // Entre 60 y 85
+          const resetValue = getSecureRandomInRange(60, 85) // Entre 60 y 85
           progressRef.current = resetValue
           return resetValue
         }
@@ -72,19 +73,19 @@ export function SpaceLoading({ isLoading = true, onLoadingComplete, shouldShow =
 
         // Progreso rápido al inicio (0-30%)
         if (currentProgress < 30) {
-          increment = Math.random() * 2 + 1 // 1-3%
+          increment = getSecureRandomInRange(1, 3) // 1-3%
         }
         // Progreso medio (30-60%)
         else if (currentProgress < 60) {
-          increment = Math.random() * 1.5 + 0.5 // 0.5-2%
+          increment = getSecureRandomInRange(0.5, 2) // 0.5-2%
         }
         // Progreso lento (60-85%)
         else if (currentProgress < 85) {
-          increment = Math.random() * 0.8 + 0.2 // 0.2-1%
+          increment = getSecureRandomInRange(0.2, 1) // 0.2-1%
         }
         // Progreso muy lento (85-95%)
         else {
-          increment = Math.random() * 0.3 + 0.1 // 0.1-0.4%
+          increment = getSecureRandomInRange(0.1, 0.4) // 0.1-0.4%
         }
 
         const newProgress = Math.min(currentProgress + increment, 95)
@@ -130,10 +131,10 @@ export function SpaceLoading({ isLoading = true, onLoadingComplete, shouldShow =
             key={`star-${i}`}
             className="absolute w-1 h-1 bg-white rounded-full animate-twinkle"
             style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
-              animationDelay: `${Math.random() * 3}s`,
-              opacity: Math.random() * 0.7 + 0.3,
+              left: `${getSecureRandomInRange(0, 100)}%`,
+              top: `${getSecureRandomInRange(0, 100)}%`,
+              animationDelay: `${getSecureRandomInRange(0, 3)}s`,
+              opacity: getSecureRandomInRange(0.3, 1),
             }}
           />
         ))}
@@ -145,8 +146,8 @@ export function SpaceLoading({ isLoading = true, onLoadingComplete, shouldShow =
             key={`shooting-star-${i}`}
             className="absolute w-1 h-1 bg-white rounded-full animate-shooting-star"
             style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 50}%`,
+              left: `${getSecureRandomInRange(0, 100)}%`,
+              top: `${getSecureRandomInRange(0, 50)}%`,
               animationDelay: `${i * 3}s`,
             }}
           />
@@ -236,10 +237,10 @@ export function SpaceLoading({ isLoading = true, onLoadingComplete, shouldShow =
               key={`particle-${i}`}
               className="absolute w-2 h-2 bg-blue-400/30 rounded-full animate-float-particle"
               style={{
-                left: `${20 + Math.random() * 60}%`,
-                top: `${30 + Math.random() * 40}%`,
-                animationDelay: `${Math.random() * 2}s`,
-                animationDuration: `${3 + Math.random() * 2}s`,
+                left: `${20 + getSecureRandomInRange(0, 60)}%`,
+                top: `${30 + getSecureRandomInRange(0, 40)}%`,
+                animationDelay: `${getSecureRandomInRange(0, 2)}s`,
+                animationDuration: `${3 + getSecureRandomInRange(0, 2)}s`,
               }}
             />
           ))}
