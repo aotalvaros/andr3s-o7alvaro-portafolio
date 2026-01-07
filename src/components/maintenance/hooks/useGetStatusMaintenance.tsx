@@ -2,6 +2,7 @@
 
 import { getMaintenanceStatus } from "@/services/maintenance/maintenace.service";
 import { useQuery } from "@tanstack/react-query";
+import { getSecureRandomInRange } from '@/utils/randomValues';
 
 export const useGetStatusMaintenance = () => {
 
@@ -13,7 +14,7 @@ export const useGetStatusMaintenance = () => {
         retry: 3, // Máximo 3 reintentos
         retryDelay: (attemptIndex) => {
             const base = 1000 * 2 ** attemptIndex;
-            const jitter = Math.random() * 1000;
+            const jitter = getSecureRandomInRange(0, 1000);
             return Math.min(base + jitter, 30000);
         },
         refetchOnMount: false,
