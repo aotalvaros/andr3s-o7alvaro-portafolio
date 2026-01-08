@@ -1,7 +1,7 @@
-import { sendContact } from "@/services/contact/contact.service";
 import { useLoadingStore } from "@/store/loadingStore";
 import { useMutation } from "@tanstack/react-query";
 import { useEffect } from "react";
+import { httpClient } from '@/core/infrastructure/http/httpClientFactory';
 
 export const usePostContact = () => {
 
@@ -11,7 +11,7 @@ export const usePostContact = () => {
     mutateAsync: sendEmail,
     isPending: isLoading,
   } = useMutation({
-    mutationFn: (payload: { name: string; email: string; message: string }) => sendContact(payload),
+    mutationFn: (payload: { name: string; email: string; message: string }) => httpClient.post('/contact', payload),
   });
 
   useEffect(() => {
