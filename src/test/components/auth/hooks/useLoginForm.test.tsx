@@ -120,7 +120,7 @@ describe("useLoginForm", () => {
     });
 
     act(() => {
-      result.current.onChangeReCaptcha();
+      result.current.onChangeReCaptcha("recaptcha-token");
     });
 
     expect(result.current.isButtonDisabled).toBe(false);
@@ -143,7 +143,7 @@ describe("useLoginForm", () => {
     });
 
     act(() => {
-      result.current.onChangeReCaptcha();
+      result.current.onChangeReCaptcha(null);
     });
 
     expect(result.current.isButtonDisabled).toBe(true);
@@ -208,7 +208,7 @@ describe("useLoginForm", () => {
     // Should not throw error when ref is null
     expect(() => {
       act(() => {
-        result.current.onChangeReCaptcha();
+        result.current.onChangeReCaptcha(null);
       });
     }).not.toThrow();
 

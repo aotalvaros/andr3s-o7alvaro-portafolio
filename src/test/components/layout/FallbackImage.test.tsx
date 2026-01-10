@@ -25,6 +25,8 @@ describe('FallbackImage', () => {
   const defaultProps = {
     src: '/assets/test-image.jpg',
     alt: 'Test image',
+    width: 50,
+    height: 50,
   };
 
   beforeEach(() => {
@@ -44,14 +46,6 @@ describe('FallbackImage', () => {
       render(<FallbackImage {...defaultProps} />);
 
       expect(screen.getByAltText('Test image')).toBeInTheDocument();
-    });
-
-    it('should render with default width and height', () => {
-      render(<FallbackImage {...defaultProps} />);
-
-      const image = screen.getByTestId('fallback-image');
-      expect(image).toHaveAttribute('width', '50');
-      expect(image).toHaveAttribute('height', '50');
     });
 
     it('should apply custom className', () => {

@@ -6,8 +6,11 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useIsMobile } from "@/hooks/useIsMobile";
 import { useToastMessageStore } from "@/store/ToastMessageStore";
+import { useRecaptcha } from '@/hooks/useRecaptcha';
 
 export const useContactForm = () => {
+
+    const { recaptchaRef, isVerified, onChangeReCaptcha } = useRecaptcha();
 
     const { setParams } = useToastMessageStore((state) => state)
     const { sendEmail, isLoading } = usePostContact();
@@ -22,9 +25,6 @@ export const useContactForm = () => {
     });
 
     const isMobile = useIsMobile()
-
-    const recaptchaRef = useRef<ReCAPTCHA>(null);
-    const [isButtonDisabled, setIsButtonDisabled] = useState<boolean>(true);
 
     const captchaSize: 'normal' | 'compact' = isMobile ? 'compact' : 'normal';
 
@@ -50,17 +50,13 @@ export const useContactForm = () => {
         if (!isLoading) reset();
     };
 
-    const onChangeReCaptcha = () => {
-        setIsButtonDisabled(!recaptchaRef.current?.getValue());
-    };
-
     return {
         register,
         handleSubmit,
         errors,
         isSubmitting,
         recaptchaRef,
-        isButtonDisabled,
+        isButtonDisabled: isVerified,
         onSubmit,
         onChangeReCaptcha,
         captchaSize

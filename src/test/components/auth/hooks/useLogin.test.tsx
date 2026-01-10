@@ -7,13 +7,16 @@ import { setCookie } from 'cookies-next';
 import React from 'react';
 import { useLogin } from '@/components/auth/hook/useLogin';
 import { useLoadingStore } from '../../../../store/loadingStore';
-import { login } from '../../../../services/login/login.service';
+import { httpClient } from '@/core/infrastructure/http/httpClientFactory'
 
+vi.mock('@/core/infrastructure/http/httpClientFactory', () => ({
+  httpClient: {
+    post: vi.fn(),
+  },
+}))
 
-// Mocks
-vi.mock('../../../../services/login/login.service');
 vi.mock('../../../../store/loadingStore');
-login
+
 vi.mock('sonner');
 vi.mock('cookies-next');
 
@@ -51,7 +54,7 @@ describe('useLogin', () => {
 
   beforeEach(() => {
 
-    vi.mocked(login).mockResolvedValue(mockLoginResponse);
+    vi.mocked(httpClient.post).mockResolvedValue(mockLoginResponse);
 
     // Reset de queryClient para cada test
     queryClient = new QueryClient({
@@ -119,8 +122,8 @@ describe('useLogin', () => {
 
       await result.current.auth(loginPayload);
 
-      expect(login).toHaveBeenCalledWith(loginPayload);
-      expect(login).toHaveBeenCalledTimes(1);
+      expect(httpClient.post).toHaveBeenCalledWith('/auth/login', loginPayload);
+      expect(httpClient.post).toHaveBeenCalledTimes(1);
     });
 
     it('should set cookies with correct values and configuration', async () => {
@@ -181,7 +184,7 @@ describe('useLogin', () => {
     };
 
     it('should not set cookies on error', async () => {
-      vi.mocked(login).mockRejectedValue(new Error('Error'));
+      vi.mocked(httpClient.post).mockRejectedValue(new Error('Error'));
 
       const { result } = renderHook(() => useLogin(), { wrapper });
 
@@ -197,7 +200,7 @@ describe('useLogin', () => {
     });
 
     it('should not store token in localStorage on error', async () => {
-      vi.mocked(login).mockRejectedValue(new Error('Error'));
+      vi.mocked(httpClient.post).mockRejectedValue(new Error('Error'));
 
       const { result } = renderHook(() => useLogin(), { wrapper });
 
@@ -213,7 +216,7 @@ describe('useLogin', () => {
 
   describe('Loading State', () => {
     it('should set loading to true when mutation starts', async () => {
-      vi.mocked(login).mockImplementation(
+      vi.mocked(httpClient.post).mockImplementation(
         () => new Promise((resolve) => setTimeout(resolve, 100))
       );
 
@@ -227,7 +230,7 @@ describe('useLogin', () => {
     });
 
     it('should call setLoading with true during mutation', async () => {
-      vi.mocked(login).mockImplementation(
+      vi.mocked(httpClient.post).mockImplementation(
         () => new Promise((resolve) => setTimeout(resolve, 100))
       );
 
@@ -241,7 +244,7 @@ describe('useLogin', () => {
     });
 
     it('should set loading to false after successful mutation', async () => {
-      vi.mocked(login).mockResolvedValue({
+      vi.mocked(httpClient.post).mockResolvedValue({
         token: 'token',
         refreshToken: 'refreshToken',
       });
@@ -257,7 +260,7 @@ describe('useLogin', () => {
     });
 
     it('should set loading to false after failed mutation', async () => {
-      vi.mocked(login).mockRejectedValue(new Error('Error'));
+      vi.mocked(httpClient.post).mockRejectedValue(new Error('Error'));
 
       const { result } = renderHook(() => useLogin(), { wrapper });
 
@@ -276,7 +279,7 @@ describe('useLogin', () => {
 
   describe('Cookie Security Configuration', () => {
     it('should set correct maxAge for token cookie (7 days)', async () => {
-      vi.mocked(login).mockResolvedValue({
+      vi.mocked(httpClient.post).mockResolvedValue({
         token: 'token',
         refreshToken: 'refreshToken',
       });
@@ -295,7 +298,7 @@ describe('useLogin', () => {
     });
 
     it('should set correct maxAge for refreshToken cookie (30 days)', async () => {
-      vi.mocked(login).mockResolvedValue({
+      vi.mocked(httpClient.post).mockResolvedValue({
         token: 'token',
         refreshToken: 'refreshToken',
       });
@@ -317,14 +320,14 @@ describe('useLogin', () => {
   describe('Multiple Login Attempts', () => {
     it('should handle multiple sequential login attempts', async () => {
       const mockResponse = { token: 'token', refreshToken: 'refreshToken' };
-      vi.mocked(login).mockResolvedValue(mockResponse);
+      vi.mocked(httpClient.post).mockResolvedValue(mockResponse);
 
       const { result } = renderHook(() => useLogin(), { wrapper });
 
       await result.current.auth({ email: 'user1@example.com', password: 'pass1' });
       await result.current.auth({ email: 'user2@example.com', password: 'pass2' });
 
-      expect(login).toHaveBeenCalledTimes(2);
+      expect(httpClient.post).toHaveBeenCalledTimes(2);
       expect(toast.success).toHaveBeenCalledTimes(2);
     });
   });

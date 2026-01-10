@@ -30,6 +30,8 @@ export function ForecastCard({ forecast }: ForecastCardProps) {
                 src={getWeatherIcon(item.weather[0].icon)}
                 alt={`icon-weather-${item.dt}`}
                 className="h-8 w-8"
+                width={10}
+                height={10}
               />
               <span className="text-sm capitalize text-muted-foreground">
                 {item.weather[0].description}
