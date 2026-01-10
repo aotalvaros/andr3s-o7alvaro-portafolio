@@ -33,6 +33,8 @@ export function CurrentWeatherCard({ weather }: Readonly<CurrentWeatherCardProps
               src={getWeatherIcon(weatherCondition.icon)}
               alt='Weather Icon'
               className="h-20 w-20"
+              width={20}
+              height={20}
             />
         </div>
 

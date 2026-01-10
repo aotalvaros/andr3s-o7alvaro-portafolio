@@ -74,10 +74,12 @@ export const App = ({ children }: { readonly children: React.ReactNode }) => {
       <footer className="border-t border-border/70 py-8 bg-muted/30">
         <div className="container mx-auto px-10">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-            <p className="text-sm text-muted-foreground text-center">
-              &copy; {new Date().getFullYear()} Todos los derechos reservados.
-              Desarrollado por Andrés Otalvaro
-            </p>
+            <section className="flex flex-row items-center gap-3">
+              <FallbackImage src="/favicon.png" alt="icono" width={35} height={35} />
+              <p className="text-sm text-muted-foreground text-center">
+                Desarrollado por Andrés Otalvaro
+              </p>
+            </section>
             <p className="text-sm text-(var(--primary))">
               Portafolio en construcción
             </p>

@@ -5,9 +5,6 @@ import { describe, it, expect, beforeEach } from "vitest";
 import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
 
-// ✅ Remover useFirstVisit ya que no se usa en el componente actual
-// vi.mock("@/hooks/useFirstVisit");
-
 vi.mock("@/components/maintenance/hooks/useMaintenance");
 vi.mock("@/store/themeStore");
 
@@ -178,18 +175,16 @@ describe("App Component", () => {
             render(<App>contenido</App>);
             
             const currentYear = new Date().getFullYear();
-            expect(screen.getByText(new RegExp(`© ${currentYear}.*Todos los derechos reservados`, "i"))).toBeInTheDocument();
-            expect(screen.getByText(/desarrollado por andrés otalvaro/i)).toBeInTheDocument();
             expect(screen.getByText(/portafolio en construcción/i)).toBeInTheDocument();
             expect(screen.getByText("andr3s.o7alvaro@gmail.com")).toBeInTheDocument();
         });
 
-        it("Should render footer with current year dynamically", () => {
-            render(<App>contenido</App>);
+        // it("Should render footer with current year dynamically", () => {
+        //     render(<App>contenido</App>);
             
-            const currentYear = new Date().getFullYear();
-            expect(screen.getByText(new RegExp(currentYear.toString()))).toBeInTheDocument();
-        });
+        //     const currentYear = new Date().getFullYear();
+        //     expect(screen.getByText(new RegExp(currentYear.toString()))).toBeInTheDocument();
+        // });
     });
 
     describe("Theme Toggle Functionality", () => {

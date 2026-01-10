@@ -14,26 +14,20 @@ export function FallbackImage({
   ...rest
 }: FallbackImageProps) {
 
-  const [currentSrc, setCurrentSrc] = useState(src);
+ const [hasError, setHasError] = useState(false);
 
   useEffect(() => {
-    setCurrentSrc(src);
+    setHasError(false);
   }, [src]);
-
-  const handleError = () => {
-    if (currentSrc !== fallbackSrc) {
-      setCurrentSrc(fallbackSrc);
-    }
-  };
 
   return (
     <Image
       {...rest}
-      src={currentSrc}
+      src={hasError ? fallbackSrc : src}
       alt={alt}
-      onError={handleError}
-      width={50}
-      height={50}
+      onError={() => {
+        if (!hasError) setHasError(true);
+      }}
     />
   );
 }
