@@ -13,7 +13,7 @@ export default function LoginPage() {
   },[isLoading])
 
   return (
-    <main className="pt-22 flex items-center justify-center bg-muted px-4 dark:bg-primary-foreground">
+    <main className="pt-22 flex items-center justify-center px-4">
       <LoginForm />
     </main>
   );

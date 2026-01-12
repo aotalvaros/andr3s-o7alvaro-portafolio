@@ -5,14 +5,18 @@ import { useLogin } from "./useLogin";
 import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
 import ReCAPTCHA from "react-google-recaptcha";
+import { useIsMobile } from '@/hooks/useIsMobile';
 
 export const useLoginForm = () => {
 
     const { auth } = useLogin()
     const router = useRouter();
+     const isMobile = useIsMobile()
+
     const [showPassword, setShowPassword] = useState(false);
     const recaptchaRef = useRef<ReCAPTCHA>(null);
     const [isButtonDisabled, setIsButtonDisabled] = useState<boolean>(true);
+    const captchaSize: 'normal' | 'compact' = isMobile ? 'compact' : 'normal';
 
     const {
         register,
@@ -44,7 +48,8 @@ export const useLoginForm = () => {
         setShowPassword,
         recaptchaRef,
         onChangeReCaptcha,
-        isButtonDisabled
+        isButtonDisabled,
+        captchaSize
     };
 
 }

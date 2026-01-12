@@ -20,39 +20,39 @@ vi.mock('@/components/ui/ToastMessageComponent', () => ({
 }));
 
 describe("Test RootLayout component", () => {
-  beforeEach(() => {
-      vi.clearAllMocks();
-  });
+    beforeEach(() => {
+        vi.clearAllMocks();
+    });
 
-  afterEach(() => {
-      vi.restoreAllMocks();
-  });
+    afterEach(() => {
+        vi.restoreAllMocks();
+    });
 
-  it("renders children correctly", () => {
-      render(<RootLayout><div>Test Child</div></RootLayout>);
-      expect(screen.getByText("Test Child")).toBeInTheDocument();
-  });
+    it("renders children correctly", () => {
+        render(<RootLayout><div>Test Child</div></RootLayout>);
+        expect(screen.getByText("Test Child")).toBeInTheDocument();
+    });
 
-  it("renders all providers and UI components", () => {
-      render(<RootLayout><div>Test</div></RootLayout>);
-      expect(screen.getByTestId("theme-provider")).toBeInTheDocument();
-      expect(screen.getByTestId("providers")).toBeInTheDocument();
-      expect(screen.getByTestId("socket-provider")).toBeInTheDocument();
-      expect(screen.getByTestId("toast-message")).toBeInTheDocument();
-  });
+    it("renders all providers and UI components", () => {
+        render(<RootLayout><div>Test</div></RootLayout>);
+        expect(screen.getByTestId("theme-provider")).toBeInTheDocument();
+        expect(screen.getByTestId("providers")).toBeInTheDocument();
+        expect(screen.getByTestId("socket-provider")).toBeInTheDocument();
+        expect(screen.getByTestId("toast-message")).toBeInTheDocument();
+    });
 
-  it("renders children inside providers", () => {
-      render(<RootLayout><span data-testid="child-span">Child</span></RootLayout>);
-      const child = screen.getByTestId("child-span");
-      expect(child).toBeInTheDocument();
+    it("renders children inside providers", () => {
+        render(<RootLayout><span data-testid="child-span">Child</span></RootLayout>);
+        const child = screen.getByTestId("child-span");
+        expect(child).toBeInTheDocument();
 
-      expect(child.closest('[data-testid="providers"]')).not.toBeNull();
-      expect(child.closest('[data-testid="theme-provider"]')).not.toBeNull();
-  });
+        expect(child.closest('[data-testid="providers"]')).not.toBeNull();
+        expect(child.closest('[data-testid="theme-provider"]')).not.toBeNull();
+    });
 
-  it("renders Toaster with correct props", () => {
-      render(<RootLayout><div>Test</div></RootLayout>);
-      const toaster = screen.getByTestId("toast-message");
-      expect(toaster).toBeInTheDocument();
-  });
+    it("renders Toaster with correct props", () => {
+        render(<RootLayout><div>Test</div></RootLayout>);
+        const toaster = screen.getByTestId("toast-message");
+        expect(toaster).toBeInTheDocument();
+    });
 });
