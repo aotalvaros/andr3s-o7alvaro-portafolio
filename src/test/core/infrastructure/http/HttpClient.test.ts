@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { describe, it, expect, vi, beforeEach, Mock } from 'vitest';
 import axios, { InternalAxiosRequestConfig, AxiosResponse } from 'axios';
 import { HttpConfig, HttpClient, Interceptor, RequestConfig } from '../../../../core/infrastructure/http/HttpClient';

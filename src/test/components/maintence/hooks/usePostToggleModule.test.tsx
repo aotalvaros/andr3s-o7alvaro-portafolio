@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { usePostToggleModule } from "../../../../components/maintenance/hooks/usePostToggleModule";
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { act, renderHook, waitFor } from "@testing-library/react";

@@ -1,12 +1,14 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { LoadingService } from "@/core/infrastructure/services/LoadingService";
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 
 describe("LoadingService", () => {
   let loadingService: LoadingService;
-  let mockSetLoading = vi.fn();
+  const mockSetLoading = vi.fn();
 
   beforeEach(() => {
     loadingService = new LoadingService(mockSetLoading);
+    vi.spyOn(console, "log").mockImplementation(() => {});
   });
 
   afterEach(() => {
@@ -457,7 +459,7 @@ describe("LoadingService", () => {
       try {
         service.start(); // Throws
       } catch (e) {
-        // Expected
+        console.log(e)
       }
 
       service.stop(); // Should still work

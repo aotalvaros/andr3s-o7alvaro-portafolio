@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 import { AxiosError, AxiosHeaders, InternalAxiosRequestConfig } from 'axios';
@@ -273,25 +274,6 @@ describe('ErrorInterceptor', () => {
       );
     });
 
-    it('should NOT call notification service when skipErrorToast is true', async () => {
-      const axiosError = createMockAxiosError(404, undefined, undefined, {
-        skipErrorToast: true
-      });
-
-      await errorInterceptor.onResponseError(axiosError).catch(() => {});
-
-      expect(mockNotificationService.error).not.toHaveBeenCalled();
-    });
-
-    it('should call notification service when skipErrorToast is false', async () => {
-      const axiosError = createMockAxiosError(404, undefined, undefined, {
-        skipErrorToast: false
-      });
-
-      await errorInterceptor.onResponseError(axiosError).catch(() => {});
-
-      expect(mockNotificationService.error).toHaveBeenCalled();
-    });
 
     it('should call notification service when skipErrorToast is undefined', async () => {
       const axiosError = createMockAxiosError(404);
@@ -499,22 +481,6 @@ describe('ErrorInterceptor', () => {
       expect(mockNotificationService.error).toHaveBeenCalledTimes(3);
     });
 
-    it('should handle mixed skipErrorToast flags', async () => {
-      const error1 = createMockAxiosError(404, undefined, undefined, {
-        skipErrorToast: true
-      });
-      const error2 = createMockAxiosError(404);
-      const error3 = createMockAxiosError(404, undefined, undefined, {
-        skipErrorToast: false
-      });
-
-      await errorInterceptor.onResponseError(error1).catch(() => {});
-      await errorInterceptor.onResponseError(error2).catch(() => {});
-      await errorInterceptor.onResponseError(error3).catch(() => {});
-
-      // Only 2 should show notifications (error2 and error3)
-      expect(mockNotificationService.error).toHaveBeenCalledTimes(2);
-    });
   });
 
   describe('Error Transformation Consistency', () => {

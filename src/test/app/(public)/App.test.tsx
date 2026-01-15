@@ -174,7 +174,6 @@ describe("App Component", () => {
         it("Should render footer with correct content", () => {
             render(<App>contenido</App>);
             
-            const currentYear = new Date().getFullYear();
             expect(screen.getByText(/portafolio en construcción/i)).toBeInTheDocument();
             expect(screen.getByText("andr3s.o7alvaro@gmail.com")).toBeInTheDocument();
         });

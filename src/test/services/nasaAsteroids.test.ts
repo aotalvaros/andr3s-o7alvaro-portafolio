@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 const { fetchAsteroids, fetchAsteroidById } = await import('@/services/nasaAsteroids');
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 

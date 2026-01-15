@@ -1,6 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useRecaptcha } from '../../hooks/useRecaptcha';
 import { renderHook, act } from "@testing-library/react";
-import { describe, it, expect, beforeEach } from 'vitest'
+import { describe, it, expect } from 'vitest'
 
 
 describe('useRecaptcha', () => {

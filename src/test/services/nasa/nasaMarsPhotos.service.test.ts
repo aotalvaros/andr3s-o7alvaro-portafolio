@@ -1,8 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const { fetchMarsPhotos } = await import('@/services/nasa/nasaMarsPhotos.service');
 import { describe, it, expect, vi, beforeEach, afterEach} from "vitest";
-import { IFetchMarsPhotosParams } from "@/services/nasa/models/fetchMarsPhotosParams.interface";
-
 
 // CRITICAL: Use vi.hoisted() to hoist mock functions before vi.mock()
 const { mockGet, mockPost, mockPut, mockDelete, mockPatch } = vi.hoisted(() => ({

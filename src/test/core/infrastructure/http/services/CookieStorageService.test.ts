@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { CookieStorageService } from '@/core/infrastructure/services/CookieStorageService';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { getCookie, setCookie, deleteCookie } from 'cookies-next';

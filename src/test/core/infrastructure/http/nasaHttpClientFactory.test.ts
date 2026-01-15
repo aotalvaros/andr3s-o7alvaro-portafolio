@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { nasaHttpClient, createNasaHttpClient } from '@/core/infrastructure/http/nasaHttpClientFactory';
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { useLoadingStore } from '@/store/loadingStore';
@@ -279,8 +280,8 @@ describe('NASA HTTP Client Factory', () => {
       });
 
       it('should not share interceptor instances between clients', () => {
-        const client1 = createNasaHttpClient();
-        const client2 = createNasaHttpClient();
+        createNasaHttpClient();
+        createNasaHttpClient();
 
         const interceptors1 = vi.mocked(HttpClient).mock.calls[0][1];
         const interceptors2 = vi.mocked(HttpClient).mock.calls[1][1];
