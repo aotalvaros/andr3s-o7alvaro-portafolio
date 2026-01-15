@@ -33,10 +33,10 @@ export const useMaintenance = () => {
       const currentPath = paths(pathname);
       setIsInMaintenance(Boolean(
         maintenanceData.status === 'error' ||
-        maintenanceData.data.find((m: responseModuleData) => m.moduleName === currentPath)?.isActive 
+        maintenanceData.data.find((m: responseModuleData) => m.moduleName === currentPath)?.isBlocked 
       ));
       setIsAplicationInMaintenance(Boolean(
-        maintenanceData.data.find((m: responseModuleData) => m.moduleName === 'allAplications')?.isActive
+        maintenanceData.data.find((m: responseModuleData) => m.moduleName === 'allAplications')?.isBlocked
       ));
     }
 

@@ -10,7 +10,7 @@ interface ScrollRevealProps {
   delay?: number
 }
 
-export function ScrollReveal({ children, className = "", delay = 0 }: ScrollRevealProps) {
+export function ScrollReveal({ children, className = "", delay = 0 }: Readonly<ScrollRevealProps>) {
   const [isVisible, setIsVisible] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
 
@@ -30,6 +30,7 @@ export function ScrollReveal({ children, className = "", delay = 0 }: ScrollReve
 
     return () => {
       if (ref.current) {
+        // eslint-disable-next-line react-hooks/exhaustive-deps
         observer.unobserve(ref.current)
       }
     }

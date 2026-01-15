@@ -29,14 +29,6 @@ describe("LoginPage Component", () => {
   it("should render main with correct classes", () => {
     render(<LoginPage />);
     const main = screen.getByRole("main");
-    expect(main).toHaveClass(
-      "pt-22",
-      "flex",
-      "items-center",
-      "justify-center",
-      "bg-muted",
-      "px-4",
-      "dark:bg-primary-foreground"
-    );
+    expect(main).toHaveClass("pt-22 flex items-center justify-center px-4");
   });
 });

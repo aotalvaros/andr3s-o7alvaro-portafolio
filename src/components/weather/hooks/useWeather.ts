@@ -35,6 +35,7 @@ export function useWeather() {
   useEffect(() => {
     setLoading(false);
     loadWeather(6.251, -75.5636, 'Medellin');
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {

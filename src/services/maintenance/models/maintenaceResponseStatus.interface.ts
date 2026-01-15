@@ -7,8 +7,17 @@ export interface MaintenanceResponseStatus {
 
 export interface responseModuleData {
    isActive: boolean;
+   isBlocked: boolean;
    moduleName: string;
    __v: number;
    _id: string;
    name: string;
+   lastModifiedAt: string;
+   lastModifiedBy: LastModifiedBy
+}
+
+export interface LastModifiedBy {
+   _id: string;
+   name: string;
+   email: string;
 }

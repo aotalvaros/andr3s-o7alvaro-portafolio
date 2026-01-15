@@ -1,6 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useWeatherData } from '../../../../components/weather/hooks/useWeatherData';
-import { describe, it, expect, beforeEach, vi, afterEach } from "vitest";
-import { renderHook, act, waitFor } from "@testing-library/react";
+import { describe, it, expect, beforeEach, vi } from "vitest";
+import { renderHook, act } from "@testing-library/react";
 
 import { useWeatherStore } from '@/store/weatherStore';
 import { getOneCallWeather, getAirQuality } from '@/services/weather';

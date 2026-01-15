@@ -16,4 +16,16 @@ describe("StatusIndicator", () => {
         expect(statusText).toBeInTheDocument();
     })
 
+    it("does not render text when isTextVisible is false", () => {
+        render(<StatusIndicator online={true} isTextVisible={false} />);
+        const statusText = screen.queryByText("Online");
+        expect(statusText).toBeNull();
+    });
+
+    it("renders text when isTextVisible is true", () => {
+        render(<StatusIndicator online={false} isTextVisible={true} />);
+        const statusText = screen.getByText("Offline");
+        expect(statusText).toBeInTheDocument();
+    });
+
 })

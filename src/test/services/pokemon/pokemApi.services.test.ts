@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { fetchPokemonList } from '@/services/pokemon/pokeApi.service';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { httpClient } from '@/core/infrastructure/http/httpClientFactory';

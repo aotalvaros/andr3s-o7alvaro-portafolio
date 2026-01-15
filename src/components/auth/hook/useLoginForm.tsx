@@ -4,6 +4,7 @@ import { useForm } from "react-hook-form";
 import { useLogin } from "./useLogin";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { useIsMobile } from '@/hooks/useIsMobile';
 import { useRecaptcha } from '@/hooks/useRecaptcha';
 
 export const useLoginForm = () => {
@@ -12,7 +13,10 @@ export const useLoginForm = () => {
 
     const { auth } = useLogin()
     const router = useRouter();
+     const isMobile = useIsMobile()
+
     const [showPassword, setShowPassword] = useState(false);
+    const captchaSize: 'normal' | 'compact' = isMobile ? 'compact' : 'normal';
 
     const {
         register,
@@ -40,6 +44,7 @@ export const useLoginForm = () => {
         setShowPassword,
         recaptchaRef,
         onChangeReCaptcha,
+        captchaSize,
         isButtonDisabled: isVerified
     };
 

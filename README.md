@@ -1,459 +1,359 @@
-# 🎯 Sistema de Gestión de Configuraciones
+# 🚀 Portafolio Personal - Andrés Otalvaro
 
-Una aplicación web moderna construida con **Next.js 14**, **React 18**, **TypeScript** y **Tailwind CSS** que permite gestionar configuraciones de manera intuitiva y eficiente.
+Portafolio web profesional construido con **Next.js 16**, **React 19**, **TypeScript** y **Tailwind CSS 4**. Incluye secciones interactivas, integración con APIs externas, sistema de autenticación, panel de administración y comunicación en tiempo real con WebSockets.
+
+[![Deployed on Vercel](https://img.shields.io/badge/Deployed%20on-Vercel-000000?style=flat&logo=vercel)](https://andr3s-o7alvaro-portafolio.vercel.app/)
+[![SonarCloud](https://img.shields.io/badge/SonarCloud-Analyzed-4E9BCD?style=flat&logo=sonarcloud)](https://sonarcloud.io)
+[![GitHub Actions](https://img.shields.io/badge/CI%2FCD-GitHub%20Actions-2088FF?style=flat&logo=github-actions)](https://github.com/features/actions)
+
+## 🌐 Enlaces
+
+- **🔗 Portafolio en vivo**: [https://andr3s-o7alvaro-portafolio.vercel.app/](https://andr3s-o7alvaro-portafolio.vercel.app/)
+- **🔧 Backend Repository**: [https://github.com/aotalvaros/portfolio-backend](https://github.com/aotalvaros/portfolio-backend)
+
+---
 
 ## 📋 Tabla de Contenidos
 
-- [🚀 Características](#-características)
-- [🏗️ Arquitectura del Proyecto](#️-arquitectura-del-proyecto)
-- [📁 Estructura de Directorios](#-estructura-de-directorios)
-- [🛠️ Tecnologías Utilizadas](#️-tecnologías-utilizadas)
-- [⚙️ Instalación y Configuración](#️-instalación-y-configuración)
-- [🔧 Scripts Disponibles](#-scripts-disponibles)
-- [📱 Componentes Principales](#-componentes-principales)
-- [🎨 Sistema de Diseño](#-sistema-de-diseño)
-- [🧪 Testing](#-testing)
-- [📊 Análisis de Código](#-análisis-de-código)
-- [🚀 Despliegue](#-despliegue)
-- [🤝 Contribuir](#-contribuir)
+- [Características](#-características)
+- [Arquitectura del Proyecto](#️-arquitectura-del-proyecto)
+- [Estructura de Directorios](#-estructura-de-directorios)
+- [Tecnologías Utilizadas](#️-tecnologías-utilizadas)
+- [Instalación y Configuración](#️-instalación-y-configuración)
+- [Scripts Disponibles](#-scripts-disponibles)
+- [Testing y Calidad de Código](#-testing-y-calidad-de-código)
+- [Despliegue](#-despliegue)
+- [Variables de Entorno](#-variables-de-entorno)
 
-## 🚀 Características
+---
 
-### ✨ Funcionalidades Principales
-- **📝 Gestión de Configuraciones**: Crear, editar y eliminar configuraciones de forma dinámica
-- **🔍 Búsqueda y Filtros**: Sistema avanzado de búsqueda con filtros múltiples
-- **📊 Dashboard Interactivo**: Visualización de datos con gráficos y métricas
-- **🌙 Modo Oscuro/Claro**: Cambio de tema automático y manual
-- **📱 Diseño Responsivo**: Optimizado para dispositivos móviles y desktop
-- **🔄 Actualizaciones en Tiempo Real**: Sincronización automática de datos
-- **💾 Persistencia Local**: Almacenamiento local de preferencias de usuario
+## ✨ Características
 
-### 🎯 Características Técnicas
-- **⚡ Server-Side Rendering (SSR)**: Renderizado del lado del servidor con Next.js
-- **🏃‍♂️ Client-Side Navigation**: Navegación rápida sin recarga de página
-- **🎨 UI Moderna**: Componentes reutilizables con shadcn/ui
-- **🔒 TypeScript**: Tipado estático para mayor seguridad
-- **🧪 Testing Completo**: Pruebas unitarias y de integración
-- **📈 Análisis de Código**: Integración con SonarQube
-- **🔄 CI/CD**: Automatización con GitHub Actions
+### 🎯 Funcionalidades Principales
+
+- **🏠 Portafolio Personal**: Secciones Hero, About, Skills y Contact
+- **🔐 Sistema de Autenticación**: Login con JWT y protección de rutas
+- **👨‍💼 Panel de Administración**: Dashboard para gestión de módulos y estadísticas
+- **🔄 Comunicación en Tiempo Real**: WebSockets con Socket.io
+- **🛠️ Laboratorio Interactivo**: 
+  - 🌦️ Aplicación del Clima (OpenWeather API)
+  - 🎮 Pokédex (PokéAPI)
+  - 🚀 Explorador NASA (NASA APIs - Mars Rover, Asteroids)
+- **🌙 Modo Oscuro/Claro**: Cambio de tema con persistencia
+- **📱 Diseño Responsivo**: Optimizado para móviles, tablets y desktop
+- **🎨 Animaciones Fluidas**: Framer Motion para transiciones suaves
+- **⚡ Optimización de Rendimiento**: Lazy loading, code splitting, image optimization
+- **🔍 Command Palette**: Navegación rápida con atajos de teclado
+- **🎯 Mantenimiento Dinámico**: Sistema de módulos activables/desactivables desde el backend
+
+### 🏗️ Características Técnicas
+
+- **⚡ Server-Side Rendering (SSR)**: Next.js App Router
+- **🎨 UI Moderna**: Componentes reutilizables con Radix UI
+- **🔒 TypeScript**: Tipado estático completo
+- **🧪 Testing Completo**: Vitest + Testing Library (cobertura > 80%)
+- **📊 Análisis de Código**: SonarCloud integrado
+- **🔄 CI/CD**: GitHub Actions para build y análisis automático
+- **🏛️ Arquitectura Limpia**: Separación de capas (Domain, Application, Infrastructure)
+- **🎯 SOLID Principles**: Código mantenible y escalable
+
+---
 
 ## 🏗️ Arquitectura del Proyecto
 
-### 🏛️ Patrones de Diseño Implementados
+### 📦 Arquitectura por Capas
 
-#### **📦 Arquitectura por Capas**
 ```
 ┌─────────────────────────────────────┐
-│           UI Components             │  ← Presentación
+│      Presentation Layer             │  ← Components, Pages, UI
 ├─────────────────────────────────────┤
-│              Hooks                  │  ← Lógica de Estado
+│      Application Layer              │  ← Use Cases, Hooks
 ├─────────────────────────────────────┤
-│             Services                │  ← Lógica de Negocio
+│      Domain Layer                   │  ← Entities, Interfaces
 ├─────────────────────────────────────┤
-│              Utils                  │  ← Utilidades
+│      Infrastructure Layer           │  ← HTTP Client, Services, Repositories
 └─────────────────────────────────────┘
 ```
 
-#### **🎭 Composición de Componentes**
-- **Componentes Atómicos**: Elementos básicos reutilizables (Button, Input, etc.)
-- **Componentes Moleculares**: Combinaciones de átomos (SearchBar, Card, etc.)
-- **Componentes Organismales**: Secciones complejas (ConfigurationPanel, Dashboard)
-- **Templates**: Estructuras de página completas
+### 🎭 Patrones Implementados
+
+- **Factory Pattern**: `httpClientFactory` para crear instancias configuradas
+- **Interceptor Pattern**: Manejo de autenticación, loading y errores
+- **Repository Pattern**: Abstracción de acceso a datos
+- **Provider Pattern**: Context API para estado global (Socket, Theme, Auth)
+- **Custom Hooks**: Lógica reutilizable encapsulada
+- **Atomic Design**: Componentes organizados por complejidad
+
+---
 
 ## 📁 Estructura de Directorios
 
 ```
-📦 proyecto/
-├── 📁 .github/workflows/        # Configuración CI/CD
-│   ├── ci.yml                   # Pipeline de integración continua
-│   └── deploy.yml               # Pipeline de despliegue
-├── 📁 .next/                    # Archivos generados por Next.js
-├── 📁 .qodo/                    # Configuración de Qodo
-├── 📁 coverage/                 # Reportes de cobertura de pruebas
-├── 📁 public/                   # Archivos estáticos públicos
-│   └── 📁 assets/               # Imágenes, iconos, etc.
-├── 📁 src/                      # Código fuente principal
-│   ├── 📁 app/                  # App Router de Next.js 14
-│   │   ├── 📁 (dashboard)/      # Grupo de rutas del dashboard
-│   │   │   ├── 📁 analytics/    # Página de analíticas
-│   │   │   ├── 📁 config/       # Página de configuraciones
-│   │   │   └── layout.tsx       # Layout del dashboard
-│   │   ├── 📁 api/              # API Routes de Next.js
-│   │   │   └── 📁 config/       # Endpoints de configuración
-│   │   ├── globals.css          # Estilos globales
-│   │   ├── layout.tsx           # Layout raíz de la aplicación
-│   │   ├── loading.tsx          # Componente de carga global
-│   │   ├── not-found.tsx        # Página 404 personalizada
-│   │   └── page.tsx             # Página principal
-│   ├── 📁 components/           # Componentes React reutilizables
-│   │   ├── 📁 ui/               # Componentes base de shadcn/ui
-│   │   │   ├── button.tsx       # Componente botón
-│   │   │   ├── card.tsx         # Componente tarjeta
-│   │   │   ├── dialog.tsx       # Componente modal
-│   │   │   ├── input.tsx        # Componente input
-│   │   │   ├── label.tsx        # Componente etiqueta
-│   │   │   ├── table.tsx        # Componente tabla
-│   │   │   └── tabs.tsx         # Componente pestañas
-│   │   ├── 📁 layout/           # Componentes de layout
-│   │   │   ├── header.tsx       # Cabecera de la aplicación
-│   │   │   ├── sidebar.tsx      # Barra lateral de navegación
-│   │   │   └── footer.tsx       # Pie de página
-│   │   ├── 📁 forms/            # Componentes de formularios
-│   │   │   ├── config-form.tsx  # Formulario de configuración
-│   │   │   └── search-form.tsx  # Formulario de búsqueda
-│   │   └── 📁 charts/           # Componentes de gráficos
-│   │       ├── bar-chart.tsx    # Gráfico de barras
-│   │       └── line-chart.tsx   # Gráfico de líneas
-│   ├── 📁 hooks/                # Custom Hooks de React
-│   │   ├── use-config.ts        # Hook para gestión de configuraciones
-│   │   ├── use-local-storage.ts # Hook para localStorage
-│   │   └── use-theme.ts         # Hook para gestión de temas
-│   ├── 📁 lib/                  # Librerías y utilidades
-│   │   ├── utils.ts             # Funciones utilitarias generales
-│   │   ├── validations.ts       # Esquemas de validación con Zod
-│   │   └── constants.ts         # Constantes de la aplicación
-│   ├── 📁 services/             # Servicios para APIs y datos
-│   │   ├── config-service.ts    # Servicio de configuraciones
-│   │   └── api-client.ts        # Cliente HTTP reutilizable
-│   ├── 📁 types/                # Definiciones de tipos TypeScript
-│   │   ├── config.ts            # Tipos relacionados con configuraciones
-│   │   └── api.ts               # Tipos para respuestas de API
-│   └── 📁 __tests__/            # Archivos de pruebas
-│       ├── 📁 components/       # Pruebas de componentes
-│       ├── 📁 hooks/            # Pruebas de hooks
-│       └── 📁 utils/            # Pruebas de utilidades
-├── 📄 configuracion.yaml        # Configuración principal de la app
-├── 📄 components.json           # Configuración de shadcn/ui
-├── 📄 .env                      # Variables de entorno
-├── 📄 .gitignore               # Archivos ignorados por Git
-├── 📄 eslint.config.mjs        # Configuración de ESLint
-├── 📄 next.config.ts           # Configuración de Next.js
-├── 📄 package.json             # Dependencias y scripts
-├── 📄 postcss.config.mjs       # Configuración de PostCSS
-├── 📄 sonar-project.properties # Configuración de SonarQube
-├── 📄 tailwind.config.ts       # Configuración de Tailwind CSS
-├── 📄 tsconfig.json            # Configuración de TypeScript
-├── 📄 vitest.config.ts         # Configuración de Vitest
-└── 📄 vitest.setup.ts          # Setup de pruebas
+📦 andr3s-o7alvaro-portafolio/
+├── 📁 .github/workflows/          # CI/CD con GitHub Actions
+│   ├── build.yml                  # Pipeline de build y SonarCloud
+│   └── sonar.yml                  # Análisis de calidad de código
+├── 📁 public/                     # Archivos estáticos
+│   ├── 📁 assets/                 # Imágenes y recursos
+│   │   ├── climateScenario/       # Imágenes del clima
+│   │   └── NASA/                  # Recursos de NASA
+│   └── favicon.png
+├── 📁 src/                        # Código fuente
+│   ├── 📁 app/                    # Next.js App Router
+│   │   ├── 📁 (public)/           # Rutas públicas
+│   │   │   ├── 📁 lab/            # Laboratorio (Weather, Pokemon, NASA)
+│   │   │   ├── 📁 login/          # Página de login
+│   │   │   ├── App.tsx            # Layout principal público
+│   │   │   ├── layout.tsx         # Layout wrapper
+│   │   │   └── page.tsx           # Página principal (Hero, About, Skills, Contact)
+│   │   ├── 📁 admin/              # Panel de administración (protegido)
+│   │   │   ├── layout.tsx
+│   │   │   └── page.tsx
+│   │   ├── globals.css            # Estilos globales
+│   │   ├── layout.tsx             # Root layout
+│   │   ├── LoaderOverlay.tsx      # Overlay de carga global
+│   │   └── providers.tsx          # Providers wrapper (React Query)
+│   ├── 📁 components/             # Componentes React
+│   │   ├── 📁 auth/               # Autenticación (LoginForm, ProtectedRoute, PublicRoute)
+│   │   ├── 📁 contact/            # Formulario de contacto
+│   │   ├── 📁 layout/             # Navbar, Pagination, CommandPalette
+│   │   ├── 📁 maintenance/        # Sistema de mantenimiento
+│   │   ├── 📁 nasa/               # Componentes NASA (Asteroids, Mars Rover)
+│   │   ├── 📁 pokemon/            # Pokédex components
+│   │   ├── 📁 sections/           # Secciones principales (Hero, About, Skills, Admin)
+│   │   ├── 📁 ui/                 # Componentes UI base (Button, Card, Modal, etc.)
+│   │   └── 📁 weather/            # Aplicación del clima
+│   ├── 📁 config/                 # Configuraciones
+│   │   └── iconMappings.ts        # Mapeo de iconos dinámicos
+│   ├── 📁 constants/              # Constantes de la aplicación
+│   │   ├── moduleNames.ts
+│   │   ├── path.constants.ts
+│   │   └── sectionsOrder.constants.ts
+│   ├── 📁 context/                # React Context
+│   │   └── SocketContext.tsx      # Context de WebSocket
+│   ├── 📁 core/                   # Arquitectura limpia
+│   │   ├── 📁 application/        # Casos de uso
+│   │   ├── 📁 domain/             # Entidades y reglas de negocio
+│   │   └── 📁 infrastructure/     # Implementaciones
+│   │       ├── 📁 http/           # Cliente HTTP
+│   │       │   ├── 📁 interceptors/ # Auth, Loading, Error interceptors
+│   │       │   ├── HttpClient.ts
+│   │       │   ├── httpClientFactory.ts
+│   │       │   └── nasaHttpClientFactory.ts
+│   │       ├── 📁 repositories/   # Repositorios
+│   │       └── 📁 services/       # Servicios de infraestructura
+│   │           ├── CookieStorageService.ts
+│   │           ├── LoadingService.ts
+│   │           └── ToastNotificationService.ts
+│   ├── 📁 hooks/                  # Custom Hooks
+│   │   ├── useAuth.ts
+│   │   ├── useDebounce.ts
+│   │   ├── useDynamicIcon.ts
+│   │   ├── useFirstVisit.ts
+│   │   ├── useImageFallback.ts
+│   │   ├── useIsMobile.ts
+│   │   ├── useRecaptcha.tsx
+│   │   ├── useScrollDirection.ts
+│   │   └── useSocket.tsx
+│   ├── 📁 lib/                    # Utilidades
+│   │   ├── pokemonUtils.ts
+│   │   └── utils.ts               # Funciones helper (cn, etc.)
+│   ├── 📁 providers/              # Providers
+│   │   ├── CommandPaletteProvider.tsx
+│   │   └── theme-provider.tsx
+│   ├── 📁 schemas/                # Validación con Zod
+│   │   ├── auth.schema.ts
+│   │   └── contact.schema.ts
+│   ├── 📁 services/               # Servicios de API
+│   │   ├── 📁 login/
+│   │   ├── 📁 maintenance/        # Gestión de módulos
+│   │   ├── 📁 nasa/               # NASA APIs
+│   │   ├── 📁 pokemon/            # PokéAPI
+│   │   └── 📁 weather/            # OpenWeather API
+│   ├── 📁 store/                  # Estado global con Zustand
+│   │   ├── commandPaletteStore.ts
+│   │   ├── dynamicIconStore.ts
+│   │   ├── loadingStore.ts
+│   │   ├── themeStore.ts
+│   │   ├── ToastMessageStore.ts
+│   │   └── weatherStore.ts
+│   ├── 📁 test/                   # Tests unitarios
+│   │   ├── 📁 app/
+│   │   ├── 📁 components/
+│   │   ├── 📁 hooks/
+│   │   ├── 📁 services/
+│   │   └── 📁 store/
+│   ├── 📁 types/                  # Definiciones de tipos TypeScript
+│   └── 📁 utils/                  # Utilidades generales
+├── 📁 coverage/                   # Reportes de cobertura de tests
+├── .env                           # Variables de entorno
+├── components.json                # Configuración de shadcn/ui
+├── eslint.config.mjs              # Configuración ESLint
+├── next.config.ts                 # Configuración Next.js
+├── package.json                   # Dependencias
+├── sonar-project.properties       # Configuración SonarCloud
+├── tailwind.config.ts             # Configuración Tailwind CSS
+├── tsconfig.json                  # Configuración TypeScript
+├── vitest.config.ts               # Configuración Vitest
+└── vitest.setup.ts                # Setup de tests
 ```
+
+---
 
 ## 🛠️ Tecnologías Utilizadas
 
 ### 🎯 Frontend Core
-- **[Next.js 14](https://nextjs.org/)** - Framework React con App Router
-- **[React 18](https://react.dev/)** - Biblioteca de UI con Hooks y Suspense
-- **[TypeScript](https://www.typescriptlang.org/)** - Superset de JavaScript con tipado estático
+
+- **[Next.js 16](https://nextjs.org/)** - Framework React con App Router y SSR
+- **[React 19](https://react.dev/)** - Biblioteca de UI
+- **[TypeScript 5](https://www.typescriptlang.org/)** - Tipado estático
 
 ### 🎨 Estilos y UI
-- **[Tailwind CSS](https://tailwindcss.com/)** - Framework de CSS utility-first
-- **[shadcn/ui](https://ui.shadcn.com/)** - Componentes de UI reutilizables
-- **[Lucide React](https://lucide.dev/)** - Iconos SVG modernos
+
+- **[Tailwind CSS 4](https://tailwindcss.com/)** - Framework CSS utility-first
+- **[Radix UI](https://www.radix-ui.com/)** - Componentes accesibles sin estilos
+- **[Framer Motion 12](https://www.framer.com/motion/)** - Animaciones fluidas
+- **[Lucide React](https://lucide.dev/)** - Iconos SVG
+- **[React Icons](https://react-icons.github.io/react-icons/)** - Biblioteca de iconos
 - **[next-themes](https://github.com/pacocoursey/next-themes)** - Gestión de temas
 
-### 📊 Visualización de Datos
-- **[Recharts](https://recharts.org/)** - Librería de gráficos para React
-- **[date-fns](https://date-fns.org/)** - Utilidades modernas para fechas
+### 📊 Gestión de Estado y Datos
+
+- **[Zustand](https://zustand-demo.pmnd.rs/)** - Estado global ligero
+- **[TanStack Query (React Query)](https://tanstack.com/query)** - Gestión de datos asíncronos
+- **[Axios](https://axios-http.com/)** - Cliente HTTP
+- **[Socket.io Client](https://socket.io/)** - WebSockets en tiempo real
+
+### 📝 Formularios y Validación
+
+- **[React Hook Form](https://react-hook-form.com/)** - Gestión de formularios
+- **[Zod](https://zod.dev/)** - Validación de esquemas
+- **[React Google reCAPTCHA](https://www.npmjs.com/package/react-google-recaptcha)** - Protección anti-spam
+
+### 🧪 Testing y Calidad
+
+- **[Vitest](https://vitest.dev/)** - Framework de testing rápido
+- **[Testing Library](https://testing-library.com/)** - Testing de componentes
+- **[jsdom](https://github.com/jsdom/jsdom)** - Entorno DOM para tests
+- **[SonarCloud](https://sonarcloud.io/)** - Análisis de calidad de código
 
 ### 🔧 Desarrollo y Tooling
+
 - **[ESLint](https://eslint.org/)** - Linter para JavaScript/TypeScript
-- **[Prettier](https://prettier.io/)** - Formateador de código
-- **[Husky](https://typicode.github.io/husky/)** - Git hooks automatizados
+- **[GitHub Actions](https://github.com/features/actions)** - CI/CD
 
-### 🧪 Testing
-- **[Vitest](https://vitest.dev/)** - Framework de testing rápido
-- **[Testing Library](https://testing-library.com/)** - Utilidades para testing de componentes
-- **[jsdom](https://github.com/jsdom/jsdom)** - Implementación DOM para Node.js
+### 🌐 APIs Externas
 
-### 📊 Análisis y Calidad
-- **[SonarQube](https://www.sonarsource.com/products/sonarqube/)** - Análisis de calidad de código
+- **[NASA API](https://api.nasa.gov/)** - Mars Rover Photos, Asteroids
+- **[PokéAPI](https://pokeapi.co/)** - Datos de Pokémon
+- **[OpenWeather API](https://openweathermap.org/api)** - Datos meteorológicos
+- **Backend Custom** - API REST con autenticación JWT
+
+---
 
 ## ⚙️ Instalación y Configuración
 
 ### 📋 Prerrequisitos
+
 - **Node.js** >= 18.0.0
 - **npm** >= 9.0.0 o **yarn** >= 1.22.0
+- **Backend** corriendo en `http://localhost:4000` (o configurar URL en `.env`)
 
-### 🚀 Instalación Rápida
+### 🚀 Instalación
 
 ```bash
 # 1. Clonar el repositorio
-git clone <url-del-repositorio>
-cd proyecto
+git clone https://github.com/aotalvaros/andr3s-o7alvaro-portafolio.git
+cd andr3s-o7alvaro-portafolio
 
 # 2. Instalar dependencias
 npm install
 
 # 3. Configurar variables de entorno
-cp .env.example .env.local
-# Editar .env.local con tus configuraciones
+cp .env.example .env
+# Editar .env con tus claves de API
 
 # 4. Ejecutar en modo desarrollo
 npm run dev
 ```
 
-### 🔧 Configuración Detallada
+La aplicación estará disponible en `http://localhost:3000`
 
-#### **1. Variables de Entorno**
-Crear archivo `.env.local`:
-```env
-# Configuración de la aplicación
-NEXT_PUBLIC_APP_NAME="Sistema de Configuraciones"
-NEXT_PUBLIC_APP_VERSION="1.0.0"
-
-# URLs de API
-NEXT_PUBLIC_API_URL="http://localhost:3000/api"
-
-# Configuración de base de datos
-DATABASE_URL="postgresql://..."
-
-# Claves de servicios externos
-NEXT_PUBLIC_ANALYTICS_ID="your-analytics-id"
-```
-
-#### **2. Configuración de shadcn/ui**
-```json
-{
-  "style": "default",
-  "rsc": true,
-  "tsx": true,
-  "tailwind": {
-    "config": "tailwind.config.ts",
-    "css": "src/app/globals.css",
-    "baseColor": "slate",
-    "cssVariables": true
-  },
-  "aliases": {
-    "components": "@/components",
-    "utils": "@/lib/utils"
-  }
-}
-```
+---
 
 ## 🔧 Scripts Disponibles
 
 ```bash
 # 🚀 Desarrollo
-npm run dev          # Servidor de desarrollo (http://localhost:3000)
-npm run dev:turbo     # Desarrollo con Turbopack (experimental)
-
-# 🏗️ Construcción
-npm run build         # Construir para producción
-npm run start         # Iniciar servidor de producción
+npm run dev          # Servidor de desarrollo con Turbopack
+npm run build        # Construir para producción
+npm run start        # Iniciar servidor de producción
 
 # 🧪 Testing
-npm run test          # Ejecutar todas las pruebas
-npm run test:watch    # Ejecutar pruebas en modo watch
-npm run test:ui       # Interfaz gráfica de pruebas
-npm run test:coverage # Generar reporte de cobertura
+npm run test         # Ejecutar tests con Vitest
+npm run coverage     # Generar reporte de cobertura
 
-# 🔍 Linting y Formateo
-npm run lint          # Ejecutar ESLint
-npm run lint:fix      # Corregir errores de ESLint automáticamente
-npm run format        # Formatear código con Prettier
-
-# 📊 Análisis
-npm run analyze       # Analizar bundle de la aplicación
-npm run sonar         # Ejecutar análisis de SonarQube
+# 🔍 Linting
+npm run lint         # Ejecutar ESLint
 ```
 
-## 📱 Componentes Principales
+---
 
-### 🏠 Layout Components
+## 🧪 Testing y Calidad de Código
 
-#### **Header Component** (`src/components/layout/header.tsx`)
-- **Propósito**: Barra de navegación principal
-- **Características**:
-  - Logo y título de la aplicación
-  - Menú de navegación responsive
-  - Selector de tema (oscuro/claro)
-  - Indicadores de estado
+### 📊 Cobertura de Tests
 
-#### **Sidebar Component** (`src/components/layout/sidebar.tsx`)
-- **Propósito**: Navegación lateral para desktop
-- **Características**:
-  - Menú colapsible
-  - Iconos de navegación
-  - Estados activos
-  - Agrupación de elementos
-
-### 📝 Form Components
-
-#### **ConfigForm Component** (`src/components/forms/config-form.tsx`)
-- **Propósito**: Formulario principal para crear/editar configuraciones
-- **Características**:
-  - Validación con Zod
-  - Estados de carga
-  - Mensajes de error
-  - Guardado automático
-
-#### **SearchForm Component** (`src/components/forms/search-form.tsx`)
-- **Propósito**: Búsqueda y filtrado de configuraciones
-- **Características**:
-  - Búsqueda en tiempo real
-  - Filtros múltiples
-  - Historial de búsquedas
-  - Sugerencias automáticas
-
-### 📊 Chart Components
-
-#### **BarChart Component** (`src/components/charts/bar-chart.tsx`)
-- **Propósito**: Visualización de datos en barras
-- **Características**:
-  - Datos dinámicos
-  - Tooltips interactivos
-  - Responsive
-  - Múltiples series
-
-#### **LineChart Component** (`src/components/charts/line-chart.tsx`)
-- **Propósito**: Gráficos de líneas para tendencias
-- **Características**:
-  - Zoom y pan
-  - Leyendas configurables
-  - Animaciones suaves
-  - Exportación de datos
-
-### 🧩 UI Components (shadcn/ui)
-
-Todos los componentes base están optimizados y personalizados:
-
-- **Button**: Múltiples variantes y tamaños
-- **Card**: Contenedores flexibles para contenido
-- **Dialog**: Modales accesibles
-- **Input**: Campos de entrada con validación
-- **Table**: Tablas con ordenamiento y paginación
-- **Tabs**: Navegación por pestañas
-
-## 🎨 Sistema de Diseño
-
-### 🎨 Paleta de Colores
-
-```css
-/* Tema Claro */
---background: 0 0% 100%;
---foreground: 222.2 84% 4.9%;
---primary: 222.2 47.4% 11.2%;
---primary-foreground: 210 40% 98%;
-
-/* Tema Oscuro */
---background: 222.2 84% 4.9%;
---foreground: 210 40% 98%;
---primary: 210 40% 98%;
---primary-foreground: 222.2 47.4% 11.2%;
-```
-
-### 📐 Sistema de Espaciado
-- **Base**: 4px (0.25rem)
-- **Escalas**: 0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 5, 6, 7, 8, 9, 10, 11, 12
-
-### 🔤 Tipografía
-- **Fuente Principal**: Inter (Google Fonts)
-- **Escalas**: text-xs, text-sm, text-base, text-lg, text-xl, text-2xl, text-3xl
-
-### 📱 Breakpoints Responsivos
-```javascript
-screens: {
-  'sm': '640px',   // Móvil grande
-  'md': '768px',   // Tablet
-  'lg': '1024px',  // Desktop pequeño
-  'xl': '1280px',  // Desktop
-  '2xl': '1536px'  // Desktop grande
-}
-```
-
-## 🧪 Testing
-
-### 🎯 Estrategia de Testing
-
-#### **1. Pruebas Unitarias**
-- **Componentes**: Testing Library + Vitest
-- **Hooks**: Renderizado aislado
-- **Utilidades**: Pruebas de funciones puras
-- **Servicios**: Mocking de APIs
-
-#### **2. Pruebas de Integración**
-- **Flujos de usuario**: End-to-end scenarios
-- **Interacciones**: Formularios y navegación
-- **Estados**: Gestión de estado global
-
-#### **3. Configuración de Testing**
-
-```typescript
-// vitest.config.ts
-export default defineConfig({
-  plugins: [react()],
-  test: {
-    environment: 'jsdom',
-    setupFiles: ['./vitest.setup.ts'],
-    coverage: {
-      provider: 'v8',
-      reporter: ['text', 'json', 'html'],
-      exclude: [
-        'node_modules/',
-        '.next/',
-        'coverage/',
-        '**/*.d.ts',
-        '**/*.config.*'
-      ]
-    }
-  }
-})
-```
-
-### 📊 Métricas de Cobertura
-- **Objetivo**: > 80% cobertura global
-- **Componentes Críticos**: > 90% cobertura
-- **Funciones Utilitarias**: 100% cobertura
-
-### 🧪 Ejecutar Pruebas
+El proyecto mantiene una cobertura de código superior al **80%** con pruebas unitarias usando **Vitest** y **Testing Library**.
 
 ```bash
-# Todas las pruebas
+# Ejecutar tests
 npm run test
 
-# Modo watch
-npm run test:watch
-
-# Con interfaz gráfica
-npm run test:ui
-
-# Cobertura detallada
-npm run test:coverage
+# Generar reporte de cobertura
+npm run coverage
 ```
 
-## 📊 Análisis de Código
+Los reportes se generan en la carpeta `coverage/` con formato:
+- **HTML**: `coverage/lcov-report/index.html`
+- **LCOV**: `coverage/lcov.info` (para SonarCloud)
+- **Cobertura**: `coverage/cobertura-coverage.xml`
 
-### 🔍 SonarQube Integration
+### 🔍 SonarCloud
 
-#### **Configuración** (`sonar-project.properties`)
-```properties
-sonar.projectKey=sistema-configuraciones
-sonar.organization=tu-organizacion
-sonar.sources=src
-sonar.tests=src/__tests__
-sonar.exclusions=**/*.test.ts,**/*.spec.ts,**/node_modules/**
-sonar.typescript.lcov.reportPaths=coverage/lcov.info
-```
+El proyecto está integrado con **SonarCloud** para análisis continuo de calidad de código:
 
-#### **Métricas Monitoreadas**
-- **🐛 Bugs**: 0 tolerancia
-- **🔒 Vulnerabilidades**: 0 tolerancia
-- **👃 Code Smells**: < 10
-- **📊 Cobertura**: > 80%
-- **🔄 Duplicación**: < 3%
+- **Análisis automático**: Cada push a `master` ejecuta análisis
+- **Métricas monitoreadas**:
+  - 🐛 Bugs
+  - 🔒 Vulnerabilidades de seguridad
+  - 👃 Code Smells
+  - 📊 Cobertura de código
+  - 🔄 Duplicación de código
 
-### 📈 Ejecutar Análisis
+**Configuración**: `sonar-project.properties`
 
-```bash
-# Análisis local
-npm run sonar
+### 🔄 CI/CD con GitHub Actions
 
-# Con reporte de cobertura
-npm run test:coverage && npm run sonar
-```
+Dos workflows configurados:
+
+1. **build.yml**: Build, tests y análisis SonarCloud (Windows)
+2. **sonar.yml**: Análisis adicional de SonarCloud (Ubuntu)
+
+Los workflows se ejecutan automáticamente en:
+- Push a `master`
+- Pull requests
+
+---
 
 ## 🚀 Despliegue
 
-### 🌐 Vercel (Recomendado)
+### 🌐 Vercel (Producción)
+
+El proyecto está desplegado en **Vercel**:
+
+**URL**: [https://andr3s-o7alvaro-portafolio.vercel.app/](https://andr3s-o7alvaro-portafolio.vercel.app/)
+
+#### Desplegar tu propia versión:
 
 ```bash
 # Instalar Vercel CLI
@@ -463,7 +363,13 @@ npm i -g vercel
 vercel --prod
 ```
 
-### 🐳 Docker
+#### Configuración en Vercel:
+
+1. Conectar repositorio de GitHub
+2. Configurar variables de entorno (ver sección siguiente)
+3. Deploy automático en cada push a `master`
+
+### 🐳 Docker (Opcional)
 
 ```dockerfile
 FROM node:18-alpine AS base
@@ -482,168 +388,156 @@ EXPOSE 3000
 CMD ["npm", "start"]
 ```
 
-### ☁️ Netlify
+---
 
-```toml
-# netlify.toml
-[build]
-  command = "npm run build"
-  publish = ".next"
+## 🔐 Variables de Entorno
 
-[[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 200
-```
-
-### 🔧 Variables de Entorno para Producción
+Crear archivo `.env` en la raíz del proyecto:
 
 ```env
-NODE_ENV=production
-NEXT_PUBLIC_APP_URL=https://tu-dominio.com
-DATABASE_URL=postgresql://prod-database-url
-REDIS_URL=redis://prod-redis-url
+# Backend API
+NEXT_PUBLIC_BASE_URL=http://localhost:4000
+
+# Socket.io
+NEXT_PUBLIC_SOCKET_URL=http://localhost:4000
+
+# NASA API
+NEXT_PUBLIC_NASA_API_KEY=tu_clave_nasa_api
+
+# OpenWeather API
+NEXT_PUBLIC_OPENWEATHER_API_KEY=tu_clave_openweather
+
+# Google reCAPTCHA
+NEXT_PUBLIC_GOOGLE_RECAPTCHA_SITE_KEY=tu_site_key
+NEXT_PUBLIC_GOOGLE_RECAPTCHA_SITE_SECRET=tu_secret_key
 ```
 
-## 🤝 Contribuir
+### 🔑 Obtener API Keys:
 
-### 📝 Guía de Contribución
+- **NASA API**: [https://api.nasa.gov/](https://api.nasa.gov/)
+- **OpenWeather**: [https://openweathermap.org/api](https://openweathermap.org/api)
+- **Google reCAPTCHA**: [https://www.google.com/recaptcha/admin](https://www.google.com/recaptcha/admin)
 
-#### **1. Configuración del Entorno**
-```bash
-# Fork del repositorio
-git clone https://github.com/tu-usuario/proyecto.git
-cd proyecto
+---
 
-# Instalar dependencias
-npm install
+## 📱 Funcionalidades Destacadas
 
-# Crear rama para feature
-git checkout -b feature/nueva-funcionalidad
-```
+### 🏠 Portafolio Principal
 
-#### **2. Convenciones de Código**
+- **Hero Section**: Presentación con animaciones
+- **About Section**: Información personal y profesional
+- **Skills Section**: Tecnologías y habilidades con iconos dinámicos
+- **Contact Form**: Formulario con validación y reCAPTCHA
 
-##### **Commits** (Conventional Commits)
-```bash
-feat: añadir nueva funcionalidad de configuración
-fix: corregir error en validación de formularios
-docs: actualizar documentación de componentes
-style: mejorar estilos de la tabla
-refactor: optimizar hook de configuraciones
-test: añadir pruebas para servicio de API
-```
+### 🔐 Sistema de Autenticación
 
-##### **Nomenclatura de Archivos**
-- **Componentes**: `PascalCase.tsx` (ej: `ConfigForm.tsx`)
-- **Hooks**: `camelCase.ts` (ej: `useConfig.ts`)
-- **Utilidades**: `kebab-case.ts` (ej: `api-client.ts`)
-- **Tipos**: `camelCase.ts` (ej: `config.ts`)
+- Login con JWT
+- Refresh token automático
+- Rutas protegidas (ProtectedRoute)
+- Rutas públicas (PublicRoute)
+- Persistencia de sesión con cookies
 
-##### **Estructura de Componentes**
+### 👨‍💼 Panel de Administración
+
+- Dashboard con estadísticas
+- Gestión de módulos (activar/desactivar)
+- Visualización de actividad
+- Gráficos con Recharts
+
+### 🛠️ Laboratorio
+
+#### 🌦️ Aplicación del Clima
+- Búsqueda por ciudad
+- Clima actual y pronóstico
+- Calidad del aire
+- Geolocalización
+
+#### 🎮 Pokédex
+- Búsqueda de Pokémon
+- Detalles completos
+- Filtros por tipo
+- Paginación
+
+#### 🚀 Explorador NASA
+- Mars Rover Photos (Curiosity, Opportunity, Spirit)
+- Near Earth Asteroids
+- Filtros por fecha y cámara
+
+### ⚡ Características Técnicas
+
+- **Command Palette**: Navegación rápida con `Ctrl+K`
+- **Modo Oscuro/Claro**: Persistente con next-themes
+- **Loading States**: Overlay global y spinners personalizados
+- **Toast Notifications**: Mensajes con Sonner
+- **Scroll Progress**: Barra de progreso de scroll
+- **Back to Top**: Botón flotante
+- **Image Fallback**: Imágenes con fallback automático
+- **Responsive Design**: Mobile-first approach
+
+---
+
+## 🏛️ Arquitectura Técnica
+
+### HttpClient con Interceptors
+
+El proyecto implementa un **HttpClient** personalizado con patrón de interceptores:
+
 ```typescript
-// 1. Imports externos
-import React from 'react'
-import { useState } from 'react'
-
-// 2. Imports internos
-import { Button } from '@/components/ui/button'
-import { useConfig } from '@/hooks/use-config'
-
-// 3. Tipos
-interface ComponentProps {
-  title: string;
-  onSave: () => void;
-}
-
-// 4. Componente
-export function Component({ title, onSave }: ComponentProps) {
-  // Hooks
-  const [loading, setLoading] = useState(false)
-  const { configs } = useConfig()
-
-  // Handlers
-  const handleSave = () => {
-    setLoading(true)
-    onSave()
-    setLoading(false)
-  }
-
-  // Render
-  return (
-    <div>
-      <h1>{title}</h1>
-      <Button onClick={handleSave} disabled={loading}>
-        Guardar
-      </Button>
-    </div>
-  )
-}
+// Interceptores configurados:
+1. LoadingInterceptor - Maneja estados de carga
+2. AuthInterceptor - Inyecta JWT y maneja refresh token
+3. ErrorInterceptor - Maneja errores y muestra notificaciones
 ```
 
-#### **3. Process de Pull Request**
+### Estado Global con Zustand
 
-1. **🔍 Pre-commit Checks**
-   ```bash
-   npm run lint
-   npm run test
-   npm run build
-   ```
+Stores implementados:
+- `loadingStore` - Estado de carga global
+- `themeStore` - Tema (dark/light)
+- `weatherStore` - Datos del clima
+- `commandPaletteStore` - Command palette
+- `dynamicIconStore` - Iconos dinámicos
+- `ToastMessageStore` - Notificaciones
 
-2. **📝 Descripción del PR**
-   - Describir cambios realizados
-   - Incluir screenshots si aplica
-   - Referenciar issues relacionados
-   - Listar breaking changes
+### WebSockets con Socket.io
 
-3. **✅ Checklist del PR**
-   - [ ] Código linted y formateado
-   - [ ] Pruebas añadidas/actualizadas
-   - [ ] Documentación actualizada
-   - [ ] No hay breaking changes
-   - [ ] Performance no afectado
-
-#### **4. Roadmap y Issues**
-
-##### **🎯 Próximas Funcionalidades**
-- [ ] Sistema de autenticación
-- [ ] API REST completa
-- [ ] Modo offline con PWA
-- [ ] Notificaciones push
-- [ ] Exportación de configuraciones
-- [ ] Sistema de plugins
-
-##### **🐛 Issues Conocidos**
-- Mejora en rendimiento de tablas grandes
-- Optimización de bundle size
-- Soporte para IE11 (deprecado)
-
-### 📞 Soporte y Contacto
-
-- **📧 Email**: desarrollador@proyecto.com
-- **💬 Discord**: [Servidor de la Comunidad](https://discord.gg/...)
-- **🐛 Issues**: [GitHub Issues](https://github.com/usuario/proyecto/issues)
-- **📚 Documentación**: [Wiki del Proyecto](https://github.com/usuario/proyecto/wiki)
+Comunicación en tiempo real para:
+- Estado online/offline
+- Notificaciones del servidor
+- Actualizaciones de módulos
 
 ---
 
 ## 📄 Licencia
 
-Este proyecto está bajo la Licencia MIT. Ver el archivo [LICENSE](LICENSE) para más detalles.
+Este proyecto es de código abierto y está disponible bajo la licencia MIT.
+
+---
+
+## 👨‍💻 Autor
+
+**Andrés Otalvaro**
+
+- 📧 Email: andr3s.o7alvaro@gmail.com
+- 🌐 Portafolio: [https://andr3s-o7alvaro-portafolio.vercel.app/](https://andr3s-o7alvaro-portafolio.vercel.app/)
+- 💼 GitHub: [@aotalvaros](https://github.com/aotalvaros)
+
+---
 
 ## 🙏 Agradecimientos
 
-- **shadcn/ui** por los componentes base
-- **Vercel** por el hosting y herramientas
 - **Next.js Team** por el framework
+- **Vercel** por el hosting
+- **Radix UI** por los componentes accesibles
 - **Tailwind CSS** por el sistema de estilos
-- **Comunidad Open Source** por las contribuciones
+- **NASA, PokéAPI, OpenWeather** por las APIs públicas
+- **Comunidad Open Source** por las herramientas
 
 ---
 
 <div align="center">
-  <p>Hecho con ❤️ por el equipo de desarrollo</p>
+  <p>Hecho con ❤️ por Andrés Otalvaro</p>
   <p>
-    <a href="#-tabla-de-contenidos">⬆️ Volver arriba</a>
+    <a href="#-portafolio-personal---andrés-otalvaro">⬆️ Volver arriba</a>
   </p>
 </div>

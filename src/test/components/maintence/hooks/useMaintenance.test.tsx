@@ -31,6 +31,13 @@ describe("useMaintenance", () => {
         data: [
             {
                 isActive: true,
+                isBlocked: true,
+                lastModifiedAt: '2024-01-01T00:00:00Z',
+                lastModifiedBy: {
+                    _id: 'admin1',
+                    name: 'Admin User',
+                    email: 'admin@example.com',
+                },
                 moduleName: "testModule",
                 __v: 0,
                 _id: "1",
@@ -38,6 +45,13 @@ describe("useMaintenance", () => {
             },
             {
                 isActive: false,
+                isBlocked: false,
+                lastModifiedAt: '2024-01-01T00:00:00Z',
+                lastModifiedBy: {
+                    _id: 'admin2',
+                    name: 'Admin User 2',
+                    email: 'admin2@example.com',
+                },
                 moduleName: "allAplications",
                 __v: 0,
                 _id: "2",

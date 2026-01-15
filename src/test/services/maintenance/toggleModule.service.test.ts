@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { toggleModule, type ToggleModuleResponse } from "@/services/maintenance/toggleModule.service";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { ToggleModuleRequest } from "@/services/maintenance/models/toggleModuleRequest.interface";

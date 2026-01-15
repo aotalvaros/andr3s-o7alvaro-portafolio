@@ -15,6 +15,7 @@ export class LoadingInterceptor implements Interceptor {
   constructor(private loadingService: ILoadingService) {}
 
   async onRequest(config: InternalAxiosRequestConfig): Promise<InternalAxiosRequestConfig> {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     if ((config as any).showLoading !== false) {
       this.loadingService.start();
     }

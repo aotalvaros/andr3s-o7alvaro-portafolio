@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { renderHook, waitFor } from '@testing-library/react'
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
@@ -40,12 +41,12 @@ describe('usePostContact', () => {
       }
       return selector ? selector(state) : state
     })
-
-    vi.clearAllMocks()
+     vi.spyOn(console, "log").mockImplementation(() => undefined);
   })
-
+  
   afterEach(() => {
     queryClient.clear()
+    vi.clearAllMocks()
   })
 
   describe('Initialization', () => {
@@ -168,7 +169,7 @@ describe('usePostContact', () => {
       try {
         await result.current.sendEmail(mockContactData)
       } catch (error) {
-        // Expected error
+        console.log(error)
       }
 
       await waitFor(() => {
@@ -185,7 +186,7 @@ describe('usePostContact', () => {
       try {
         await result.current.sendEmail(mockContactData)
       } catch (error) {
-        // Expected error
+        console.log(error)
       }
 
       await waitFor(() => {
@@ -350,7 +351,7 @@ describe('usePostContact', () => {
           message: 'Test',
         })
       } catch (error) {
-        // Expected
+        console.log(error)
       }
 
       // Should only be called once because retry is false

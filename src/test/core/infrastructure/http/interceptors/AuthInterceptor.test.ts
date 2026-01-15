@@ -1,7 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { InternalAxiosRequestConfig, AxiosError, AxiosHeaders } from 'axios';
+import axios, { InternalAxiosRequestConfig, AxiosError, AxiosHeaders } from 'axios';
 
-import axios from 'axios';
 import { AuthInterceptor, IStorageService, IAuthRepository } from '../../../../../core/infrastructure/http/interceptors/AuthInterceptor';
 
 // Mock de axios
@@ -11,7 +11,7 @@ describe('AuthInterceptor', () => {
   let authInterceptor: AuthInterceptor;
   let mockStorageService: IStorageService;
   let mockAuthRepository: IAuthRepository;
-  let mockAxios = vi.mocked(axios);
+  const mockAxios = vi.mocked(axios);
 
   // Helpers para crear objetos mock
   const createMockConfig = (overrides = {}): InternalAxiosRequestConfig => ({
@@ -249,6 +249,7 @@ describe('AuthInterceptor', () => {
 
     it('should handle the case where window is not defined (SSR)', async () => {
       const originalWindow = global.window;
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       delete global.window;
 

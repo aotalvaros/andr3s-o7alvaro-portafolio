@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { WEATHER_CONFIG } from './../../../services/weather/constants/weatherConfig';
 import { getOneCallWeather } from '@/services/weather';
 import { describe, it, expect, vi, beforeEach, type Mock } from 'vitest';

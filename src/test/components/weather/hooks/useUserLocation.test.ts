@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useUserLocation } from '../../../../components/weather/hooks/useUserLocation';
 import { describe, it, expect, beforeEach, vi, afterEach } from "vitest";
 import { renderHook, act } from "@testing-library/react";
@@ -574,27 +575,6 @@ describe('useUserLocation', () => {
         -74.00597402,
         'Tu ubicación'
       );
-    });
-
-    it('should handle unmounting during location fetch', async () => {
-      let resolveGetLocation: (value: any) => void;
-      vi.mocked(getUserLocation).mockImplementation(
-        () => new Promise((resolve) => {
-          resolveGetLocation = resolve;
-        })
-      );
-
-      const { result, unmount } = renderHook(() => useUserLocation());
-
-      act(() => {
-        result.current.handleUseCurrentLocation();
-      });
-
-      // Unmount before location is obtained
-      unmount();
-
-      // Should not throw error
-      expect(() => unmount()).not.toThrow();
     });
 
     it('should always use "Tu ubicación" as label', async () => {

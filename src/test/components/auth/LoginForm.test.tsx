@@ -43,6 +43,9 @@ vi.mock("@/components/ui/tooltip", () => ({
   TooltipContent: ({ children }: { children: React.ReactNode }) => (
     <div data-testid="tooltip-content">{children}</div>
   ),
+  TooltipProvider: ({ children }: { children: React.ReactNode }) => (
+    <div>{children}</div>
+  ),
 }));
 
 describe("LoginForm", () => {
@@ -71,14 +74,14 @@ describe("LoginForm", () => {
     recaptchaRef: mockRecaptchaRef,
     onChangeReCaptcha: mockOnChangeReCaptcha,
     isButtonDisabled: false,
-  };
+    captchaSize: "normal" as "normal" | "compact",
+  }
 
   beforeEach(() => {
     vi.clearAllMocks();
     vi.mocked(useLoginForm).mockReturnValue(defaultMockReturn);
   });
   
-
   describe("Rendering", () => {
     it("should render login form with all elements", () => {
       render(<LoginForm />);
@@ -101,7 +104,7 @@ describe("LoginForm", () => {
 
       const tooltipContent = screen.getByTestId("tooltip-content");
       expect(tooltipContent).toHaveTextContent(
-        "Inicio de sesion solo para usuarios registrados (administrador)"
+        "Acceso exclusivo para administradores registrados. Si no tienes credenciales, contacta al propietario del sitio."
       );
     });
 
@@ -173,8 +176,8 @@ describe("LoginForm", () => {
     it("should show eye icon when password is hidden", () => {
       render(<LoginForm />);
 
-      const eyeIcon = screen.getByRole("button", { name: "" });
-      expect(eyeIcon.querySelector("svg")).toBeInTheDocument();
+      const eyeIcon = screen.getAllByRole("button", { name: "" });
+      expect(eyeIcon[0].querySelector("svg")).toBeInTheDocument();
     });
 
     it("should show EyeOff icon when password is visible", () => {
@@ -310,14 +313,8 @@ describe("LoginForm", () => {
         /Ingresa tu contraseña/i
       );
 
-      expect(emailInput).toHaveClass(
-        "dark:text-white",
-        "dark:placeholder:text-secondary-foreground"
-      );
-      expect(passwordInput).toHaveClass(
-        "dark:text-white",
-        "dark:placeholder:text-secondary-foreground"
-      );
+      expect(emailInput).toHaveClass("pl-10 h-11 transition-all focus:ring-2 focus:ring-primary/20");
+      expect(passwordInput).toHaveClass(" pl-10 pr-10 h-11 transition-all focus:ring-2 focus:ring-primary/20");
     });
 
     it("should apply correct classes to submit button", () => {
@@ -340,16 +337,7 @@ describe("LoginForm", () => {
       const form = screen
         .getByRole("button", { name: /Iniciar sesión/i })
         .closest("form");
-      expect(form).toHaveClass(
-        "max-w-md",
-        "w-full",
-        "space-y-6",
-        "bg-white",
-        "dark:bg-gray-800",
-        "rounded-lg",
-        "shadow-md",
-        "border"
-      );
+      expect(form).toHaveClass(" w-full md:w-min relative py-4");
     });
   });
 

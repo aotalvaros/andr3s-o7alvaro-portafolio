@@ -1,22 +1,22 @@
 
 import { OnlineStatus } from '@/components/ui/OnlineStatus'
-
 interface StatusIndicatorProps {
-  online: boolean
+  online: boolean,
+  isTextVisible?: boolean,
 }
 
-export function StatusIndicator({ online }: Readonly<StatusIndicatorProps>) {
+export function StatusIndicator({ online, isTextVisible = true }: Readonly<StatusIndicatorProps>) {
   return (
     <div className="alert">
       {online ? (
         <OnlineStatus 
-          text=" Online" 
+          text={ isTextVisible ? " Online" : ""}
           backgroundColor="bg-green-500" 
           textColor="text-green-500" 
         />
       ) : (
         <OnlineStatus 
-          text=" Offline" 
+          text={ isTextVisible ? " Offline" : ""}
           backgroundColor="bg-red-500" 
           textColor="text-red-500" 
         />

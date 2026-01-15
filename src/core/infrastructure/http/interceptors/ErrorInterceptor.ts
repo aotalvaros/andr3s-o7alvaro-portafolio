@@ -49,6 +49,7 @@ export class ErrorInterceptor implements Interceptor {
     const axiosError = error as AxiosError;
     const customError = this.mapError(axiosError);
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     if (!(axiosError.config as any)?.skipErrorToast) {
       this.notificationService.error(customError.message);
     }

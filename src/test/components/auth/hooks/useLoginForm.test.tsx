@@ -4,7 +4,9 @@ import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { useLoginForm } from "@/components/auth/hook/useLoginForm";
 import { renderHook, act } from "@testing-library/react";
 import { useForm } from "react-hook-form";
+import { useIsMobile } from '@/hooks/useIsMobile';
 
+vi.mock('@/hooks/useIsMobile');
 vi.mock("@/components/auth/hook/useLogin");
 vi.mock("next/navigation", () => ({
   useRouter: () => ({
@@ -49,6 +51,9 @@ describe("useLoginForm", () => {
         isSubmitting: false,
       },
     });
+
+    vi.mocked(useIsMobile).mockReturnValue(false);
+
   });
 
   afterEach(() => {
@@ -214,4 +219,21 @@ describe("useLoginForm", () => {
 
     expect(result.current.isButtonDisabled).toBe(true);
   });
+
+  it('should set captchaSize to "normal" on desktop', () => {
+    vi.mocked(useIsMobile).mockReturnValue(false);
+
+    const { result } = renderHook(() => useLoginForm());
+
+    expect(result.current.captchaSize).toBe('normal');
+  });
+  
+   it('should set captchaSize to "compact" on mobile', () => {
+      vi.mocked(useIsMobile).mockReturnValue(true);
+
+      const { result } = renderHook(() => useLoginForm());
+
+      expect(result.current.captchaSize).toBe('compact');
+    });
+
 });
