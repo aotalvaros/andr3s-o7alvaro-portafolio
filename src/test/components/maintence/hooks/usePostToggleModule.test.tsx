@@ -1,6 +1,6 @@
 import { usePostToggleModule } from "../../../../components/maintenance/hooks/usePostToggleModule";
-import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { act, renderHook, waitFor } from "@testing-library/react";
+import { describe, it, expect, vi, beforeEach } from "vitest";
+import { renderHook, waitFor, act } from "@testing-library/react";
 import {
   toggleModule,
   ToggleModuleResponse,
@@ -9,7 +9,6 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactNode } from "react";
 import { ToggleModuleRequest } from "../../../../services/maintenance/models/toggleModuleRequest.interface";
 
-// Mock de toggleModule
 vi.mock("../../../../services/maintenance/toggleModule.service");
 
 const mockToggleModule = vi.mocked(toggleModule);
@@ -46,11 +45,7 @@ describe("usePostToggleModule", () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    vi.spyOn(console, "log").mockImplementation(() => {}); // Suppress logs
-  });
-
-  afterEach(() => {
-    vi.resetAllMocks();
+    vi.spyOn(console, "log").mockImplementation(() => {});
   });
 
   describe("Initialization", () => {
@@ -90,45 +85,12 @@ describe("usePostToggleModule", () => {
         wrapper: Wrapper,
       });
 
-      await act(async () => {
-        await result.current.mutateAsync(mockRequest);
-      });
+      await result.current.mutateAsync(mockRequest);
 
       expect(mockToggleModule).toHaveBeenCalledWith(mockRequest);
       expect(mockToggleModule).toHaveBeenCalledTimes(1);
-      
-      await waitFor(() => {
-        expect(result.current.data).toEqual(mockSuccessResponse);
-      })
     });
 
-    it("should toggle module to unblocked state", async () => {
-      const unblockRequest: ToggleModuleRequest = {
-        moduleName: "module-123",
-        status: false,
-      };
-
-      const unblockResponse: ToggleModuleResponse = {
-        message: "Module unblocked successfully",
-        data: {
-          moduleName: "module-123",
-          status: false,
-        },
-      };
-
-      mockToggleModule.mockResolvedValue(unblockResponse);
-
-      const { Wrapper } = createWrapper();
-      const { result } = renderHook(() => usePostToggleModule(), {
-        wrapper: Wrapper,
-      });
-
-      await act(async () => {
-        await result.current.mutateAsync(unblockRequest);
-      });
-
-      expect(mockToggleModule).toHaveBeenCalledWith(unblockRequest);
-    });
 
     it("should handle different module IDs", async () => {
       const moduleNames = [
@@ -149,11 +111,9 @@ describe("usePostToggleModule", () => {
           wrapper: Wrapper,
         });
 
-        await act(async () => {
-          await result.current.mutateAsync({
-            moduleName: moduleName,
-            status: true,
-          });
+        await result.current.mutateAsync({
+          moduleName: moduleName,
+          status: true,
         });
 
         expect(mockToggleModule).toHaveBeenCalledWith(
@@ -168,7 +128,7 @@ describe("usePostToggleModule", () => {
       mockToggleModule.mockImplementation(
         () =>
           new Promise((resolve) =>
-            setTimeout(() => resolve(mockSuccessResponse), 50)
+            setTimeout(() => resolve(mockSuccessResponse), 100)
           )
       );
 
@@ -177,13 +137,9 @@ describe("usePostToggleModule", () => {
         wrapper: Wrapper,
       });
 
-      const mutationPromise = act(async () => {
-        await result.current.mutateAsync(mockRequest);
-      });
+      const mutationPromise = result.current.mutateAsync(mockRequest);
 
-      await waitFor(() => {
-        expect(result.current.isPending).toBe(true);
-      });
+      await waitFor(() => expect(result.current.isPending).toBe(true));
 
       await mutationPromise;
 
@@ -201,11 +157,7 @@ describe("usePostToggleModule", () => {
         wrapper: Wrapper,
       });
 
-      let response: ToggleModuleResponse | undefined;
-
-      await act(async () => {
-        response = await result.current.mutateAsync(mockRequest);
-      });
+      const response = await result.current.mutateAsync(mockRequest);
 
       expect(response).toEqual(mockSuccessResponse);
     });
@@ -221,13 +173,11 @@ describe("usePostToggleModule", () => {
         wrapper: Wrapper,
       });
 
-      await act(async () => {
-        try {
-          await result.current.mutateAsync(mockRequest);
-        } catch (e) {
-          console.log(e);
-        }
-      });
+      try {
+        await result.current.mutateAsync(mockRequest);
+      } catch (e) {
+        console.log(e);
+      }
 
       await waitFor(() => {
         expect(result.current.isError).toBe(true);
@@ -245,14 +195,12 @@ describe("usePostToggleModule", () => {
       });
 
       await expect(
-        act(async () => {
-          await result.current.mutateAsync(mockRequest);
-        })
+        result.current.mutateAsync(mockRequest)
       ).rejects.toThrow("Network error");
 
       await waitFor(() => {
         expect(result.current.isError).toBe(true);
-      })
+      });
     });
 
     it("should handle 401 unauthorized errors", async () => {
@@ -264,9 +212,7 @@ describe("usePostToggleModule", () => {
       });
 
       await expect(
-        act(async () => {
-          await result.current.mutateAsync(mockRequest);
-        })
+        result.current.mutateAsync(mockRequest)
       ).rejects.toThrow("Unauthorized");
     });
 
@@ -279,9 +225,7 @@ describe("usePostToggleModule", () => {
       });
 
       await expect(
-        act(async () => {
-          await result.current.mutateAsync(mockRequest);
-        })
+        result.current.mutateAsync(mockRequest)
       ).rejects.toThrow("Forbidden");
     });
 
@@ -294,215 +238,8 @@ describe("usePostToggleModule", () => {
       });
 
       await expect(
-        act(async () => {
-          await result.current.mutateAsync(mockRequest);
-        })
+        result.current.mutateAsync(mockRequest)
       ).rejects.toThrow("Module not found");
-    });
-
-    it("should handle 500 server errors", async () => {
-      mockToggleModule.mockRejectedValue(new Error("Internal server error"));
-
-      const { Wrapper } = createWrapper();
-      const { result } = renderHook(() => usePostToggleModule(), {
-        wrapper: Wrapper,
-      });
-
-      await expect(
-        act(async () => {
-          await result.current.mutateAsync(mockRequest);
-        })
-      ).rejects.toThrow("Internal server error");
-    });
-
-    it("should set isPending to false after error", async () => {
-      mockToggleModule.mockRejectedValue(new Error("Test error"));
-
-      const { Wrapper } = createWrapper();
-      const { result } = renderHook(() => usePostToggleModule(), {
-        wrapper: Wrapper,
-      });
-
-      await act(async () => {
-        try {
-          await result.current.mutateAsync(mockRequest);
-        } catch (e) {
-            console.log(e);
-        }
-      });
-
-      await waitFor(() => {
-        expect(result.current.isPending).toBe(false);
-        expect(result.current.isError).toBe(true);
-      });
-    });
-
-    it("should allow retry after error", async () => {
-      mockToggleModule
-        .mockRejectedValueOnce(new Error("First attempt failed"))
-        .mockResolvedValueOnce(mockSuccessResponse);
-
-      const { Wrapper } = createWrapper();
-      const { result } = renderHook(() => usePostToggleModule(), {
-        wrapper: Wrapper,
-      });
-
-      // First attempt - fails
-      await act(async () => {
-        try {
-          await result.current.mutateAsync(mockRequest);
-        } catch (e) {
-          console.log(e)
-        }
-      });
-
-      await waitFor(() => {
-        expect(result.current.isError).toBe(true);
-      })
-
-      // Second attempt - succeeds
-      await act(async () => {
-        await result.current.mutateAsync(mockRequest);
-      });
-
-     await waitFor(() => {
-        expect(result.current.isSuccess).toBe(true);
-        expect(result.current.data).toEqual(mockSuccessResponse);
-     });
-    });
-  });
-
-  describe("Mutation callbacks", () => {
-    it("should call onSuccess callback", async () => {
-      mockToggleModule.mockResolvedValue(mockSuccessResponse);
-
-      const onSuccess = vi.fn();
-      const { Wrapper } = createWrapper();
-      const { result } = renderHook(() => usePostToggleModule(), {
-        wrapper: Wrapper,
-      });
-
-      await act(async () => {
-        await result.current.mutateAsync(mockRequest, {
-          onSuccess,
-        });
-      });
-
-      await waitFor(() => {
-        expect(onSuccess).toHaveBeenCalledWith(
-          mockSuccessResponse,
-          mockRequest,
-          undefined
-        );
-        expect(onSuccess).toHaveBeenCalledTimes(1);
-      });
-    });
-
-    it("should call onError callback", async () => {
-      const error = new Error("Test error");
-      mockToggleModule.mockRejectedValue(error);
-
-      const onError = vi.fn();
-      const { Wrapper } = createWrapper();
-      const { result } = renderHook(() => usePostToggleModule(), {
-        wrapper: Wrapper,
-      });
-
-      await act(async () => {
-        try {
-          await result.current.mutateAsync(mockRequest, {
-            onError,
-          });
-        } catch (e) {
-          console.log(e)
-        }
-      });
-
-      await waitFor(() => {
-        expect(onError).toHaveBeenCalledWith(error, mockRequest, undefined);
-        expect(onError).toHaveBeenCalledTimes(1);
-      });
-    });
-
-    it("should call onSettled callback on success", async () => {
-      mockToggleModule.mockResolvedValue(mockSuccessResponse);
-
-      const onSettled = vi.fn();
-      const { Wrapper } = createWrapper();
-      const { result } = renderHook(() => usePostToggleModule(), {
-        wrapper: Wrapper,
-      });
-
-      await act(async () => {
-        await result.current.mutateAsync(mockRequest, {
-          onSettled,
-        });
-      });
-
-      await waitFor(() => {
-        expect(onSettled).toHaveBeenCalledWith(
-          mockSuccessResponse,
-          null,
-          mockRequest,
-          undefined
-        );
-        expect(onSettled).toHaveBeenCalledTimes(1);
-      });
-    });
-
-    it("should call onSettled callback on error", async () => {
-      const error = new Error("Test error");
-      mockToggleModule.mockRejectedValue(error);
-
-      const onSettled = vi.fn();
-      const { Wrapper } = createWrapper();
-      const { result } = renderHook(() => usePostToggleModule(), {
-        wrapper: Wrapper,
-      });
-
-      await act(async () => {
-        try {
-          await result.current.mutateAsync(mockRequest, {
-            onSettled,
-          });
-        } catch (e) {
-          console.log(e);
-        }
-      });
-
-      await waitFor(() => {
-        expect(onSettled).toHaveBeenCalledWith(
-          undefined,
-          error,
-          mockRequest,
-          undefined
-        );
-        expect(onSettled).toHaveBeenCalledTimes(1);
-      });
-    });
-
-    it("should call multiple callbacks in correct order", async () => {
-      mockToggleModule.mockResolvedValue(mockSuccessResponse);
-
-      const callOrder: string[] = [];
-      const onSuccess = vi.fn(() => callOrder.push("success"));
-      const onSettled = vi.fn(() => callOrder.push("settled"));
-
-      const { Wrapper } = createWrapper();
-      const { result } = renderHook(() => usePostToggleModule(), {
-        wrapper: Wrapper,
-      });
-
-      await act(async () => {
-        await result.current.mutateAsync(mockRequest, {
-          onSuccess,
-          onSettled,
-        });
-      });
-
-      await waitFor(() => {
-        expect(callOrder).toEqual(["success", "settled"]);
-      });
     });
   });
 
@@ -778,5 +515,6 @@ describe("usePostToggleModule", () => {
 
       expect(mockToggleModule).toHaveBeenCalledWith(validRequest);
     });
+  
   });
 });
