@@ -25,7 +25,7 @@ export const useBlockedModules = () => {
     ): responseModuleData[] | undefined => {
         if (!prevModules) return prevModules;
         return prevModules.map((module) =>
-            module.moduleName === data.moduleName ? { ...module, isActive: data.status } : module
+            module.moduleName === data.moduleName ? { ...module, isBlocked: data.status } : module
         );
     };
 

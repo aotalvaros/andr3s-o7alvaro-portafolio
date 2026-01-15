@@ -19,17 +19,11 @@ describe("Test AdminLayout component", () => {
         render(<AdminLayout><div>Test Child</div></AdminLayout>);
         expect(screen.getByText("Test Child")).toBeInTheDocument();
     });
-
-    it("renders footer with correct text", () => {
-        render(<AdminLayout><div>Test Child</div></AdminLayout>);
-        const footerText = screen.getByTestId("footer-text");
-        expect(footerText).toHaveTextContent(`© ${new Date().getFullYear()} Todos los derechos reservados.`);
-    });
-
+    
     it("renders developer information in footer", () => {
         render(<AdminLayout><div>Test Child</div></AdminLayout>);
         const developerInfo = screen.getByTestId("footer-developer");
-        expect(developerInfo).toHaveTextContent("Desarrollado por Andrés Otalvaro - andr3s.o7alvaro@gmail.com");
+        expect(developerInfo).toHaveTextContent(`© ${new Date().getFullYear()} Todos los derechos reservados. Desarrollado por Andrés Otalvaro`);
     });
 
     it("renders construction information in footer", () => {

@@ -22,7 +22,7 @@ export function BlockedModules() {
                             <label htmlFor={`module-${module._id}`}>{module.name}</label>
                             <Switch
                                 id={`module-${module._id}`}
-                                checked={module.isActive}
+                                checked={module.isBlocked}
                                 onCheckedChange={(checked) => {
                                     handleToggleModule(module.moduleName, checked);
                                 }}

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook, waitFor } from '@testing-library/react';
 import { useGetStatusMaintenance } from '@/components/maintenance/hooks/useGetStatusMaintenance';
@@ -6,7 +7,6 @@ import { MaintenanceResponseStatus } from '@/services/maintenance/models/mainten
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactNode } from 'react';
 
-// Mock the service
 vi.mock('@/services/maintenance/maintenace.service', () => ({
   getMaintenanceStatus: vi.fn(),
 }));
@@ -32,24 +32,38 @@ const createWrapper = () => {
 };
 
 
-const responseDataMaintences: MaintenanceResponseStatus = {
-    data: [
-        {
-            isActive: false,
-            moduleName: "module1",
-            __v: 0,
-            _id: "1",
-            name: "Module 1"
-        },
-        {
-            isActive: false,
-            moduleName: "module2",
-             __v: 0,
-            _id: "2",
-            name: "Module 2"
-        }
-    ],
-    status: "success"
+const mockMaintenanceData: MaintenanceResponseStatus = {
+  data: [
+    {
+      isActive: false,
+      isBlocked: false,
+      lastModifiedAt: '2024-01-01T00:00:00Z',
+      lastModifiedBy: {
+        _id: 'admin1',
+        name: 'Admin User',
+        email: 'admin@example.com',
+      },
+      moduleName: 'module1',
+      __v: 0,
+      _id: '1',
+      name: 'Module 1',
+    },
+    {
+      isActive: false,
+      isBlocked: false,
+      lastModifiedAt: '2024-01-01T00:00:00Z',
+      lastModifiedBy: {
+        _id: 'admin2',
+        name: 'Admin User 2',
+        email: 'admin2@example.com',
+      },
+      moduleName: 'module2',
+      __v: 0,
+      _id: '2',
+      name: 'Module 2',
+    },
+  ],
+  status: 'success',
 }
 
 describe('useGetStatusMaintenance', () => {
@@ -57,177 +71,472 @@ describe('useGetStatusMaintenance', () => {
     vi.clearAllMocks();
   });
 
-  it('should return isInMaintenance as false when no data is available', async () => {
-    mockGetMaintenanceStatus.mockResolvedValue(responseDataMaintences);
+ describe('Initial state', () => {
+    it('should start with loading state', () => {
+      mockGetMaintenanceStatus.mockImplementation(
+        () => new Promise(() => {}) // Never resolves
+      )
 
-    const { result } = renderHook(() => useGetStatusMaintenance(), {
-      wrapper: createWrapper()
-    });
 
-    await waitFor(() => {
-      expect(result.current.isSuccess).toBe(true);
-    });
+      const { result } = renderHook(() => useGetStatusMaintenance(), {
+        wrapper: createWrapper(),
+      })
 
-    expect(result.current.isInMaintenance).toBe(false);
-  });
+      expect(result.current.isLoading).toBe(true)
+      expect(result.current.isSuccess).toBe(false)
+      expect(result.current.isError).toBe(false)
+      expect(result.current.isInMaintenance).toBe(false)
+    })
 
-  it('should return isInMaintenance as true when at least one module is active', async () => {
-    mockGetMaintenanceStatus.mockResolvedValue({
-      data: [
+    it('should have correct initial data', () => {
+      mockGetMaintenanceStatus.mockImplementation(
+        () => new Promise(() => {})
+      )
+
+      const { result } = renderHook(() => useGetStatusMaintenance(), {
+        wrapper: createWrapper()
+      })
+
+      expect(result.current.data).toBeUndefined()
+      expect(result.current.error).toBeNull()
+    })
+  })
+
+  describe('Successful data fetching', () => {
+    it('should return isInMaintenance as false when no modules are blocked', async () => {
+      mockGetMaintenanceStatus.mockResolvedValue(mockMaintenanceData)
+
+      const { result } = renderHook(() => useGetStatusMaintenance(), {
+        wrapper: createWrapper()
+      })
+
+      await waitFor(() => {
+        expect(result.current.isSuccess).toBe(true)
+      })
+
+      expect(result.current.isInMaintenance).toBe(false)
+      expect(result.current.data).toEqual(mockMaintenanceData)
+    })
+
+    it('should return isInMaintenance as true when at least one module is blocked', async () => {
+      const dataWithBlockedModule: MaintenanceResponseStatus = {
+        data: [
           {
             isActive: true,
-            moduleName: "module1",
+            isBlocked: true,
+            lastModifiedAt: '2024-01-01T00:00:00Z',
+            lastModifiedBy: {
+              _id: 'admin1',
+              name: 'Admin User',
+              email: 'admin@example.com',
+            },
+            moduleName: 'module1',
             __v: 0,
-            _id: "1",
-            name: "Module 1"
-        },
-        {
+            _id: '1',
+            name: 'Module 1',
+          },
+          {
             isActive: false,
-            moduleName: "module2",
-             __v: 0,
-            _id: "2",
-            name: "Module 2"
-        }
-      ],
-        status: "success"
-    });
+            isBlocked: false,
+            lastModifiedAt: '2024-01-01T00:00:00Z',
+            lastModifiedBy: {
+              _id: 'admin2',
+              name: 'Admin User 2',
+              email: 'admin2@example.com',
+            },
+            moduleName: 'module2',
+            __v: 0,
+            _id: '2',
+            name: 'Module 2',
+          },
+        ],
+        status: 'success',
+      }
 
-    const { result } = renderHook(() => useGetStatusMaintenance(), {
-      wrapper: createWrapper(),
-    });
+      mockGetMaintenanceStatus.mockResolvedValue(dataWithBlockedModule)
 
-    await waitFor(() => {
-      expect(result.current.isSuccess).toBe(true);
-    });
+      const { result } = renderHook(() => useGetStatusMaintenance(), {
+        wrapper: createWrapper()
+      })
 
-    expect(result.current.isInMaintenance).toBe(true);
-  });
+      await waitFor(() => {
+        expect(result.current.isSuccess).toBe(true)
+      })
 
-//   it('should return isInMaintenance as false when no modules are active', async () => {
-//     mockGetMaintenanceStatus.mockResolvedValue({
-//       data: [
-//         { id: 1, name: 'module1', isActive: false },
-//         { id: 2, name: 'module2', isActive: false },
-//         { id: 3, name: 'module3', isActive: false },
-//       ]
-//     });
+      expect(result.current.isInMaintenance).toBe(true)
+    })
 
-//     const { result } = renderHook(() => useGetStatusMaintenance(), {
-//       wrapper: createWrapper(),
-//     });
+    it('should return isInMaintenance as true when all modules are blocked', async () => {
+      const allBlockedData: MaintenanceResponseStatus = {
+        data: [
+          {
+            isActive: true,
+            isBlocked: true,
+            lastModifiedAt: '2024-01-01T00:00:00Z',
+            lastModifiedBy: {
+              _id: 'admin1',
+              name: 'Admin User',
+              email: 'admin@example.com',
+            },
+            moduleName: 'module1',
+            __v: 0,
+            _id: '1',
+            name: 'Module 1',
+          },
+          {
+            isActive: true,
+            isBlocked: true,
+            lastModifiedAt: '2024-01-01T00:00:00Z',
+            lastModifiedBy: {
+              _id: 'admin2',
+              name: 'Admin User 2',
+              email: 'admin2@example.com',
+            },
+            moduleName: 'module2',
+            __v: 0,
+            _id: '2',
+            name: 'Module 2',
+          },
+        ],
+        status: 'success',
+      }
 
-//     await waitFor(() => {
-//       expect(result.current.isSuccess).toBe(true);
-//     });
+      mockGetMaintenanceStatus.mockResolvedValue(allBlockedData)
 
-//     expect(result.current.isInMaintenance).toBe(false);
-//   });
+      const { result } = renderHook(() => useGetStatusMaintenance(), {
+        wrapper: createWrapper()
+      })
 
-//   it('should return isInMaintenance as false when data is undefined', async () => {
-//     mockGetMaintenanceStatus.mockResolvedValue({});
+      await waitFor(() => {
+        expect(result.current.isSuccess).toBe(true)
+      })
 
-//     const { result } = renderHook(() => useGetStatusMaintenance(), {
-//       wrapper: createWrapper(),
-//     });
+      expect(result.current.isInMaintenance).toBe(true)
+    })
 
-//     await waitFor(() => {
-//       expect(result.current.isSuccess).toBe(true);
-//     });
+    it('should handle empty data array', async () => {
+      const emptyData: MaintenanceResponseStatus = {
+        data: [],
+        status: 'success',
+      }
 
-//     expect(result.current.isInMaintenance).toBe(false);
-//   });
+      mockGetMaintenanceStatus.mockResolvedValue(emptyData)
 
-//   it('should call getMaintenanceStatus service function', () => {
-//     mockGetMaintenanceStatus.mockResolvedValue({
-//       data: []
-//     });
+      const { result } = renderHook(() => useGetStatusMaintenance(), {
+        wrapper: createWrapper()
+      })
 
-//     renderHook(() => useGetStatusMaintenance(), {
-//       wrapper: createWrapper(),
-//     });
+      await waitFor(() => {
+        expect(result.current.isSuccess).toBe(true)
+      })
 
-//     expect(mockGetMaintenanceStatus).toHaveBeenCalledTimes(1);
-//   });
+      expect(result.current.isInMaintenance).toBe(false)
+      expect(result.current.data?.data).toHaveLength(0)
+    })
 
-//   it('should use correct query key', async () => {
-//     mockGetMaintenanceStatus.mockResolvedValue({
-//       data: []
-//     });
+    it('should call getMaintenanceStatus service', async () => {
+      mockGetMaintenanceStatus.mockResolvedValue(mockMaintenanceData)
 
-//     const { result } = renderHook(() => useGetStatusMaintenance(), {
-//       wrapper: createWrapper(),
-//     });
+      renderHook(() => useGetStatusMaintenance(), {
+        wrapper: createWrapper()
+      })
 
-//     await waitFor(() => {
-//       expect(result.current.isSuccess).toBe(true);
-//     });
+      await waitFor(() => {
+        expect(mockGetMaintenanceStatus).toHaveBeenCalledTimes(1)
+      })
+    })
+  })
 
-//     expect(result.current.queryKey).toEqual(['maintenanceStatus']);
-//   });
+  describe('React Query configuration', () => {
+    it('should have correct staleTime configuration', async () => {
+      mockGetMaintenanceStatus.mockResolvedValue(mockMaintenanceData)
 
-//   it('should handle loading state correctly', () => {
-//     mockGetMaintenanceStatus.mockImplementation(() => new Promise(() => {}));
+      const { result } = renderHook(() => useGetStatusMaintenance(), {
+        wrapper: createWrapper()
+      })
 
-//     const { result } = renderHook(() => useGetStatusMaintenance(), {
-//       wrapper: createWrapper(),
-//     });
+      await waitFor(() => {
+        expect(result.current.isSuccess).toBe(true)
+      })
 
-//     expect(result.current.isLoading).toBe(true);
-//     expect(result.current.isInMaintenance).toBe(false);
-//   });
+      // Data should not be stale immediately
+      expect(result.current.isStale).toBe(false)
+    })
 
-//   it('should handle error state correctly', async () => {
-//     const mockError = new Error('Service error');
-//     mockGetMaintenanceStatus.mkRejectedValue(mockError);
+    it('should not refetch on window focus', async () => {
+      mockGetMaintenanceStatus.mockResolvedValue(mockMaintenanceData)
 
-//     const { result } = renderHook(() => useGetStatusMaintenance(), {
-//       wrapper: createWrapper(),
-//     });
+      renderHook(() => useGetStatusMaintenance(), {
+        wrapper: createWrapper()
+      })
 
-//     await waitFor(() => {
-//       expect(result.current.isError).toBe(true);
-//     });
+      await waitFor(() => {
+        expect(mockGetMaintenanceStatus).toHaveBeenCalledTimes(1)
+      })
 
-//     expect(result.current.isInMaintenance).toBe(false);
-//     expect(result.current.error).toBe(mockError);
-//   });
+      // Simulate window focus
+      window.dispatchEvent(new Event('focus'))
 
-//   it('should spread all useQuery properties', async () => {
-//     mockGetMaintenanceStatus.mockResolvedValue({
-//       data: []
-//     });
+      // Wait a bit to see if it refetches
+      await new Promise(resolve => setTimeout(resolve, 100))
 
-//     const { result } = renderHook(() => useGetStatusMaintenance(), {
-//       wrapper: createWrapper(),
-//     });
+      // Should still be called only once
+      expect(mockGetMaintenanceStatus).toHaveBeenCalledTimes(1)
+    })
 
-//     await waitFor(() => {
-//       expect(result.current.isSuccess).toBe(true);
-//     });
+    
+    it('should not throw errors on failure', async () => {
+      mockGetMaintenanceStatus.mockRejectedValue(new Error('Test error'))
 
-//     // Check that useQuery properties are available
-//     expect(result.current).toHaveProperty('data');
-//     expect(result.current).toHaveProperty('isLoading');
-//     expect(result.current).toHaveProperty('isError');
-//     expect(result.current).toHaveProperty('isSuccess');
-//     expect(result.current).toHaveProperty('error');
-//     expect(result.current).toHaveProperty('refetch');
-//     expect(result.current).toHaveProperty('isInMaintenance');
-//   });
 
-//   it('should return isInMaintenance as false when data.data is null', async () => {
-//     mockGetMaintenanceStatus.mockResolvedValue({
-//       data: null
-//     });
+      expect(() => {
+        renderHook(() => useGetStatusMaintenance(), {
+          wrapper: createWrapper()
+        })
+      }).not.toThrow()
+    })
+  })
 
-//     const { result } = renderHook(() => useGetStatusMaintenance(), {
-//       wrapper: createWrapper(),
-//     });
+  describe('Data transformation', () => {
+    it('should correctly identify maintenance when first module is blocked', async () => {
+      const data: MaintenanceResponseStatus = {
+        data: [
+          {
+            ...mockMaintenanceData.data[0],
+            isBlocked: true,
+          },
+          mockMaintenanceData.data[1],
+        ],
+        status: 'success',
+      }
 
-//     await waitFor(() => {
-//       expect(result.current.isSuccess).toBe(true);
-//     });
+      mockGetMaintenanceStatus.mockResolvedValue(data)
 
-//     expect(result.current.isInMaintenance).toBe(false);
-//   });
+      const { result } = renderHook(() => useGetStatusMaintenance(), {
+        wrapper: createWrapper()
+      })
+
+      await waitFor(() => {
+        expect(result.current.isSuccess).toBe(true)
+      })
+
+      expect(result.current.isInMaintenance).toBe(true)
+    })
+
+    it('should correctly identify maintenance when last module is blocked', async () => {
+      const data: MaintenanceResponseStatus = {
+        data: [
+          mockMaintenanceData.data[0],
+          {
+            ...mockMaintenanceData.data[1],
+            isBlocked: true,
+          },
+        ],
+        status: 'success',
+      }
+
+      mockGetMaintenanceStatus.mockResolvedValue(data)
+
+      const { result } = renderHook(() => useGetStatusMaintenance(), {
+        wrapper: createWrapper()
+      })
+
+      await waitFor(() => {
+        expect(result.current.isSuccess).toBe(true)
+      })
+
+      expect(result.current.isInMaintenance).toBe(true)
+    })
+
+    it('should correctly identify maintenance when middle module is blocked', async () => {
+      const data: MaintenanceResponseStatus = {
+        data: [
+          mockMaintenanceData.data[0],
+          {
+            ...mockMaintenanceData.data[1],
+            isBlocked: true,
+          },
+          {
+            isActive: false,
+            isBlocked: false,
+            lastModifiedAt: '2024-01-01T00:00:00Z',
+            lastModifiedBy: {
+              _id: 'admin3',
+              name: 'Admin User 3',
+              email: 'admin3@example.com',
+            },
+            moduleName: 'module3',
+            __v: 0,
+            _id: '3',
+            name: 'Module 3',
+          },
+        ],
+        status: 'success',
+      }
+
+      mockGetMaintenanceStatus.mockResolvedValue(data)
+
+      const { result } = renderHook(() => useGetStatusMaintenance(), {
+        wrapper: createWrapper()
+      })
+
+      await waitFor(() => {
+        expect(result.current.isSuccess).toBe(true)
+      })
+
+      expect(result.current.isInMaintenance).toBe(true)
+    })
+
+    it('should handle large number of modules', async () => {
+      const manyModules = Array.from({ length: 100 }, (_, i) => ({
+        isActive: false,
+        isBlocked: i === 50, // Only module 50 is blocked
+        lastModifiedAt: '2024-01-01T00:00:00Z',
+        lastModifiedBy: {
+          _id: `admin${i}`,
+          name: `Admin ${i}`,
+          email: `admin${i}@example.com`,
+        },
+        moduleName: `module${i}`,
+        __v: 0,
+        _id: `${i}`,
+        name: `Module ${i}`,
+      }))
+
+      mockGetMaintenanceStatus.mockResolvedValue({
+        data: manyModules,
+        status: 'success',
+      })
+
+      const { result } = renderHook(() => useGetStatusMaintenance(), {
+        wrapper: createWrapper()
+      })
+
+      await waitFor(() => {
+        expect(result.current.isSuccess).toBe(true)
+      })
+
+      expect(result.current.isInMaintenance).toBe(true)
+    })
+  })
+
+  describe('Edge cases', () => {
+    it('should handle null data gracefully', async () => {
+      mockGetMaintenanceStatus.mockResolvedValue(null as any)
+
+      const { result } = renderHook(() => useGetStatusMaintenance(), {
+        wrapper: createWrapper()
+      })
+
+      await waitFor(() => {
+        expect(result.current.isSuccess).toBe(true)
+      })
+
+      expect(result.current.isInMaintenance).toBe(false)
+    })
+
+    it('should handle module with isBlocked as undefined', async () => {
+      const data: any = {
+        data: [
+          {
+            ...mockMaintenanceData.data[0],
+            isBlocked: undefined,
+          },
+        ],
+        status: 'success',
+      }
+
+      mockGetMaintenanceStatus.mockResolvedValue(data)
+
+      const { result } = renderHook(() => useGetStatusMaintenance(), {
+        wrapper: createWrapper()
+      })
+
+      await waitFor(() => {
+        expect(result.current.isSuccess).toBe(true)
+      })
+
+      expect(result.current.isInMaintenance).toBe(false)
+    })
+
+    it('should handle module with isBlocked as null', async () => {
+      const data: any = {
+        data: [
+          {
+            ...mockMaintenanceData.data[0],
+            isBlocked: null,
+          },
+        ],
+        status: 'success',
+      }
+
+      mockGetMaintenanceStatus.mockResolvedValue(data)
+
+      const { result } = renderHook(() => useGetStatusMaintenance(), {
+        wrapper: createWrapper()
+      })
+
+      await waitFor(() => {
+        expect(result.current.isSuccess).toBe(true)
+      })
+
+      expect(result.current.isInMaintenance).toBe(false)
+    })
+  })
+
+  describe('Return values', () => {
+    it('should return all React Query properties', async () => {
+      mockGetMaintenanceStatus.mockResolvedValue(mockMaintenanceData)
+
+      const { result } = renderHook(() => useGetStatusMaintenance(), {
+        wrapper: createWrapper()
+      })
+
+      await waitFor(() => {
+        expect(result.current.isSuccess).toBe(true)
+      })
+
+      expect(result.current).toHaveProperty('data')
+      expect(result.current).toHaveProperty('error')
+      expect(result.current).toHaveProperty('isLoading')
+      expect(result.current).toHaveProperty('isSuccess')
+      expect(result.current).toHaveProperty('isError')
+      expect(result.current).toHaveProperty('isInMaintenance')
+      expect(result.current).toHaveProperty('refetch')
+    })
+
+    it('should allow manual refetch', async () => {
+      mockGetMaintenanceStatus.mockResolvedValue(mockMaintenanceData)
+
+      const { result } = renderHook(() => useGetStatusMaintenance(), {
+        wrapper: createWrapper()
+      })
+
+      await waitFor(() => {
+        expect(result.current.isSuccess).toBe(true)
+      })
+
+      expect(mockGetMaintenanceStatus).toHaveBeenCalledTimes(1)
+
+      // Manual refetch
+      await result.current.refetch()
+
+      expect(mockGetMaintenanceStatus).toHaveBeenCalledTimes(2)
+    })
+
+    it('should expose isStale property', async () => {
+      mockGetMaintenanceStatus.mockResolvedValue(mockMaintenanceData)
+
+      const { result } = renderHook(() => useGetStatusMaintenance(), {
+        wrapper: createWrapper()
+      })
+
+      await waitFor(() => {
+        expect(result.current.isSuccess).toBe(true)
+      })
+
+      expect(result.current).toHaveProperty('isStale')
+    })
+  })
+
 });

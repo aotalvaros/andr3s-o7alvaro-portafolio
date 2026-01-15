@@ -2,9 +2,11 @@ import { AdminSidebar } from './AdminSidebarProps';
 import { useState } from 'react';
 import { AdminView } from './types/adminDashboard.type';
 import { AdminHeader } from './AdminHeader';
+import { DashboardOverview } from './DashboardOverview';
+import { BlockedModules } from './BlockedModules';
 export function AdminDashboard() {
     const [currentView, setCurrentView] = useState<AdminView>("overview")
-    const [sidebarOpen, setSidebarOpen] = useState(true)
+    const [sidebarOpen, setSidebarOpen] = useState(false)
 
    return(
      <div className="flex h-screen bg-background">
@@ -19,8 +21,8 @@ export function AdminDashboard() {
             <AdminHeader />
 
             <main className="flex-1 overflow-y-auto p-6">
-                {currentView === "overview" && <div>overview</div>}
-                {currentView === "modules" && <div>modules</div>}
+                {currentView === "overview" && <DashboardOverview />}
+                {currentView === "modules" && <BlockedModules />}
                 {currentView === "activity" && <div>activity</div>}
                 {currentView === "settings" && <div>settings</div>}
             </main>

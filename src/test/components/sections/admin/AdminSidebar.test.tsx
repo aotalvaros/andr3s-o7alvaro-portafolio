@@ -4,11 +4,6 @@ import { render, screen, fireEvent } from "@testing-library/react";
 import { logout } from "@/components/auth/logout";
 import { AdminView } from '@/components/sections/admin/types/adminDashboard.type';
 
-
-vi.mock("@/components/sections/admin/BlockedModules", () => ({
-    BlockedModules: () => <div data-testid="blocked-modules">Bienvenido al panel de administración</div>,
-}));
-
 vi.mock("@/components/auth/logout");
 
 describe("Test AdminSidebar component", () => {

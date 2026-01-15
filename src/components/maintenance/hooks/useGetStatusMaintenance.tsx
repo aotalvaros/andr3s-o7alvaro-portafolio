@@ -23,7 +23,7 @@ export const useGetStatusMaintenance = () => {
         networkMode: 'online', // Solo hacer peticiones cuando hay conexión
     });
 
-    const isInMaintenance = maintenanceData?.data?.data.some((module) => module.isActive) || false;
+    const isInMaintenance = maintenanceData?.data?.data.some((module) => module.isBlocked) || false;
 
     return {
         isInMaintenance,
