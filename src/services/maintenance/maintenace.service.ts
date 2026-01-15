@@ -1,9 +1,9 @@
-import api from '@/lib/axios';
+import { httpClient } from '@/core/infrastructure/http/httpClientFactory';
 import { MaintenanceResponseStatus } from './models/maintenaceResponseStatus.interface';
 
 export const getMaintenanceStatus = async (): Promise<MaintenanceResponseStatus> => {
    try {
-    const { data } = await api.get('/modules', {
+    const data = await httpClient.get<MaintenanceResponseStatus>('/modules', {
       showLoading: false,
       skipErrorToast: true // No mostrar toast en este servicio
     });

@@ -126,7 +126,7 @@ describe('useContactForm', () => {
       } as any;
 
       act(() => {
-        result.current.onChangeReCaptcha();
+        result.current.onChangeReCaptcha("recaptcha-token");
       });
 
       expect(result.current.isButtonDisabled).toBe(false);
@@ -141,7 +141,7 @@ describe('useContactForm', () => {
       } as any;
 
       act(() => {
-        result.current.onChangeReCaptcha();
+        result.current.onChangeReCaptcha(null);
       });
 
       expect(result.current.isButtonDisabled).toBe(true);
@@ -153,7 +153,7 @@ describe('useContactForm', () => {
       result.current.recaptchaRef.current = null;
 
       act(() => {
-        result.current.onChangeReCaptcha();
+        result.current.onChangeReCaptcha(null);
       });
 
       expect(result.current.isButtonDisabled).toBe(true);
@@ -168,7 +168,7 @@ describe('useContactForm', () => {
       } as any;
 
       act(() => {
-        result.current.onChangeReCaptcha();
+        result.current.onChangeReCaptcha("recaptcha-token");
       });
 
       expect(result.current.isButtonDisabled).toBe(false);
@@ -179,7 +179,7 @@ describe('useContactForm', () => {
       } as any;
 
       act(() => {
-        result.current.onChangeReCaptcha();
+        result.current.onChangeReCaptcha(null);
       });
 
       expect(result.current.isButtonDisabled).toBe(true);

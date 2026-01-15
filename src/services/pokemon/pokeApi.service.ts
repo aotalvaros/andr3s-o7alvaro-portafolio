@@ -1,4 +1,4 @@
-import axios from "axios";
+import { httpClient } from '@/core/infrastructure/http/httpClientFactory';
 import { IPokemon } from "./models/pokemon.interface";
 
 const API_URL = "https://beta.pokeapi.co/graphql/v1beta";
@@ -20,15 +20,19 @@ export async function fetchPokemonList(
   query: string,
   variables: Record<string, unknown>
 ): Promise<FetchPokemonListResponse> {
-  const response = await axios.post<GraphQLResponse<FetchPokemonListResponse>>(
+  const response = await httpClient.post<GraphQLResponse<FetchPokemonListResponse>>(
     API_URL,
     { query, variables },
     { headers: { "Content-Type": "application/json" }, showLoading: false }
   );
 
-  if (response.data.errors) {
-    throw new Error(response.data.errors[0].message);
+  if (response.errors) {
+    throw new Error(response.errors[0].message);
   }
 
-  return response.data.data!;
+  if (!response.data) {
+    throw new Error('No data returned from GraphQL');
+  }
+
+  return response.data;
 }

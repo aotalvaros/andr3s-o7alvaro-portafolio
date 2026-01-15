@@ -12,6 +12,7 @@ describe("logout", () => {
   let originalLocation: Location;
 
   beforeEach(() => {
+    vi.spyOn(console, 'error').mockImplementation(() => {});
     vi.clearAllMocks();
 
     // Save original window and location

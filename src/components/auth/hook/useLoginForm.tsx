@@ -3,19 +3,19 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useLogin } from "./useLogin";
 import { useRouter } from "next/navigation";
-import { useRef, useState } from "react";
-import ReCAPTCHA from "react-google-recaptcha";
+import { useState } from "react";
 import { useIsMobile } from '@/hooks/useIsMobile';
+import { useRecaptcha } from '@/hooks/useRecaptcha';
 
 export const useLoginForm = () => {
+
+    const { recaptchaRef, isVerified, onChangeReCaptcha } = useRecaptcha();
 
     const { auth } = useLogin()
     const router = useRouter();
      const isMobile = useIsMobile()
 
     const [showPassword, setShowPassword] = useState(false);
-    const recaptchaRef = useRef<ReCAPTCHA>(null);
-    const [isButtonDisabled, setIsButtonDisabled] = useState<boolean>(true);
     const captchaSize: 'normal' | 'compact' = isMobile ? 'compact' : 'normal';
 
     const {
@@ -34,10 +34,6 @@ export const useLoginForm = () => {
         });
     };
 
-    const onChangeReCaptcha = () => {
-        setIsButtonDisabled(!recaptchaRef.current?.getValue());
-    };
-
     return {
         register,
         handleSubmit,
@@ -48,8 +44,8 @@ export const useLoginForm = () => {
         setShowPassword,
         recaptchaRef,
         onChangeReCaptcha,
-        isButtonDisabled,
-        captchaSize
+        captchaSize,
+        isButtonDisabled: isVerified
     };
 
 }

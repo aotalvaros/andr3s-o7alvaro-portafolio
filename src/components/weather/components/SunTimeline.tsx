@@ -24,7 +24,7 @@ export function SunTimeline({ sunrise, sunset, currentTime }: Readonly<SunTimeli
   const sunY = 90 - Math.abs(Math.sin((currentProgress * Math.PI))) * 100
 
   return (
-    <Card className="p-6 bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-950/20 dark:to-orange-950/20 border-2 border-amber-200 dark:border-amber-900">
+    <Card className="relative p-6 bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-950/20 dark:to-orange-950/20 border-2 border-amber-200 dark:border-amber-900">
       <h3 className="text-lg font-semibold mb-6">Ciclo Solar</h3>
 
       <div className="relative h-[40dvh] lg:h-40 xl:h-45 m-0_auto flex justify-center items-center">

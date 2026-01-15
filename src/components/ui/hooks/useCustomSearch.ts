@@ -1,5 +1,6 @@
 import React from "react";
 import { useState, useRef, useMemo } from "react";
+import { getSecureRandomInRange } from '@/utils/randomValues';
 
 const PARTICLE_COUNT = 12;
 const PARTICLE_DURATION = 1000;
@@ -36,8 +37,8 @@ export const useCustomSearch = ({
   const createParticles = () => {
     const newParticles = Array.from({ length: PARTICLE_COUNT }, (_, i) => ({
       id: Date.now() + i,
-      x: Math.random() * 100,
-      y: Math.random() * 100,
+      x: getSecureRandomInRange(0, 100),
+      y: getSecureRandomInRange(0, 100),
     }));
     setParticles(newParticles);
     setTimeout(() => setParticles([]), PARTICLE_DURATION);

@@ -19,7 +19,7 @@ export const metadata = {
 export default function RootLayout({ children }: { readonly children: React.ReactNode }) {
   return (
     <html lang="es">
-    <body className={`${inter.className} grid min-h-[100dvh] grid-rows-[auto_1fr_auto]`}>
+    <body className={`${inter.className} grid min-h-dvh grid-rows-[auto_1fr_auto]`}>
       <ThemeProvider>
         <Providers>
             <SocketProvider>

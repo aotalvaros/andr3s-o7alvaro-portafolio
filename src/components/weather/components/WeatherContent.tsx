@@ -14,7 +14,7 @@ import { WeatherChart } from "@/components/layout/navbar/components/WeatherChart
 import { SunTimeline } from "./SunTimeline";
 import { AirQualityCard } from "./AirQualityCard";
 import { ForecastCard } from "./ForecastCard";
-import { useWeatherContent } from "../hooks/useWeatherContent";
+import { useWeather } from "../hooks/useWeather";
 import { APILimitWarning } from "./APILimitWarning";
 import { CityResultItem } from "./CityResultItem";
 
@@ -36,7 +36,7 @@ export function WeatherContent() {
     handleUseCurrentLocation,
     handleCitySelect,
     handleSearchChange,
-  } = useWeatherContent();
+  } = useWeather();
 
   return (
     <div className={`h-full bg-gradient-to-br ${backgroundGradient}`}>
@@ -126,7 +126,7 @@ export function WeatherContent() {
                 <WeatherChart forecast={weatherData.daily} />
               </div>
 
-              <div className="space-y-8">
+              <div className="relative space-y-8">
                 <SunTimeline
                   sunrise={weatherData.current.sunrise}
                   sunset={weatherData.current.sunset}

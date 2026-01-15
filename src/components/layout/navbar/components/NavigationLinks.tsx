@@ -21,16 +21,13 @@ export function NavigationLinks({
   isDarkMode,
   variant = 'desktop'
 }: Readonly<NavigationLinksProps>) {
-  const linkClasses = variant === 'mobile' 
-    ? "hover:underline dark:text-secondary" 
-    : "hover:underline dark:text-secondary"
 
   return (
     <>
       <Link 
         onClick={onContactClick} 
         href="/#contact" 
-        className={linkClasses}
+        className='hover:underline dark:text-secondary'
         data-testid="contact-link"
       >
         Contacto

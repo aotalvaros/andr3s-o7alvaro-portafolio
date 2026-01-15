@@ -1,9 +1,10 @@
-import { login } from "@/services/login/login.service";
 import { useLoadingStore } from "@/store/loadingStore";
 import { useMutation } from "@tanstack/react-query"
 import { useEffect } from "react";
 import { toast } from "sonner";
 import { setCookie } from 'cookies-next';
+import { httpClient } from '@/core/infrastructure/http/httpClientFactory';
+import { LoginResponse } from '@/services/login/models/loginResponse.interface';
 
 export const useLogin = () => {
   
@@ -13,7 +14,7 @@ export const useLogin = () => {
         mutateAsync: auth, 
         isPending: isLoading 
     } = useMutation({
-        mutationFn: (payload: { email: string; password: string }) => login(payload),
+        mutationFn: (payload: { email: string; password: string }) => httpClient.post<LoginResponse>('/auth/login', payload),
         onSuccess: (data) => {
             // Establecer cookies con configuración segura
             setCookie('token', data?.token, { 
@@ -35,10 +36,6 @@ export const useLogin = () => {
             }
             
             toast.success('Inicio de sesión exitoso');
-        },
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        onError: (error: any) => {
-            toast.error(error.message ?? 'Error al iniciar sesión');
         },
     });
 

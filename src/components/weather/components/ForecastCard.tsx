@@ -10,7 +10,7 @@ interface ForecastCardProps {
 
 export function ForecastCard({ forecast }: ForecastCardProps) {
   return (
-    <div className="rounded-2xl border border-border bg-gradient-to-br from-background/80 via-background/60 to-background/80 backdrop-blur-xl p-6 shadow-2xl">
+    <div className="relative rounded-2xl border border-border bg-gradient-to-br from-background/80 via-background/60 to-background/80 backdrop-blur-xl p-6 shadow-2xl">
       <h3 className="text-xl font-bold mb-6">Pronóstico de 7 días</h3>
 
       <div className="space-y-2">
@@ -30,6 +30,8 @@ export function ForecastCard({ forecast }: ForecastCardProps) {
                 src={getWeatherIcon(item.weather[0].icon)}
                 alt={`icon-weather-${item.dt}`}
                 className="h-8 w-8"
+                width={10}
+                height={10}
               />
               <span className="text-sm capitalize text-muted-foreground">
                 {item.weather[0].description}

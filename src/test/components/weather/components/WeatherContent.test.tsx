@@ -2,10 +2,10 @@
 import { WeatherContent } from '../../../../components/weather/components/WeatherContent';
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { render, screen, fireEvent } from '@testing-library/react';
-import { useWeatherContent } from '../../../../components/weather/hooks/useWeatherContent';
 import { OneCallWeatherData, AirQuality } from '@/types/weather.interface';
+import { useWeather } from '../../../../components/weather/hooks/useWeather';
 
-vi.mock("../../../../components/weather/hooks/useWeatherContent")
+vi.mock("../../../../components/weather/hooks/useWeather")
 
 vi.mock('../../../../components/ui/CustomSearch', () => ({
    CustomSearch: vi.fn(({ onSearch, placeholder, disabled, isSearching, propsAnimate }) => (
@@ -121,14 +121,15 @@ describe("WeatherContent Component", () => {
     isSearching: false,
     isLoading: false,
     isNighttime: false,
+    query: '',
     setError: vi.fn(),
     handleUseCurrentLocation: vi.fn(),
     handleCitySelect: vi.fn(),
     handleSearchChange: vi.fn(),
-  };
+  } 
 
     beforeEach(() => {
-        vi.mocked(useWeatherContent).mockReturnValue(defaultMockReturn);
+        vi.mocked(useWeather).mockReturnValue(defaultMockReturn);
     })
 
      afterEach(() => {
@@ -163,7 +164,7 @@ describe("WeatherContent Component", () => {
     });
 
     it('should show moon icon during nighttime', () => {
-      vi.mocked(useWeatherContent).mockReturnValue({
+      vi.mocked(useWeather).mockReturnValue({
         ...defaultMockReturn,
         isNighttime: true,
       });
@@ -177,7 +178,7 @@ describe("WeatherContent Component", () => {
 
   describe('Loading states', () => {
     it('should display loading indicator when isLoading is true', () => {
-      vi.mocked(useWeatherContent).mockReturnValue({
+      vi.mocked(useWeather).mockReturnValue({
         ...defaultMockReturn,
         isLoading: true,
       });
@@ -188,7 +189,7 @@ describe("WeatherContent Component", () => {
     });
 
     it('should show location loading spinner', () => {
-      vi.mocked(useWeatherContent).mockReturnValue({
+      vi.mocked(useWeather).mockReturnValue({
         ...defaultMockReturn,
         isLoadingLocation: true,
       });
@@ -200,7 +201,7 @@ describe("WeatherContent Component", () => {
     });
 
     it('should display searching indicator when isSearching is true', () => {
-      vi.mocked(useWeatherContent).mockReturnValue({
+      vi.mocked(useWeather).mockReturnValue({
         ...defaultMockReturn,
         isSearching: true,
       });
@@ -213,7 +214,7 @@ describe("WeatherContent Component", () => {
 
   describe('Error handling', () => {
     it('should display error message when error exists', () => {
-      vi.mocked(useWeatherContent).mockReturnValue({
+      vi.mocked(useWeather).mockReturnValue({
         ...defaultMockReturn,
         error: 'Error al cargar los datos',
       });
@@ -225,7 +226,7 @@ describe("WeatherContent Component", () => {
 
     it('should allow closing the error message', () => {
       const mockSetError = vi.fn();
-      vi.mocked(useWeatherContent).mockReturnValue({
+      vi.mocked(useWeather).mockReturnValue({
         ...defaultMockReturn,
         error: 'Error al cargar los datos',
         setError: mockSetError,
@@ -242,7 +243,7 @@ describe("WeatherContent Component", () => {
 
   describe('API rate limiting', () => {
     it('should display warning when API limit is reached', () => {
-      vi.mocked(useWeatherContent).mockReturnValue({
+      vi.mocked(useWeather).mockReturnValue({
         ...defaultMockReturn,
         isRateLimited: true,
       });
@@ -253,7 +254,7 @@ describe("WeatherContent Component", () => {
     });
 
     it('should disable search when rate limited', () => {
-      vi.mocked(useWeatherContent).mockReturnValue({
+      vi.mocked(useWeather).mockReturnValue({
         ...defaultMockReturn,
         isRateLimited: true,
       });
@@ -265,7 +266,7 @@ describe("WeatherContent Component", () => {
     });
 
     it('should disable location button when rate limited', () => {
-      vi.mocked(useWeatherContent).mockReturnValue({
+      vi.mocked(useWeather).mockReturnValue({
         ...defaultMockReturn,
         isRateLimited: true,
       });
@@ -277,7 +278,7 @@ describe("WeatherContent Component", () => {
     });
 
     it('should not display weather data when rate limited', () => {
-      vi.mocked(useWeatherContent).mockReturnValue({
+      vi.mocked(useWeather).mockReturnValue({
         ...defaultMockReturn,
         isRateLimited: true,
         weatherData: mockWeatherData,
@@ -292,7 +293,7 @@ describe("WeatherContent Component", () => {
   describe('City search', () => {
     it('should call handleSearchChange when typing in the input', () => {
       const mockHandleSearchChange = vi.fn();
-      vi.mocked(useWeatherContent).mockReturnValue({
+      vi.mocked(useWeather).mockReturnValue({
         ...defaultMockReturn,
         handleSearchChange: mockHandleSearchChange,
       });
@@ -311,7 +312,7 @@ describe("WeatherContent Component", () => {
         { name: 'Cali', country: 'CO', lat: 3.4, lon: -76.5 }
       ];
 
-      vi.mocked(useWeatherContent).mockReturnValue({
+      vi.mocked(useWeather).mockReturnValue({
         ...defaultMockReturn,
         results: mockResults,
       });
@@ -328,7 +329,7 @@ describe("WeatherContent Component", () => {
         { name: 'Bogotá', country: 'CO', lat: 4.6, lon: -74.08 }
       ];
 
-      vi.mocked(useWeatherContent).mockReturnValue({
+      vi.mocked(useWeather).mockReturnValue({
         ...defaultMockReturn,
         results: mockResults,
         handleCitySelect: mockHandleCitySelect,
@@ -346,7 +347,7 @@ describe("WeatherContent Component", () => {
   describe('Current location', () => {
     it('should call handleUseCurrentLocation when clicking the button', () => {
       const mockHandleUseCurrentLocation = vi.fn();
-      vi.mocked(useWeatherContent).mockReturnValue({
+      vi.mocked(useWeather).mockReturnValue({
         ...defaultMockReturn,
         handleUseCurrentLocation: mockHandleUseCurrentLocation,
       });
@@ -368,7 +369,7 @@ describe("WeatherContent Component", () => {
 
   describe('Weather data rendering', () => {
     it('should render all components when weather data is available', () => {
-      vi.mocked(useWeatherContent).mockReturnValue({
+      vi.mocked(useWeather).mockReturnValue({
         ...defaultMockReturn,
         weatherData: mockWeatherData,
         airQuality: mockAirQuality,
@@ -385,7 +386,7 @@ describe("WeatherContent Component", () => {
     });
 
     it('should pass correct data to CurrentWeatherCard', () => {
-      vi.mocked(useWeatherContent).mockReturnValue({
+      vi.mocked(useWeather).mockReturnValue({
         ...defaultMockReturn,
         weatherData: mockWeatherData,
       });
@@ -398,7 +399,7 @@ describe("WeatherContent Component", () => {
     });
 
     it('should not render AirQualityCard when air quality data is unavailable', () => {
-      vi.mocked(useWeatherContent).mockReturnValue({
+      vi.mocked(useWeather).mockReturnValue({
         ...defaultMockReturn,
         weatherData: mockWeatherData,
         airQuality: null,
@@ -420,7 +421,7 @@ describe("WeatherContent Component", () => {
 
   describe('CSS styles and classes', () => {
     it('should apply correct background gradient', () => {
-      vi.mocked(useWeatherContent).mockReturnValue({
+      vi.mocked(useWeather).mockReturnValue({
         ...defaultMockReturn,
         backgroundGradient: 'from-purple-400 to-pink-600',
       });
@@ -451,14 +452,14 @@ describe("WeatherContent Component", () => {
 
       const { rerender } = render(<WeatherContent />);
 
-      vi.mocked(useWeatherContent).mockReturnValue({
+      vi.mocked(useWeather).mockReturnValue({
         ...defaultMockReturn,
         handleSearchChange: mockHandleSearchChange,
         isSearching: true,
       });
       rerender(<WeatherContent />);
 
-      vi.mocked(useWeatherContent).mockReturnValue({
+      vi.mocked(useWeather).mockReturnValue({
         ...defaultMockReturn,
         handleSearchChange: mockHandleSearchChange,
         handleCitySelect: mockHandleCitySelect,
@@ -472,7 +473,7 @@ describe("WeatherContent Component", () => {
 
       fireEvent.click(cityButton);
       
-      vi.mocked(useWeatherContent).mockReturnValue({
+      vi.mocked(useWeather).mockReturnValue({
         ...defaultMockReturn,
         isLoading: true,
       });
@@ -481,7 +482,7 @@ describe("WeatherContent Component", () => {
       expect(screen.getByText('Cargando datos del clima...')).toBeInTheDocument();
 
       // Simulate loaded data
-      vi.mocked(useWeatherContent).mockReturnValue({
+      vi.mocked(useWeather).mockReturnValue({
         ...defaultMockReturn,
         weatherData: mockWeatherData,
         airQuality: mockAirQuality,

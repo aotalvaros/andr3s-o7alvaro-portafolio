@@ -7,12 +7,12 @@ import { MaintenanceResponseStatus } from '@/services/maintenance/models/mainten
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactNode } from 'react';
 
+
 vi.mock('@/services/maintenance/maintenace.service', () => ({
   getMaintenanceStatus: vi.fn(),
 }));
 
 const mockGetMaintenanceStatus = vi.mocked(getMaintenanceStatus);
-
 const createWrapper = () => {
   const queryClient = new QueryClient({
     defaultOptions: {
@@ -30,7 +30,6 @@ const createWrapper = () => {
 
   return Wrapper;
 };
-
 
 const mockMaintenanceData: MaintenanceResponseStatus = {
   data: [
