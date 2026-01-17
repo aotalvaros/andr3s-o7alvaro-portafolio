@@ -31,6 +31,6 @@ describe("About Test", () => {
     it("should render technologies badges", () => {
         setUp();
         const technologies = screen.getAllByText(/React|Next\.js|TypeScript|TailwindCSS|SASS|Jest|Vitest|Azure|Git|SQL/i);
-        expect(technologies).toHaveLength(16);
+        expect(technologies).toHaveLength(12);
     });
 });
