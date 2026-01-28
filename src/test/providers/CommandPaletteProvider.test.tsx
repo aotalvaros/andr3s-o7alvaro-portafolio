@@ -490,7 +490,7 @@ describe('CommandPaletteProvider', () => {
 
         githubCommand?.action()
         expect(window.open).toHaveBeenCalledWith(
-          'https://github.com/andr3s-o7alvaro',
+          'https://github.com/aotalvaros',
           '_blank'
         )
       })

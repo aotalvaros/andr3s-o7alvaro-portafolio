@@ -19,7 +19,8 @@ export const useMaintenance = () => {
     isLoading: isInitialLoading, 
     isFetched,
     isError,
-    error
+    error,
+    refetch
   } = useGetStatusMaintenance();
 
   useEffect(() => {
@@ -57,8 +58,9 @@ export const useMaintenance = () => {
         if (data.moduleName === 'allAplications') {
           setIsAplicationInMaintenance(data.status);
         }
+        
+        refetch();
     });
-
 
     return () => {
       socket?.off('init-module-status', handler);

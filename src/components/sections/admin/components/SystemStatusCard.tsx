@@ -7,7 +7,7 @@ interface SystemStatusCardProps {
 
 export function SystemStatusCard({ isSocketOnline }: Readonly<SystemStatusCardProps>) {
   return (
-    <Card>
+    <Card className='bg-muted/60'>
       <CardHeader>
         <CardTitle>Estado del Sistema</CardTitle>
         <CardDescription>Rendimiento y disponibilidad</CardDescription>

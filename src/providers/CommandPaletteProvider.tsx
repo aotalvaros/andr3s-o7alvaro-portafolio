@@ -129,7 +129,7 @@ export function CommandPaletteProvider({ children }: { readonly children: React.
         description: 'Ver mi perfil de GitHub',
         icon: <FaGithub className="h-4 w-4" />,
         action: () => {
-          window.open('https://github.com/andr3s-o7alvaro', '_blank')
+          window.open('https://github.com/aotalvaros', '_blank')
         },
         keywords: ['github', 'código', 'code', 'repositorio'],
         category: 'social' as const,

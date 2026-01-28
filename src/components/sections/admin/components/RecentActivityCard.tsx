@@ -7,7 +7,7 @@ interface RecentActivityCardProps {
 
 export function RecentActivityCard({ activities }: Readonly<RecentActivityCardProps>) {
   return (
-    <Card>
+    <Card className='bg-muted/60'>
       <CardHeader>
         <CardTitle>Actividad Reciente</CardTitle>
         <CardDescription>Últimos cambios en el sistema</CardDescription>
@@ -18,7 +18,7 @@ export function RecentActivityCard({ activities }: Readonly<RecentActivityCardPr
             <div key={item.module + i} className="flex items-center justify-between text-sm">
               <p className="text-muted-foreground">
                 Módulo <span className="font-semibold text-foreground">{item.module}</span>{' '}
-                esta {!item.isBlocked ? 'activo' : 'bloqueado'}
+                esta {item.isBlocked ? 'bloqueado' : 'activo'}
               </p>
               <span className="text-xs text-muted-foreground">{item.time}</span>
             </div>

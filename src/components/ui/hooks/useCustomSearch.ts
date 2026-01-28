@@ -1,5 +1,4 @@
-import React from "react";
-import { useState, useRef, useMemo } from "react";
+import React, { useState, useRef, useMemo } from "react";
 import { getSecureRandomInRange } from '@/utils/randomValues';
 
 const PARTICLE_COUNT = 12;
