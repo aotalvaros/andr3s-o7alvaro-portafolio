@@ -10,4 +10,5 @@ export interface ICustomSearchProps<T = unknown> {
     childrenButton?: React.ReactNode;
   };
   isSearching?: boolean;
+  classNameContainer?: string;
 }

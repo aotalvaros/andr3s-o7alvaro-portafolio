@@ -4,6 +4,7 @@ export const paths = (value: string) => {
         "/lab/mars-rover": "nasaGallery",
         "/lab/asteroids": "nasaAsteroid",
         "/lab/pokemon": "pokemonGallery",
+        "/lab/weather": "weather",
         "/contact": "contact",
         "/login": "login",
     };

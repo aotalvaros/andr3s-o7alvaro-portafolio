@@ -25,7 +25,7 @@ export function AdminSidebar({ currentView, onViewChange, isOpen, onToggle }: Re
   return (
     <aside
         className={cn(
-            "relative flex h-full flex-col border-r bg-card transition-all duration-300",
+            "relative flex h-full flex-col border-r bg-muted transition-all duration-300",
             isOpen ? "w-64" : "w-20",
         )}
         data-testid="admin-sidebar"

@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import './globals.css'
 import { Inter } from 'next/font/google'
 import { Providers } from './providers'
@@ -8,12 +9,21 @@ import { ThemeProvider } from '@/providers/theme-provider'
 
 const inter = Inter({ subsets: ["latin"], display: "swap" })
 
-export const metadata = {
+export const metadata: Metadata= {
   title: 'Portafolio | Andrés Dev',
   description: 'Desarrollador Frontend especializado en React y Next.js',
   icons: {
     icon: "/favicon.png", 
   },
+  keywords: [
+    'Andres',
+    'Andres Dev',
+    'Andrés otalvaro sanchez',
+    'Portafolio',
+    'Desarrollador Frontend',
+    'React',
+    'Frontend'
+  ]
 }
 
 export default function RootLayout({ children }: { readonly children: React.ReactNode }) {

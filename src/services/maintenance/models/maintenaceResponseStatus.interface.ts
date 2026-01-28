@@ -13,7 +13,8 @@ export interface responseModuleData {
    _id: string;
    name: string;
    lastModifiedAt: string;
-   lastModifiedBy: LastModifiedBy
+   lastModifiedBy: LastModifiedBy,
+   category: string
 }
 
 export interface LastModifiedBy {

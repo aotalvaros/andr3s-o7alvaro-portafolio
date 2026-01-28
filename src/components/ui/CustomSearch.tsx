@@ -14,6 +14,7 @@ export function CustomSearch<T = unknown>({
   disabled,
   propsAnimate,
   isSearching = false,
+  classNameContainer = "mx-auto",
 }: Readonly<ICustomSearchProps<T>>) {
   const {
     query,
@@ -34,7 +35,7 @@ export function CustomSearch<T = unknown>({
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.2 }}
     >
-      <div className="relative w-full max-w-2xl mx-auto">
+      <div className={`${classNameContainer} relative w-full max-w-2xl`}>
         <form onSubmit={handleSubmit} className="relative">
           {/* Animated background glow */}
           <motion.div

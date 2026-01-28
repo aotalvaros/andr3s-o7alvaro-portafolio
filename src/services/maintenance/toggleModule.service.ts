@@ -4,6 +4,7 @@ import { ToggleModuleRequest } from "./models/toggleModuleRequest.interface";
 export interface ToggleModuleResponse {
   message: string;
   data: ToggleModuleRequest;
+  status: string
 }
 
 export const toggleModule = async (data: ToggleModuleRequest): Promise<ToggleModuleResponse> => {
