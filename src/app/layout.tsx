@@ -6,6 +6,7 @@ import { SocketProvider } from '@/context/SocketContext'
 import { ToastMessage } from '@/components/ui/ToastMessageComponent'
 import { Toaster } from 'sonner'
 import { ThemeProvider } from '@/providers/theme-provider'
+import { Analytics } from "@vercel/analytics/next"
 
 const inter = Inter({ subsets: ["latin"], display: "swap" })
 
@@ -45,6 +46,7 @@ export default function RootLayout({ children }: { readonly children: React.Reac
             </SocketProvider>
         </Providers>
       </ThemeProvider>
+      <Analytics />
     </body>
   </html>
   )
