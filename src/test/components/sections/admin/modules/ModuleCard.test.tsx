@@ -640,13 +640,15 @@ describe('ModuleCard Component', () => {
     it('should have descriptive text for status', () => {
       render(
         <ModuleCard
-          module={mockModuleActive}
+          module={mockModuleBlocked}
           isPending={false}
           onToggle={mockOnToggle}
         />
       );
 
-      expect(screen.getByText('Bloqueado')).toBeInTheDocument();
+      // Cuando está bloqueado aparece el badge y el span de estado
+      expect(screen.getByTestId('blocked-badge')).toBeInTheDocument();
+      expect(screen.getAllByText('Bloqueado').length).toBeGreaterThanOrEqual(1);
     });
   });
 

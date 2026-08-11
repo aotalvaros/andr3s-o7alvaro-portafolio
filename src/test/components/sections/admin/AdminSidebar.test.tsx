@@ -3,8 +3,33 @@ import { afterEach, beforeEach, vi, describe, it, expect } from 'vitest';
 import { render, screen, fireEvent } from "@testing-library/react";
 import { logout } from "@/components/auth/logout";
 import { AdminView } from '@/components/sections/admin/types/adminDashboard.type';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import type { ReactNode } from 'react';
 
 vi.mock("@/components/auth/logout");
+
+// Mock useAuth para evitar dependencia de QueryClient y fetch real
+vi.mock('@/hooks/useAuth', () => ({
+  useAuth: vi.fn(() => ({
+    user: { name: 'Admin User', avatar: 'https://example.com/avatar.jpg' },
+    isAuthenticated: true,
+    isLoading: false,
+    isInitialized: true,
+    clearAuth: vi.fn(),
+  })),
+}));
+
+// Mock AvatarDropdown para aislar el sidebar del dropdown
+vi.mock('@/components/sections/admin/components/AvatarDropdown', () => ({
+  AvatarDropdown: () => <div data-testid="avatar-dropdown" />,
+}));
+
+const createWrapper = () => {
+  const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+  return ({ children }: { children: ReactNode }) => (
+    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+  );
+};
 
 describe("Test AdminSidebar component", () => {
 
@@ -30,7 +55,7 @@ describe("Test AdminSidebar component", () => {
 
     describe('Rendering', () => {
         it('should render sidebar with all menu items', () => {
-        render(<AdminSidebar {...defaultProps} />)
+        render(<AdminSidebar {...defaultProps} />, { wrapper: createWrapper() })
 
         expect(screen.getByTestId('admin-sidebar')).toBeInTheDocument()
         expect(screen.getByTestId('sidebar-header')).toBeInTheDocument()
@@ -42,19 +67,19 @@ describe("Test AdminSidebar component", () => {
         })
 
         it('should render header title when sidebar is open', () => {
-        render(<AdminSidebar {...defaultProps} isOpen={true} />)
+        render(<AdminSidebar {...defaultProps} isOpen={true} />, { wrapper: createWrapper() })
 
         expect(screen.getByText('Panel de Admin')).toBeInTheDocument()
         })
 
         it('should not render header title when sidebar is closed', () => {
-        render(<AdminSidebar {...defaultProps} isOpen={false} />)
+        render(<AdminSidebar {...defaultProps} isOpen={false} />, { wrapper: createWrapper() })
 
         expect(screen.queryByText('Panel de Admin')).not.toBeInTheDocument()
         })
 
         it('should render all menu item labels when open', () => {
-        render(<AdminSidebar {...defaultProps} isOpen={true} />)
+        render(<AdminSidebar {...defaultProps} isOpen={true} />, { wrapper: createWrapper() })
 
         expect(screen.getByText('Dashboard')).toBeInTheDocument()
         expect(screen.getByText('Módulos')).toBeInTheDocument()
@@ -64,7 +89,7 @@ describe("Test AdminSidebar component", () => {
         })
 
         it('should not render menu item labels when closed', () => {
-        render(<AdminSidebar {...defaultProps} isOpen={false} />)
+        render(<AdminSidebar {...defaultProps} isOpen={false} />, { wrapper: createWrapper() })
 
         expect(screen.queryByText('Dashboard')).not.toBeInTheDocument()
         expect(screen.queryByText('Módulos')).not.toBeInTheDocument()
@@ -74,13 +99,13 @@ describe("Test AdminSidebar component", () => {
         })
 
         it('should render toggle button', () => {
-        render(<AdminSidebar {...defaultProps} />)
+        render(<AdminSidebar {...defaultProps} />, { wrapper: createWrapper() })
 
         expect(screen.getByTestId('toggle-sidebar-button')).toBeInTheDocument()
         })
 
         it('should render logout button', () => {
-        render(<AdminSidebar {...defaultProps} />)
+        render(<AdminSidebar {...defaultProps} />, { wrapper: createWrapper() })
 
         expect(screen.getByTestId('logout-button')).toBeInTheDocument()
         })
@@ -88,35 +113,35 @@ describe("Test AdminSidebar component", () => {
 
     describe('Active state', () => {
         it('should highlight overview button when currentView is overview', () => {
-        render(<AdminSidebar {...defaultProps} currentView="overview" />)
+        render(<AdminSidebar {...defaultProps} currentView="overview" />, { wrapper: createWrapper() })
 
         const overviewButton = screen.getByTestId('sidebar-button-overview')
         expect(overviewButton).toHaveClass('bg-secondary')
         })
 
         it('should highlight modules button when currentView is modules', () => {
-        render(<AdminSidebar {...defaultProps} currentView="modules" />)
+        render(<AdminSidebar {...defaultProps} currentView="modules" />, { wrapper: createWrapper() })
 
         const modulesButton = screen.getByTestId('sidebar-button-modules')
         expect(modulesButton).toHaveClass('bg-secondary')
         })
 
         it('should highlight activity button when currentView is activity', () => {
-        render(<AdminSidebar {...defaultProps} currentView="activity" />)
+        render(<AdminSidebar {...defaultProps} currentView="activity" />, { wrapper: createWrapper() })
 
         const activityButton = screen.getByTestId('sidebar-button-activity')
         expect(activityButton).toHaveClass('bg-secondary')
         })
 
         it('should highlight settings button when currentView is settings', () => {
-        render(<AdminSidebar {...defaultProps} currentView="settings" />)
+        render(<AdminSidebar {...defaultProps} currentView="settings" />, { wrapper: createWrapper() })
 
         const settingsButton = screen.getByTestId('sidebar-button-settings')
         expect(settingsButton).toHaveClass('bg-secondary')
         })
 
         it('should only highlight one button at a time', () => {
-        render(<AdminSidebar {...defaultProps} currentView="modules" />)
+        render(<AdminSidebar {...defaultProps} currentView="modules" />, { wrapper: createWrapper() })
 
         const overviewButton = screen.getByTestId('sidebar-button-overview')
         const modulesButton = screen.getByTestId('sidebar-button-modules')
@@ -132,7 +157,7 @@ describe("Test AdminSidebar component", () => {
 
     describe('Navigation', () => {
         it('should call onViewChange with "overview" when Dashboard is clicked', () => {
-        render(<AdminSidebar {...defaultProps} />)
+        render(<AdminSidebar {...defaultProps} />, { wrapper: createWrapper() })
 
         const overviewButton = screen.getByTestId('sidebar-button-overview')
         fireEvent.click(overviewButton)
@@ -142,7 +167,7 @@ describe("Test AdminSidebar component", () => {
         })
 
         it('should call onViewChange with "modules" when Módulos is clicked', () => {
-        render(<AdminSidebar {...defaultProps} />)
+        render(<AdminSidebar {...defaultProps} />, { wrapper: createWrapper() })
 
         const modulesButton = screen.getByTestId('sidebar-button-modules')
         fireEvent.click(modulesButton)
@@ -152,7 +177,7 @@ describe("Test AdminSidebar component", () => {
         })
 
         it('should call onViewChange with "activity" when Actividad is clicked', () => {
-        render(<AdminSidebar {...defaultProps} />)
+        render(<AdminSidebar {...defaultProps} />, { wrapper: createWrapper() })
 
         const activityButton = screen.getByTestId('sidebar-button-activity')
         fireEvent.click(activityButton)
@@ -162,7 +187,7 @@ describe("Test AdminSidebar component", () => {
         })
 
         it('should call onViewChange with "settings" when Configuración is clicked', () => {
-        render(<AdminSidebar {...defaultProps} />)
+        render(<AdminSidebar {...defaultProps} />, { wrapper: createWrapper() })
 
         const settingsButton = screen.getByTestId('sidebar-button-settings')
         fireEvent.click(settingsButton)
@@ -172,7 +197,7 @@ describe("Test AdminSidebar component", () => {
         })
 
         it('should allow clicking on currently active view', () => {
-        render(<AdminSidebar {...defaultProps} currentView="overview" />)
+        render(<AdminSidebar {...defaultProps} currentView="overview" />, { wrapper: createWrapper() })
 
         const overviewButton = screen.getByTestId('sidebar-button-overview')
         fireEvent.click(overviewButton)
@@ -181,7 +206,7 @@ describe("Test AdminSidebar component", () => {
         })
 
         it('should handle multiple navigation clicks', () => {
-        render(<AdminSidebar {...defaultProps} />)
+        render(<AdminSidebar {...defaultProps} />, { wrapper: createWrapper() })
 
         const overviewButton = screen.getByTestId('sidebar-button-overview')
         const modulesButton = screen.getByTestId('sidebar-button-modules')
@@ -200,7 +225,7 @@ describe("Test AdminSidebar component", () => {
 
     describe('Toggle functionality', () => {
         it('should call onToggle when toggle button is clicked', () => {
-        render(<AdminSidebar {...defaultProps} />)
+        render(<AdminSidebar {...defaultProps} />, { wrapper: createWrapper() })
 
         const toggleButton = screen.getByTestId('toggle-sidebar-button')
         fireEvent.click(toggleButton)
@@ -209,7 +234,7 @@ describe("Test AdminSidebar component", () => {
         })
 
         it('should call onToggle multiple times for multiple clicks', () => {
-        render(<AdminSidebar {...defaultProps} />)
+        render(<AdminSidebar {...defaultProps} />, { wrapper: createWrapper() })
 
         const toggleButton = screen.getByTestId('toggle-sidebar-button')
         
@@ -221,28 +246,28 @@ describe("Test AdminSidebar component", () => {
         })
 
         it('should apply correct width class when open', () => {
-        render(<AdminSidebar {...defaultProps} isOpen={true} />)
+        render(<AdminSidebar {...defaultProps} isOpen={true} />, { wrapper: createWrapper() })
 
         const sidebar = screen.getByTestId('admin-sidebar')
         expect(sidebar).toHaveClass('w-64')
         })
 
         it('should apply correct width class when closed', () => {
-        render(<AdminSidebar {...defaultProps} isOpen={false} />)
+        render(<AdminSidebar {...defaultProps} isOpen={false} />, { wrapper: createWrapper() })
 
         const sidebar = screen.getByTestId('admin-sidebar')
         expect(sidebar).toHaveClass('w-20')
         })
 
         it('should rotate chevron icon when closed', () => {
-        const { container } = render(<AdminSidebar {...defaultProps} isOpen={false} />)
+        const { container } = render(<AdminSidebar {...defaultProps} isOpen={false} />, { wrapper: createWrapper() })
 
         const chevron = container.querySelector('.rotate-180')
         expect(chevron).toBeInTheDocument()
         })
 
         it('should not rotate chevron icon when open', () => {
-        const { container } = render(<AdminSidebar {...defaultProps} isOpen={true} />)
+        const { container } = render(<AdminSidebar {...defaultProps} isOpen={true} />, { wrapper: createWrapper() })
 
         const chevron = container.querySelector('.rotate-180')
         expect(chevron).not.toBeInTheDocument()
@@ -251,7 +276,7 @@ describe("Test AdminSidebar component", () => {
 
     describe('Logout functionality', () => {
         it('should call logout when logout button is clicked', () => {
-        render(<AdminSidebar {...defaultProps} />)
+        render(<AdminSidebar {...defaultProps} />, { wrapper: createWrapper() })
 
         const logoutButton = screen.getByTestId('logout-button')
         fireEvent.click(logoutButton)
@@ -260,7 +285,7 @@ describe("Test AdminSidebar component", () => {
         })
 
         it('should not call onViewChange when logout is clicked', () => {
-        render(<AdminSidebar {...defaultProps} />)
+        render(<AdminSidebar {...defaultProps} />, { wrapper: createWrapper() })
 
         const logoutButton = screen.getByTestId('logout-button')
         fireEvent.click(logoutButton)
@@ -270,7 +295,7 @@ describe("Test AdminSidebar component", () => {
         })
 
         it('should handle multiple logout clicks', () => {
-        render(<AdminSidebar {...defaultProps} />)
+        render(<AdminSidebar {...defaultProps} />, { wrapper: createWrapper() })
 
         const logoutButton = screen.getByTestId('logout-button')
         
@@ -283,35 +308,35 @@ describe("Test AdminSidebar component", () => {
 
     describe('Styling and CSS classes', () => {
         it('should apply base classes to sidebar', () => {
-        render(<AdminSidebar {...defaultProps} />)
+        render(<AdminSidebar {...defaultProps} />, { wrapper: createWrapper() })
 
         const sidebar = screen.getByTestId('admin-sidebar')
         expect(sidebar).toHaveClass('relative', 'flex', 'h-full', 'flex-col')
         })
 
         it('should apply transition class for smooth animation', () => {
-        render(<AdminSidebar {...defaultProps} />)
+        render(<AdminSidebar {...defaultProps} />, { wrapper: createWrapper() })
 
         const sidebar = screen.getByTestId('admin-sidebar')
         expect(sidebar).toHaveClass('transition-all', 'duration-300')
         })
 
         it('should apply destructive color to logout button', () => {
-        render(<AdminSidebar {...defaultProps} />)
+        render(<AdminSidebar {...defaultProps} />, { wrapper: createWrapper() })
 
         const logoutButton = screen.getByTestId('logout-button')
         expect(logoutButton).toHaveClass('text-destructive')
         })
 
         it('should center buttons when sidebar is closed', () => {
-        render(<AdminSidebar {...defaultProps} isOpen={false} />)
+        render(<AdminSidebar {...defaultProps} isOpen={false} />, { wrapper: createWrapper() })
 
         const overviewButton = screen.getByTestId('sidebar-button-overview')
         expect(overviewButton).toHaveClass('justify-center')
         })
 
         it('should left-align buttons when sidebar is open', () => {
-        render(<AdminSidebar {...defaultProps} isOpen={true} />)
+        render(<AdminSidebar {...defaultProps} isOpen={true} />, { wrapper: createWrapper() })
 
         const overviewButton = screen.getByTestId('sidebar-button-overview')
         expect(overviewButton).toHaveClass('justify-start')
@@ -320,7 +345,7 @@ describe("Test AdminSidebar component", () => {
 
     describe('Accessibility', () => {
         it('should have proper testids for all interactive elements', () => {
-        render(<AdminSidebar {...defaultProps} />)
+        render(<AdminSidebar {...defaultProps} />, { wrapper: createWrapper() })
 
         expect(screen.getByTestId('admin-sidebar')).toBeInTheDocument()
         expect(screen.getByTestId('sidebar-header')).toBeInTheDocument()
@@ -333,14 +358,14 @@ describe("Test AdminSidebar component", () => {
         })
 
         it('should render all buttons as clickable elements', () => {
-        render(<AdminSidebar {...defaultProps} />)
+        render(<AdminSidebar {...defaultProps} />, { wrapper: createWrapper() })
 
         const allButtons = screen.getAllByRole('button')
         expect(allButtons.length).toBeGreaterThanOrEqual(6) // 4 menu + 1 toggle + 1 logout
         })
 
         it('should have icons in all menu items', () => {
-        const { container } = render(<AdminSidebar {...defaultProps} isOpen={true} />)
+        const { container } = render(<AdminSidebar {...defaultProps} isOpen={true} />, { wrapper: createWrapper() })
 
         const icons = container.querySelectorAll('svg')
         expect(icons.length).toBeGreaterThanOrEqual(5) // 4 menu icons + 1 chevron + 1 logout
@@ -349,7 +374,7 @@ describe("Test AdminSidebar component", () => {
 
     describe('Edge cases', () => {
         it('should handle rapid toggle clicks', () => {
-        render(<AdminSidebar {...defaultProps} />)
+        render(<AdminSidebar {...defaultProps} />, { wrapper: createWrapper() })
 
         const toggleButton = screen.getByTestId('toggle-sidebar-button')
         
@@ -361,7 +386,7 @@ describe("Test AdminSidebar component", () => {
         })
 
         it('should handle rapid navigation clicks', () => {
-        render(<AdminSidebar {...defaultProps} />)
+        render(<AdminSidebar {...defaultProps} />, { wrapper: createWrapper() })
 
         const buttons = [
             screen.getByTestId('sidebar-button-overview'),
@@ -379,7 +404,7 @@ describe("Test AdminSidebar component", () => {
         })
 
         it('should work when starting with closed state', () => {
-        render(<AdminSidebar {...defaultProps} isOpen={false} />)
+        render(<AdminSidebar {...defaultProps} isOpen={false} />, { wrapper: createWrapper() })
 
         const modulesButton = screen.getByTestId('sidebar-button-modules')
         fireEvent.click(modulesButton)
@@ -388,14 +413,14 @@ describe("Test AdminSidebar component", () => {
         })
 
         it('should maintain functionality across state changes', () => {
-        const { rerender } = render(<AdminSidebar {...defaultProps} isOpen={true} />)
+        const { rerender } = render(<AdminSidebar {...defaultProps} isOpen={true} />, { wrapper: createWrapper() })
 
         const overviewButton = screen.getByTestId('sidebar-button-overview')
         fireEvent.click(overviewButton)
 
         expect(mockOnViewChange).toHaveBeenCalledWith('overview')
 
-        rerender(<AdminSidebar {...defaultProps} isOpen={false} />)
+        rerender(<AdminSidebar {...defaultProps} isOpen={false} />, { wrapper: createWrapper() })
 
         fireEvent.click(overviewButton)
 
@@ -403,7 +428,7 @@ describe("Test AdminSidebar component", () => {
         })
 
         it('should handle all views being changed sequentially', () => {
-        render(<AdminSidebar {...defaultProps} />)
+        render(<AdminSidebar {...defaultProps} />, { wrapper: createWrapper() })
 
         const views: AdminView[] = ['overview', 'modules', 'activity', 'settings']
 
@@ -455,14 +480,14 @@ describe("Test AdminSidebar component", () => {
         })
 
         it('should render correctly with isOpen true', () => {
-        render(<AdminSidebar {...defaultProps} isOpen={true} />)
+        render(<AdminSidebar {...defaultProps} isOpen={true} />, { wrapper: createWrapper() })
 
         expect(screen.getByTestId('admin-sidebar')).toHaveClass('w-64')
         expect(screen.getByText('Panel de Admin')).toBeInTheDocument()
         })
 
         it('should render correctly with isOpen false', () => {
-        render(<AdminSidebar {...defaultProps} isOpen={false} />)
+        render(<AdminSidebar {...defaultProps} isOpen={false} />, { wrapper: createWrapper() })
 
         expect(screen.getByTestId('admin-sidebar')).toHaveClass('w-20')
         expect(screen.queryByText('Panel de Admin')).not.toBeInTheDocument()
@@ -471,7 +496,7 @@ describe("Test AdminSidebar component", () => {
 
     describe('Integration scenarios', () => {
         it('should handle complete user flow: navigate, toggle, navigate again', () => {
-        render(<AdminSidebar {...defaultProps} />)
+        render(<AdminSidebar {...defaultProps} />, { wrapper: createWrapper() })
 
         // Navigate to modules
         fireEvent.click(screen.getByTestId('sidebar-button-modules'))
@@ -490,7 +515,7 @@ describe("Test AdminSidebar component", () => {
         })
 
         it('should handle navigation and logout flow', () => {
-        render(<AdminSidebar {...defaultProps} />)
+        render(<AdminSidebar {...defaultProps} />, { wrapper: createWrapper() })
 
         // Navigate through menu
         fireEvent.click(screen.getByTestId('sidebar-button-modules'))
@@ -504,7 +529,7 @@ describe("Test AdminSidebar component", () => {
         })
 
         it('should maintain state after multiple interactions', () => {
-        render(<AdminSidebar {...defaultProps} currentView="overview" />)
+        render(<AdminSidebar {...defaultProps} currentView="overview" />, { wrapper: createWrapper() })
 
         // Multiple toggles
         fireEvent.click(screen.getByTestId('toggle-sidebar-button'))
@@ -519,3 +544,5 @@ describe("Test AdminSidebar component", () => {
         })
     });
 });
+
+

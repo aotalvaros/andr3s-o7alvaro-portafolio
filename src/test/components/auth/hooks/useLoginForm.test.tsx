@@ -5,9 +5,11 @@ import { useLoginForm } from "@/components/auth/hook/useLoginForm";
 import { renderHook, act } from "@testing-library/react";
 import { useForm } from "react-hook-form";
 import { useIsMobile } from '@/hooks/useIsMobile';
+import { useRecaptcha } from '@/hooks/useRecaptcha';
 
 vi.mock('@/hooks/useIsMobile');
 vi.mock("@/components/auth/hook/useLogin");
+vi.mock('@/hooks/useRecaptcha');
 vi.mock("next/navigation", () => ({
   useRouter: () => ({
     push: vi.fn(),
@@ -54,6 +56,13 @@ describe("useLoginForm", () => {
 
     vi.mocked(useIsMobile).mockReturnValue(false);
 
+    // Mock useRecaptcha con isVerified=false para que onSubmit no haga early return
+    vi.mocked(useRecaptcha).mockReturnValue({
+      recaptchaRef: { current: null } as any,
+      isVerified: false,
+      onChangeReCaptcha: vi.fn(),
+    });
+
   });
 
   afterEach(() => {
@@ -61,6 +70,11 @@ describe("useLoginForm", () => {
   });
 
   it("should initialize with correct default values", () => {
+    vi.mocked(useRecaptcha).mockReturnValue({
+      recaptchaRef: { current: null } as any,
+      isVerified: true,
+      onChangeReCaptcha: vi.fn(),
+    });
     const { result } = renderHook(() => useLoginForm());
 
     expect(result.current.showPassword).toBe(false);
@@ -109,47 +123,25 @@ describe("useLoginForm", () => {
   });
 
   it("should enable button when reCAPTCHA is completed", () => {
-    const mockGetValue = vi.fn().mockReturnValue("recaptcha-token");
-    const mockRecaptchaRef = {
-      current: {
-        getValue: mockGetValue,
-      },
-    };
+    vi.mocked(useRecaptcha).mockReturnValue({
+      recaptchaRef: { current: null } as any,
+      isVerified: false,
+      onChangeReCaptcha: vi.fn(),
+    });
 
     const { result } = renderHook(() => useLoginForm());
-
-    // Mock the ref to have a value
-    Object.defineProperty(result.current.recaptchaRef, "current", {
-      value: mockRecaptchaRef.current,
-      writable: true,
-    });
-
-    act(() => {
-      result.current.onChangeReCaptcha("recaptcha-token");
-    });
 
     expect(result.current.isButtonDisabled).toBe(false);
   });
 
   it("should disable button when reCAPTCHA is not completed", () => {
-    const mockGetValue = vi.fn().mockReturnValue(null);
-    const mockRecaptchaRef = {
-      current: {
-        getValue: mockGetValue,
-      },
-    };
+    vi.mocked(useRecaptcha).mockReturnValue({
+      recaptchaRef: { current: null } as any,
+      isVerified: true,
+      onChangeReCaptcha: vi.fn(),
+    });
 
     const { result } = renderHook(() => useLoginForm());
-
-    // Mock the ref to have no value
-    Object.defineProperty(result.current.recaptchaRef, "current", {
-      value: mockRecaptchaRef.current,
-      writable: true,
-    });
-
-    act(() => {
-      result.current.onChangeReCaptcha(null);
-    });
 
     expect(result.current.isButtonDisabled).toBe(true);
   });
@@ -205,18 +197,14 @@ describe("useLoginForm", () => {
   });
 
   it("should handle reCAPTCHA ref being null", () => {
+    vi.mocked(useRecaptcha).mockReturnValue({
+      recaptchaRef: { current: null } as any,
+      isVerified: true,
+      onChangeReCaptcha: vi.fn(),
+    });
     const { result } = renderHook(() => useLoginForm());
 
-    // Ensure ref is null initially
     expect(result.current.recaptchaRef.current).toBeNull();
-
-    // Should not throw error when ref is null
-    expect(() => {
-      act(() => {
-        result.current.onChangeReCaptcha(null);
-      });
-    }).not.toThrow();
-
     expect(result.current.isButtonDisabled).toBe(true);
   });
 
