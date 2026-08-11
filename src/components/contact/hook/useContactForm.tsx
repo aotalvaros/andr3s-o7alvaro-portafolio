@@ -28,6 +28,8 @@ export const useContactForm = () => {
     const captchaSize: 'normal' | 'compact' = isMobile ? 'compact' : 'normal';
 
     const onSubmit = async (data: ContactFormData) => {
+        if (isVerified) return 
+        
         await sendEmail(data, {
             onSuccess: (data: any) => {
                 setParams({

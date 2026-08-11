@@ -5,6 +5,7 @@ import { useContactForm } from '@/components/contact/hook/useContactForm';
 import { usePostContact } from '@/components/contact/hook/usePostContact';
 import { useIsMobile } from '@/hooks/useIsMobile';
 import { useToastMessageStore } from '@/store/ToastMessageStore';
+import { useRecaptcha } from '@/hooks/useRecaptcha';
 import { ContactFormData } from '@/schemas/contact.schema';
 import { useForm } from 'react-hook-form';
 
@@ -12,6 +13,7 @@ import { useForm } from 'react-hook-form';
 vi.mock('@/components/contact/hook/usePostContact');
 vi.mock('@/hooks/useIsMobile');
 vi.mock('@/store/ToastMessageStore');
+vi.mock('@/hooks/useRecaptcha');
 
 // Mock de react-hook-form
 vi.mock('react-hook-form', async () => {
@@ -76,10 +78,23 @@ describe('useContactForm', () => {
       formState: { errors: {}, isSubmitting: false },
       reset: mockReset,
     } as any);
+
+    // Mock de useRecaptcha: isVerified=false para que onSubmit no haga early return
+    vi.mocked(useRecaptcha).mockReturnValue({
+      recaptchaRef: { current: null } as any,
+      isVerified: false,
+      onChangeReCaptcha: vi.fn(),
+    });
   });
 
   describe('Initialization', () => {
     it('should initialize with correct default values', () => {
+      // En inicialización el recaptcha no está verificado aún (isVerified=true → botón deshabilitado)
+      vi.mocked(useRecaptcha).mockReturnValue({
+        recaptchaRef: { current: null } as any,
+        isVerified: true,
+        onChangeReCaptcha: vi.fn(),
+      });
       const { result } = renderHook(() => useContactForm());
 
       expect(result.current.register).toBeDefined();
@@ -94,6 +109,11 @@ describe('useContactForm', () => {
     });
 
     it('should initialize with button disabled', () => {
+      vi.mocked(useRecaptcha).mockReturnValue({
+        recaptchaRef: { current: null } as any,
+        isVerified: true,
+        onChangeReCaptcha: vi.fn(),
+      });
       const { result } = renderHook(() => useContactForm());
 
       expect(result.current.isButtonDisabled).toBe(true);
@@ -118,71 +138,53 @@ describe('useContactForm', () => {
 
   describe('ReCAPTCHA onChange', () => {
     it('should enable button when reCAPTCHA is verified', () => {
-      const { result } = renderHook(() => useContactForm());
-
-      // Mock del ref con valor
-      result.current.recaptchaRef.current = {
-        getValue: vi.fn(() => 'recaptcha-token'),
-      } as any;
-
-      act(() => {
-        result.current.onChangeReCaptcha("recaptcha-token");
+      vi.mocked(useRecaptcha).mockReturnValue({
+        recaptchaRef: { current: null } as any,
+        isVerified: false,
+        onChangeReCaptcha: vi.fn(),
       });
-
+      const { result } = renderHook(() => useContactForm());
       expect(result.current.isButtonDisabled).toBe(false);
     });
 
     it('should keep button disabled when reCAPTCHA has no value', () => {
-      const { result } = renderHook(() => useContactForm());
-
-      // Mock del ref sin valor
-      result.current.recaptchaRef.current = {
-        getValue: vi.fn(() => null),
-      } as any;
-
-      act(() => {
-        result.current.onChangeReCaptcha(null);
+      vi.mocked(useRecaptcha).mockReturnValue({
+        recaptchaRef: { current: null } as any,
+        isVerified: true,
+        onChangeReCaptcha: vi.fn(),
       });
-
+      const { result } = renderHook(() => useContactForm());
       expect(result.current.isButtonDisabled).toBe(true);
     });
 
     it('should handle when recaptchaRef.current is null', () => {
-      const { result } = renderHook(() => useContactForm());
-
-      result.current.recaptchaRef.current = null;
-
-      act(() => {
-        result.current.onChangeReCaptcha(null);
+      vi.mocked(useRecaptcha).mockReturnValue({
+        recaptchaRef: { current: null } as any,
+        isVerified: true,
+        onChangeReCaptcha: vi.fn(),
       });
-
+      const { result } = renderHook(() => useContactForm());
       expect(result.current.isButtonDisabled).toBe(true);
     });
 
     it('should toggle button state correctly on multiple calls', () => {
-      const { result } = renderHook(() => useContactForm());
-
-      // Primera verificación - con token
-      result.current.recaptchaRef.current = {
-        getValue: vi.fn(() => 'token'),
-      } as any;
-
-      act(() => {
-        result.current.onChangeReCaptcha("recaptcha-token");
+      // Simular estado verificado
+      vi.mocked(useRecaptcha).mockReturnValue({
+        recaptchaRef: { current: null } as any,
+        isVerified: false,
+        onChangeReCaptcha: vi.fn(),
       });
+      const { result: verifiedResult } = renderHook(() => useContactForm());
+      expect(verifiedResult.current.isButtonDisabled).toBe(false);
 
-      expect(result.current.isButtonDisabled).toBe(false);
-
-      // Segunda verificación - sin token
-      result.current.recaptchaRef.current = {
-        getValue: vi.fn(() => null),
-      } as any;
-
-      act(() => {
-        result.current.onChangeReCaptcha(null);
+      // Simular estado no verificado
+      vi.mocked(useRecaptcha).mockReturnValue({
+        recaptchaRef: { current: null } as any,
+        isVerified: true,
+        onChangeReCaptcha: vi.fn(),
       });
-
-      expect(result.current.isButtonDisabled).toBe(true);
+      const { result: unverifiedResult } = renderHook(() => useContactForm());
+      expect(unverifiedResult.current.isButtonDisabled).toBe(true);
     });
   });
 

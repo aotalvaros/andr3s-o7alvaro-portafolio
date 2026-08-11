@@ -64,7 +64,7 @@ export function ModuleCard({ module, lastModified, isPending, onToggle }: Readon
               ) : (
                 <Unlock className="h-4 w-4 text-green-500" />
               )}
-              <span className="text-muted-foreground">Bloqueado</span>
+              <span>{module.isBlocked ? "Bloqueado" : "Activo"}</span>
             </div>
             <Switch 
               checked={!module.isBlocked} 
