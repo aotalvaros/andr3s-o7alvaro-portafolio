@@ -4,18 +4,16 @@
 import { useEffect, useState } from 'react';
 import { jwtDecode } from 'jwt-decode';
 import { deleteCookie, getCookie } from 'cookies-next';
+import { useQuery } from '@tanstack/react-query';
+import { User } from '@/core/domain/entities/User';
+import { getUserProfile } from '@/services/user/user.service';
 
 interface DecodedToken {
-  email: string;
-  role: string;
-  name: string;
-  avatar?: string;
-  iat: number;
   exp: number;
 }
 
 export const useAuth = () => {
-  const [user, setUser] = useState<DecodedToken | null>(null);
+  const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isInitialized, setIsInitialized] = useState(false);
 
@@ -28,50 +26,37 @@ export const useAuth = () => {
     }
   };
 
-  const validateAndSetUser = (token: string) => {
+  const cookieToken = getCookie('token');
+  const localToken = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+  const token = cookieToken || localToken;
+
+  const isTokenValid = () => {
+    if (!token) return false;
     try {
-      const decoded: DecodedToken = jwtDecode(token);
-      const currentTime = Date.now() / 1000;
-
-      if (decoded.exp < currentTime) {
-        clearAuth();
-        return false;
-      }
-
-      setUser(decoded);
-      return true;
-    } catch (err) {
-      console.error('Token inválido', err);
-      clearAuth();
+      const decoded: DecodedToken = jwtDecode(token as string);
+      return decoded.exp > Date.now() / 1000;
+    } catch {
       return false;
     }
   };
 
+  const { data: userData, isLoading: queryLoading } = useQuery({
+    queryKey: ['userProfile'],
+    queryFn: getUserProfile,
+    enabled: isTokenValid(),
+    retry: false,
+    staleTime: 5 * 60 * 1000,
+  });
+
   useEffect(() => {
-    const checkAuth = () => {
-      try {
-        // Priorizar cookie sobre localStorage para mejor SSR
-        const cookieToken = getCookie('token');
-        const localToken = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
-        const token = cookieToken || localToken;
-
-        if (!token) {
-          setUser(null);
-        } else {
-          validateAndSetUser(token as string);
-        }
-      } catch (err) {
-        console.error('Error checking auth', err);
-        clearAuth();
-      } finally {
-        setIsLoading(false);
-        setIsInitialized(true);
-      }
-    };
-
-    checkAuth();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    if (!isTokenValid()) {
+      clearAuth();
+    } else if (userData) {
+      setUser(userData);
+    }
+    setIsLoading(queryLoading);
+    setIsInitialized(true);
+  }, [userData, queryLoading]);
 
   return { 
     user, 
