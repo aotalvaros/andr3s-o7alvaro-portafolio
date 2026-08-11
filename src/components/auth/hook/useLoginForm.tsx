@@ -27,6 +27,9 @@ export const useLoginForm = () => {
     });
 
     const onSubmit = async (data: AuthFormData) => {
+        if (isVerified) {
+            return;
+        }
         await auth(data, {
             onSuccess: () => {
                 router.push("/admin");
