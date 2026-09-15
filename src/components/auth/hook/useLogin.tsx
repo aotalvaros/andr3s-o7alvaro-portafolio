@@ -34,8 +34,13 @@ export const useLogin = () => {
             if (typeof window !== 'undefined') {
                 localStorage.setItem('token', data?.token);
             }
-            
-            toast.success('Inicio de sesión exitoso');
+
+            const loginMessage = data?.message || 'Inicio de sesión exitoso';
+            toast.success(loginMessage);
+
+            if (data?.mustChangePassword) {
+                toast.warning('Debes cambiar tu contraseña antes de continuar.');
+            }
         },
     });
 

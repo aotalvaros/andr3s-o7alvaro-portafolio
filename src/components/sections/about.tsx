@@ -1,10 +1,13 @@
 "use client";
 
+import { useEffect, useState } from "react";
 
 import { ScrollReveal } from "../ui/ScrollReveal";
 import { Badge } from "../ui/badge";
 import { getRandomColor } from "@/utils/randomColor";
 import { FallbackImage } from '../layout/FallbackImage';
+
+const ABOUT_HTML_URL = "https://s6s2oxgnpnutegmr.public.blob.vercel-storage.com/Texto/sobreMi.html";
 
 const TECH_STACKS = {
   coreStack: ["React", "Next.js", "TypeScript", "TailwindCSS"],
@@ -15,6 +18,35 @@ const TECH_STACKS = {
 interface TechSectionProps {
   title: string;
   technologies: readonly string[];
+}
+
+function sanitizeAndNormalizeHtml(rawHtml: string): string {
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(rawHtml, "text/html");
+
+  doc.querySelectorAll("script").forEach((element) => element.remove());
+
+  doc.querySelectorAll("*").forEach((element) => {
+    for (const attr of Array.from(element.attributes)) {
+      const attrName = attr.name.toLowerCase();
+      const attrValue = attr.value.trim().toLowerCase();
+
+      if (attrName.startsWith("on")) {
+        element.removeAttribute(attr.name);
+      }
+
+      if ((attrName === "href" || attrName === "src") && attrValue.startsWith("javascript:")) {
+        element.removeAttribute(attr.name);
+      }
+    }
+
+    if (element.hasAttribute("classname")) {
+      element.setAttribute("class", element.getAttribute("classname") ?? "");
+      element.removeAttribute("classname");
+    }
+  });
+
+  return doc.body.innerHTML.replace(/\{\s*" "\s*\}/g, " ");
 }
 
 function TechSection({ title, technologies }: Readonly<TechSectionProps>) {
@@ -38,6 +70,45 @@ function TechSection({ title, technologies }: Readonly<TechSectionProps>) {
 }
 
 export function About() {
+  const [aboutHtml, setAboutHtml] = useState<string>("");
+  const [isLoadingAboutHtml, setIsLoadingAboutHtml] = useState(true);
+  const [aboutHtmlError, setAboutHtmlError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const controller = new AbortController();
+
+    async function loadAboutHtml() {
+      try {
+        setIsLoadingAboutHtml(true);
+        setAboutHtmlError(null);
+
+        const response = await fetch(ABOUT_HTML_URL, {
+          cache: "no-store",
+          signal: controller.signal,
+        });
+
+        if (!response.ok) {
+          throw new Error("No se pudo obtener el HTML remoto.");
+        }
+
+        const html = await response.text();
+        setAboutHtml(sanitizeAndNormalizeHtml(html));
+      } catch (error) {
+        if ((error as Error).name === "AbortError") {
+          return;
+        }
+
+        setAboutHtmlError("¡Ups! Ocurrió un error nuestro, la información aún no está disponible, por favor intente más tarde.");
+      } finally {
+        setIsLoadingAboutHtml(false);
+      }
+    }
+
+    loadAboutHtml();
+
+    return () => controller.abort();
+  }, []);
+
   return (
     <section id="about" className="py-20 bg-muted/30" data-testid="about-section">
       <div className="container mx-auto px-4">
@@ -87,36 +158,23 @@ export function About() {
 
           <ScrollReveal delay={400} className="h-full">
             <div className="space-y-2">
-              <h1 className="text-2xl font-bold">
-                Ingeniero de Software | Desarrollador Frontend
-              </h1>
+              <div className="rounded-2xl border border-border bg-background/80 p-4">
+                {isLoadingAboutHtml ? (
+                  <p className="text-sm text-muted-foreground">Cargando contenido...</p>
+                ) : null}
 
-              <p className="text-lg leading-relaxed">
-                Con más de{" "}
-                <span className="font-bold text-primary">4 años de experiencia</span>,
-                transformo requisitos complejos en productos digitales escalables y de
-                alto rendimiento. Mi enfoque no se detiene en la interfaz; diseño
-                soluciones sólidas utilizando el ecosistema{" "}
-                <span className="font-bold text-primary">React/Next.js</span> bajo
-                estándares rigurosos de{" "}
-                <span className="font-bold text-primary">Testing</span> y limpieza de
-                código.
-              </p>
+                {aboutHtmlError ? (
+                  <p className="text-fluid-sm text-red-500">{aboutHtmlError}</p>
+                ) : null}
 
-              <p className="text-lg leading-relaxed">
-                Actualmente, estoy expandiendo mi stack hacia la{" "}
-                <span className="font-semibold text-secondary">
-                  Arquitectura Cloud (AWS/Azure)
-                </span>{" "}
-                y la integración de{" "}
-                <span className="font-semibold text-secondary">
-                  Inteligencia Artificial
-                </span>{""}
-                , con el objetivo de cerrar la brecha entre el frontend moderno y la
-                infraestructura robusta. No solo construyo software; optimizo sistemas
-                para que sean mantenibles y eficientes a largo plazo.
-              </p>
-
+                {!isLoadingAboutHtml && !aboutHtmlError ? (
+                  <div
+                    className="space-y-3 text-sm leading-relaxed text-foreground"
+                    dangerouslySetInnerHTML={{ __html: aboutHtml }}
+                  />
+                ) : null}
+              </div>
+               
               <div className="flex flex-col gap-3 pt-2">
                 <TechSection title="CORE STACK" technologies={TECH_STACKS.coreStack} />
                 <TechSection title="QUALITY & TESTING" technologies={TECH_STACKS.qualityTesting} />
