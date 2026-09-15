@@ -1,2 +1,2 @@
 
-export type AdminView = "overview" | "modules" | "activity" | "settings"
+export type AdminView = "overview" | "modules" | "activity" | "settings" | "profile"

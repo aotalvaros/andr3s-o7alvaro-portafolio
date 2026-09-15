@@ -31,31 +31,63 @@ vi.mock("next/dynamic", () => ({
   },
 }));
 
+const mockUseAuth = vi.hoisted(() =>
+    vi.fn(() => ({
+        user: {
+            _id: "1",
+            name: "Admin",
+            email: "admin@test.com",
+            role: "superAdmin",
+            avatar: "",
+            phone: "",
+            createdAt: "2024-01-01",
+            updatedAt: "2024-01-01",
+            mustChangePassword: false,
+        },
+        isLoading: false,
+        isInitialized: true,
+        isAuthenticated: true,
+    }))
+);
+
+vi.mock("../../../../hooks/useAuth", () => ({
+    useAuth: mockUseAuth,
+}));
+
 // Mock de componentes estáticos
 vi.mock("../../../../components/sections/admin/AdminSidebarProps", () => ({
     AdminSidebar: ({ 
         currentView,
         onViewChange, 
         isOpen,
-        onToggle 
+        onToggle,
+        passwordChangeRequired,
     }: {
         currentView: string;
         onViewChange: (view: string) => void;
         isOpen: boolean;
         onToggle: () => void;
+        passwordChangeRequired?: boolean;
     }) => (
-        <div data-testid="admin-sidebar" data-open={isOpen} data-current-view={currentView}>
-            <button onClick={() => onViewChange("overview")} data-testid="view-overview">
-                Overview
-            </button>
-            <button onClick={() => onViewChange("modules")} data-testid="view-modules">
-                Modules
-            </button>
-            <button onClick={() => onViewChange("activity")} data-testid="view-activity">
-                Activity
-            </button>
-            <button onClick={() => onViewChange("settings")} data-testid="view-settings">
-                Settings
+        <div data-testid="admin-sidebar" data-open={isOpen} data-current-view={currentView} data-password-change-required={String(passwordChangeRequired)}>
+            {!passwordChangeRequired && (
+                <>
+                    <button onClick={() => onViewChange("overview")} data-testid="view-overview">
+                        Overview
+                    </button>
+                    <button onClick={() => onViewChange("modules")} data-testid="view-modules">
+                        Modules
+                    </button>
+                    <button onClick={() => onViewChange("activity")} data-testid="view-activity">
+                        Activity
+                    </button>
+                    <button onClick={() => onViewChange("settings")} data-testid="view-settings">
+                        Settings
+                    </button>
+                </>
+            )}
+            <button onClick={() => onViewChange("profile")} data-testid="view-profile">
+                Profile
             </button>
             <button onClick={onToggle} data-testid="toggle-sidebar">
                 Toggle
@@ -79,6 +111,22 @@ vi.mock("../../../../components/sections/admin/modules/ModulesManager", () => ({
 describe('AdminDashboard Component', () => {
     beforeEach(() => {
         vi.clearAllMocks();
+        mockUseAuth.mockReturnValue({
+            user: {
+                _id: "1",
+                name: "Admin",
+                email: "admin@test.com",
+                role: "superAdmin",
+                avatar: "",
+                phone: "",
+                createdAt: "2024-01-01",
+                updatedAt: "2024-01-01",
+                mustChangePassword: false,
+            },
+            isLoading: false,
+            isInitialized: true,
+            isAuthenticated: true,
+        });
     });
 
     afterEach(() => {
@@ -111,7 +159,7 @@ describe('AdminDashboard Component', () => {
         it('should have correct layout classes', () => {
             const { container } = render(<AdminDashboard />);
             
-            const mainContainer = container.querySelector('.flex.h-screen.bg-background');
+            const mainContainer = container.querySelector('.flex.h-full.bg-background');
             expect(mainContainer).toBeInTheDocument();
         });
     });
@@ -190,6 +238,36 @@ describe('AdminDashboard Component', () => {
         });
     });
 
+    describe('Password change required access restriction', () => {
+        it('should restrict access to profile only until the password is changed', async () => {
+            mockUseAuth.mockReturnValue({
+                user: {
+                    _id: "1",
+                    name: "Admin",
+                    email: "admin@test.com",
+                    role: "superAdmin",
+                    avatar: "",
+                    phone: "",
+                    createdAt: "2024-01-01",
+                    updatedAt: "2024-01-01",
+                    mustChangePassword: true,
+                },
+                isLoading: false,
+                isInitialized: true,
+                isAuthenticated: true,
+            });
+
+            render(<AdminDashboard />);
+
+            const sidebar = screen.getByTestId('admin-sidebar');
+            expect(sidebar).toHaveAttribute('data-password-change-required', 'true');
+            expect(sidebar).toHaveAttribute('data-current-view', 'profile');
+            expect(screen.getByTestId('view-profile')).toBeInTheDocument();
+            expect(screen.queryByTestId('view-modules')).not.toBeInTheDocument();
+            expect(screen.queryByTestId('view-overview')).not.toBeInTheDocument();
+        });
+    });
+
     describe('Sidebar Toggle', () => {
         it('should toggle sidebar state when toggle button is clicked', async () => {
             const user = userEvent.setup();
@@ -265,7 +343,7 @@ describe('AdminDashboard Component', () => {
             const { container } = render(<AdminDashboard />);
             
             // Contenedor principal
-            const mainContainer = container.querySelector('.flex.h-screen');
+            const mainContainer = container.querySelector('.flex.h-full');
             expect(mainContainer).toBeInTheDocument();
             
             // Área de contenido

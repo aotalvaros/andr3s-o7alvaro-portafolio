@@ -168,6 +168,25 @@ describe('useLogin', () => {
       });
     });
 
+    it('should show the password-change warning when mustChangePassword is true', async () => {
+      const response = {
+        ...mockLoginResponse,
+        mustChangePassword: true,
+        message: 'Inicio de sesión exitoso. Debe cambiar su contraseña al entrar al sistema.',
+      };
+
+      vi.mocked(httpClient.post).mockResolvedValue(response as any);
+
+      const { result } = renderHook(() => useLogin(), { wrapper });
+
+      await result.current.auth(loginPayload);
+
+      await waitFor(() => {
+        expect(toast.success).toHaveBeenCalledWith(response.message);
+        expect(toast.warning).toHaveBeenCalledWith('Debes cambiar tu contraseña antes de continuar.');
+      });
+    });
+
     it('should return login response data', async () => {
       const { result } = renderHook(() => useLogin(), { wrapper });
 
