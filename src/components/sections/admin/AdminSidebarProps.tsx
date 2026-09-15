@@ -1,32 +1,34 @@
 "use client"
 
-import { cn } from "@/lib/utils"
+import { cn, getInitials } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
-import { LayoutDashboard, Blocks, Activity, Settings, ChevronLeft, LogOut, BadgeCheckIcon  } from "lucide-react"
+import { LayoutDashboard, Blocks, Activity, Settings, ChevronLeft, LogOut, UserRound } from "lucide-react"
 import { AdminView } from './types/adminDashboard.type';
 import { logout } from '@/components/auth/logout';
 import { useAuth } from '@/hooks/useAuth';
-import { AvatarDropdown } from './components/AvatarDropdown';
-
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 
 interface AdminSidebarProps {
   currentView: string
   onViewChange: (view: AdminView) => void
   isOpen: boolean
   onToggle: () => void
+  passwordChangeRequired?: boolean
 }
 
 const menuItems: { id: AdminView; label: string; icon: React.ComponentType<React.SVGProps<SVGSVGElement>> }[] = [
   { id: "overview", label: "Dashboard", icon: LayoutDashboard },
   { id: "modules", label: "Módulos", icon: Blocks },
   { id: "activity", label: "Actividad", icon: Activity },
+  { id: "profile", label: "Perfil", icon: UserRound },
   { id: "settings", label: "Configuración", icon: Settings },
 ]
 
-export function AdminSidebar({ currentView, onViewChange, isOpen, onToggle }: Readonly<AdminSidebarProps>) {
+export function AdminSidebar({ currentView, onViewChange, isOpen, onToggle, passwordChangeRequired = false }: Readonly<AdminSidebarProps>) {
 
     const { user } = useAuth();
+    const visibleMenuItems = passwordChangeRequired ? menuItems.filter((item) => item.id === 'profile') : menuItems;
     
     return (
         <aside
@@ -47,13 +49,13 @@ export function AdminSidebar({ currentView, onViewChange, isOpen, onToggle }: Re
                 <nav className="space-y-2">
                     {isOpen && user && (
                         <div className="flex flex-col items-center px-4 py-6">
-                            <AvatarDropdown srcAvatar={user.avatar} altAvatar={user.name} menuItems={[
-                                { label: "Perfil", onClick: () => console.log("Profile clicked"), icon: BadgeCheckIcon  },
-                                { label: "Conf", onClick: () => console.log("Settings clicked"), icon: Settings },
-                            ]} />
+                            <Avatar className="h-16 w-16 ring-2 ring-primary/20">
+                                <AvatarImage src={user.avatar} alt={user.name} />
+                                <AvatarFallback className="text-2xl font-semibold">{ getInitials(user.name)}</AvatarFallback>
+                            </Avatar>
                         </div>
                     )}
-                {menuItems.map((item) => {
+                {visibleMenuItems.map((item) => {
                     const Icon = item.icon
                     const isActive = currentView === item.id
 

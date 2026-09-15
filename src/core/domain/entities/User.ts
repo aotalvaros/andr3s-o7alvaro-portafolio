@@ -7,4 +7,6 @@ export interface User {
   role: string;
   createdAt: string;
   updatedAt: string;
+  mustChangePassword?: boolean;
+  passwordChangedAt?: string | null;
 }

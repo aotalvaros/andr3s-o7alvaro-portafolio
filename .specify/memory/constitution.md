@@ -89,6 +89,11 @@ Patrones:
 - Zustand stores DEBEN usar `devtools` middleware
 - TanStack Query DEBE centralizar query keys
 - Formularios: React Hook Form + Zod para validación
+- `useAuth` obtiene el perfil del usuario via `useQuery` → `GET /user/profile`; no lee datos del JWT
+- `User` entity: `{ _id, name, email, avatar, phone, role, createdAt, updatedAt }`
+
+**Tests con `useQuery`**: componentes/hooks que usen `useAuth` o cualquier hook con `useQuery`
+requieren `QueryClientProvider` en su wrapper de test y mock de los servicios correspondientes.
 
 **Rationale**: Una jerarquía clara de estado evita estados duplicados y facilita el debugging.
 
